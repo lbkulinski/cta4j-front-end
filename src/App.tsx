@@ -1,12 +1,10 @@
 import React from 'react';
 import './App.css';
 import {
+    Autocomplete,
     Box,
-    FormControl,
-    InputLabel,
-    MenuItem, Paper,
-    Select,
-    Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
+    Paper,
+    Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField
 } from "@mui/material";
 import {useQuery} from '@apollo/client';
 import { gql } from './__generated__';
@@ -19,6 +17,11 @@ query GetStations {
     }
 }
 `);
+
+interface Option {
+    id: number;
+    label?: string | null;
+}
 
 function App() {
     const [station, setStation] = React.useState(null);
@@ -39,31 +42,34 @@ function App() {
 
     const stations = data.getStations;
 
-    if (!stations) {
-        return <p>Error...</p>
-    }
+    const names = new Set<string>();
+
+    const options = new Array<Option>();
+
+    stations.forEach(station => {
+        const name = station.name;
+
+        if (names.has(name)) {
+            return;
+        }
+
+        names.add(name);
+
+        options.push({
+            id: station.id,
+            label: name
+        });
+    });
 
     return (
         <div>
             <Stack spacing={2}>
-                <FormControl sx={{m: 2, maxWidth: 500}} size="small">
-                    <InputLabel>
-                        Station
-                    </InputLabel>
-                    <Select autoWidth>
-                        {
-                            stations.map(station => {
-                                return (
-                                    <MenuItem value={station.id}>
-                                        {
-                                            station.name
-                                        }
-                                    </MenuItem>
-                                );
-                            })
-                        }
-                    </Select>
-                </FormControl>
+                <Autocomplete
+                    sx={{p: 2, maxWidth: 500}}
+                    disablePortal
+                    renderInput={(params) => <TextField {...params} label="Station" />}
+                    options={options}
+                />
                 <Box sx={{p: 2}}>
                     <TableContainer component={Paper}>
                         <Table size="small">

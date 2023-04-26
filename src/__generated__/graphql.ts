@@ -39,7 +39,7 @@ export enum Route {
 export type Station = {
   __typename?: 'Station';
   id: Scalars['Int'];
-  name?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
 };
 
 export type Train = {
@@ -58,7 +58,7 @@ export type Train = {
 export type GetStationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetStationsQuery = { __typename?: 'Query', getStations: Array<{ __typename?: 'Station', id: number, name?: string | null }> };
+export type GetStationsQuery = { __typename?: 'Query', getStations: Array<{ __typename?: 'Station', id: number, name: string }> };
 
 
 export const GetStationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetStations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getStations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<GetStationsQuery, GetStationsQueryVariables>;
