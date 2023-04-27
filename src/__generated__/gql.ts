@@ -14,6 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "\nquery GetStations {\n    getStations {\n        id\n        name\n    }\n}\n": types.GetStationsDocument,
+    "\nquery GetTrains($stationId: Int!) {\n    getTrains(stationId: $stationId) {\n        route\n        destination\n        run\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n": types.GetTrainsDocument,
 };
 
 /**
@@ -34,6 +35,10 @@ export function gql(source: string): unknown;
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\nquery GetStations {\n    getStations {\n        id\n        name\n    }\n}\n"): (typeof documents)["\nquery GetStations {\n    getStations {\n        id\n        name\n    }\n}\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nquery GetTrains($stationId: Int!) {\n    getTrains(stationId: $stationId) {\n        route\n        destination\n        run\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n"): (typeof documents)["\nquery GetTrains($stationId: Int!) {\n    getTrains(stationId: $stationId) {\n        route\n        destination\n        run\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

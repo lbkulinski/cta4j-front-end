@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './App.css';
 import {
     Autocomplete,
@@ -18,14 +18,27 @@ query GetStations {
 }
 `);
 
+const GET_TRAINS = gql(`
+query GetTrains($stationId: Int!) {
+    getTrains(stationId: $stationId) {
+        route
+        destination
+        run
+        predictionTime
+        arrivalTime
+        due
+        scheduled
+        delayed
+    }
+}
+`);
+
 interface Option {
     id: number;
-    label?: string | null;
+    label: string;
 }
 
 function App() {
-    const [station, setStation] = React.useState(null);
-
     const { loading, error, data } = useQuery(GET_STATIONS);
 
     if (loading) {
@@ -61,14 +74,25 @@ function App() {
         });
     });
 
+    options.sort((option0, option1) => option0.label.localeCompare(option1.label));
+
     return (
         <div>
             <Stack spacing={2}>
                 <Autocomplete
                     sx={{p: 2, maxWidth: 500}}
-                    disablePortal
                     renderInput={(params) => <TextField {...params} label="Station" />}
                     options={options}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                    onChange={(event, value) => {
+                        console.log(value);
+
+                        if (!value) {
+                            return;
+                        }
+
+                        //setStation(value);
+                    }}
                 />
                 <Box sx={{p: 2}}>
                     <TableContainer component={Paper}>
