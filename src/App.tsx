@@ -1,13 +1,12 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import './App.css';
 import {
     Autocomplete,
-    Box,
-    Paper,
-    Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField
+    Stack, TextField
 } from "@mui/material";
 import {useQuery} from '@apollo/client';
-import { gql } from './__generated__';
+import {gql} from './__generated__';
+import Trains from "./Trains";
 
 const GET_STATIONS = gql(`
 query GetStations {
@@ -18,28 +17,15 @@ query GetStations {
 }
 `);
 
-const GET_TRAINS = gql(`
-query GetTrains($stationId: Int!) {
-    getTrains(stationId: $stationId) {
-        route
-        destination
-        run
-        predictionTime
-        arrivalTime
-        due
-        scheduled
-        delayed
-    }
-}
-`);
-
 interface Option {
     id: number;
     label: string;
 }
 
 function App() {
-    const { loading, error, data } = useQuery(GET_STATIONS);
+    const {loading, error, data} = useQuery(GET_STATIONS);
+
+    const [stationId, setStationId] = React.useState<number | null>(null);
 
     if (loading) {
         return <p>Loading...</p>;
@@ -81,7 +67,7 @@ function App() {
             <Stack spacing={2}>
                 <Autocomplete
                     sx={{p: 2, maxWidth: 500}}
-                    renderInput={(params) => <TextField {...params} label="Station" />}
+                    renderInput={(params) => <TextField {...params} label="Station"/>}
                     options={options}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
                     onChange={(event, value) => {
@@ -91,28 +77,10 @@ function App() {
                             return;
                         }
 
-                        //setStation(value);
+                        setStationId(value.id);
                     }}
                 />
-                <Box sx={{p: 2}}>
-                    <TableContainer component={Paper}>
-                        <Table size="small">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Route</TableCell>
-                                    <TableCell>Destination</TableCell>
-                                    <TableCell>Run</TableCell>
-                                    <TableCell>ETA</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {
-
-                                }
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Box>
+                <Trains stationId={stationId}/>
             </Stack>
         </div>
     );
