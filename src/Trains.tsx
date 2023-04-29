@@ -22,6 +22,17 @@ query GetTrains($stationId: Int!) {
 }
 `);
 
+const routeToHexColor = new Map([
+    ["RED", "#C60C30"],
+    ["BLUE", "#00A1DE"],
+    ["BROWN", "#62361B"],
+    ["GREEN", "#009B3A"],
+    ["ORANGE", "#F9461C"],
+    ["PURPLE", "#522398"],
+    ["PINK", "#E27EA6"],
+    ["YELLOW", "#F9E300"]
+]);
+
 interface Train {
     route: string,
     destination: string,
@@ -34,6 +45,10 @@ interface Train {
 }
 
 function getRow(train: Train) {
+    const routeColor = routeToHexColor.get(train.route);
+
+    const routeStyles = (routeColor === undefined) ? {} : {color: routeColor};
+
     const arrivalDate = new Date(train.arrivalTime);
 
     const arrivalMillis = arrivalDate.getTime();
@@ -54,7 +69,7 @@ function getRow(train: Train) {
 
     return (
         <TableRow key={train.run}>
-            <TableCell>
+            <TableCell sx={routeStyles}>
                 {
                     train.route
                 }
@@ -102,6 +117,36 @@ function getTable(trains: Train[]) {
     );
 }
 
+function compareTrains(train0: Train, train1: Train) {
+    let route0 = train0.route;
+
+    let destination0 = train0.destination;
+
+    let date0 = new Date(train0.arrivalTime);
+
+    let route1 = train1.route;
+
+    let destination1 = train1.destination;
+
+    let date1 = new Date(train1.arrivalTime);
+
+    if (route0 < route1) {
+        return -1;
+    } else if (route0 > route1) {
+        return 1;
+    } else if (destination0 < destination1) {
+        return -1;
+    } else if (destination0 > destination1) {
+        return 1;
+    } else if (date0 < date1) {
+        return -1;
+    } else if (date0 === date1) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
 function Trains(props: TrainsProps) {
     const stationId = props.stationId;
 
@@ -118,7 +163,9 @@ function Trains(props: TrainsProps) {
         return getTable([]);
     }
 
-    const trains: Train[] = data.getTrains;
+    const trains = Array.from(data.getTrains);
+
+    trains.sort(compareTrains);
 
     return getTable(trains);
 }
