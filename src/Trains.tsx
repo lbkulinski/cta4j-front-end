@@ -34,6 +34,24 @@ interface Train {
 }
 
 function getRow(train: Train) {
+    const arrivalDate = new Date(train.arrivalTime);
+
+    const arrivalMillis = arrivalDate.getTime();
+
+    const predictionDate = new Date(train.predictionTime);
+
+    const predictionMillis = predictionDate.getTime();
+
+    let difference = arrivalMillis - predictionMillis;
+
+    const minuteMillis = 60000;
+
+    difference /= minuteMillis;
+
+    difference = Math.floor(difference);
+
+    const eta = (difference <= 1) ? "Due" : `${difference} min`;
+
     return (
         <TableRow key={train.run}>
             <TableCell>
@@ -49,6 +67,11 @@ function getRow(train: Train) {
             <TableCell>
                 {
                     train.run
+                }
+            </TableCell>
+            <TableCell>
+                {
+                    eta
                 }
             </TableCell>
         </TableRow>
