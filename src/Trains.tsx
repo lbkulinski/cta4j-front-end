@@ -67,6 +67,20 @@ function getRow(train: Train) {
 
     const eta = (difference <= 1) ? "Due" : `${difference} min`;
 
+    /*
+    .table-success {
+    --bs-table-bg: #d1e7dd;
+    --bs-table-striped-bg: #c7dbd2;
+    --bs-table-striped-color: #000;
+    --bs-table-active-bg: #bcd0c7;
+    --bs-table-active-color: #000;
+    --bs-table-hover-bg: #c1d6cc;
+    --bs-table-hover-color: #000;
+    color: #000;
+    border-color:#bcd0c7
+}
+     */
+
     return (
         <TableRow key={train.run}>
             <TableCell sx={routeStyles}>
@@ -93,7 +107,11 @@ function getRow(train: Train) {
     );
 }
 
-function getTable(trains: Train[]) {
+function getTable(trains: Train[] | null) {
+    if (trains === null) {
+        return null;
+    }
+
     return (
         <Box sx={{p: 2}}>
             <TableContainer component={Paper}>
@@ -157,11 +175,21 @@ function Trains(props: TrainsProps) {
         }
     }
 
-    const {data} = useQuery(GET_TRAINS, options);
+    const {loading, error, data, startPolling} = useQuery(GET_TRAINS, options);
+
+    if (loading) {
+        return null;
+    }
+
+    if (error) {
+        return null;
+    }
 
     if (!data) {
-        return getTable([]);
+        return null;
     }
+
+    startPolling(60000);
 
     const trains = Array.from(data.getTrains);
 

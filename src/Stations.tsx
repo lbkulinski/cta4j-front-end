@@ -23,7 +23,21 @@ interface Option {
 }
 
 function Stations(props: StationsProps) {
-    const {data} = useQuery(GET_STATIONS);
+    const {loading, error, data} = useQuery(GET_STATIONS);
+
+    if (loading) {
+        return null;
+    }
+
+    if (error) {
+        return (
+            <p>
+                {
+                    `Error: ${error.message}`
+                }
+            </p>
+        );
+    }
 
     if (!data) {
         return null;
