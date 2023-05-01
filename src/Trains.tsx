@@ -45,6 +45,22 @@ interface Train {
 }
 
 function getRow(train: Train) {
+    let rowStyles = {};
+
+    if (train.due) {
+        rowStyles = {
+            backgroundColor: "#d1e7dd"
+        };
+    } else if (train.scheduled) {
+        rowStyles = {
+            backgroundColor: "#badce3"
+        }
+    } else if (train.delayed) {
+        rowStyles = {
+            backgroundColor: "#f8d7da"
+        }
+    }
+
     const routeColor = routeToHexColor.get(train.route);
 
     const routeStyles = (routeColor === undefined) ? {} : {color: routeColor};
@@ -67,22 +83,8 @@ function getRow(train: Train) {
 
     const eta = (difference <= 1) ? "Due" : `${difference} min`;
 
-    /*
-    .table-success {
-    --bs-table-bg: #d1e7dd;
-    --bs-table-striped-bg: #c7dbd2;
-    --bs-table-striped-color: #000;
-    --bs-table-active-bg: #bcd0c7;
-    --bs-table-active-color: #000;
-    --bs-table-hover-bg: #c1d6cc;
-    --bs-table-hover-color: #000;
-    color: #000;
-    border-color:#bcd0c7
-}
-     */
-
     return (
-        <TableRow key={train.run}>
+        <TableRow key={train.run} sx={rowStyles}>
             <TableCell sx={routeStyles}>
                 {
                     train.route
