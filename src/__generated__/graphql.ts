@@ -22,7 +22,7 @@ export type Query = {
 
 
 export type QueryGetTrainsArgs = {
-  stationId: Scalars['Int'];
+  stationId: Scalars['ID'];
 };
 
 export enum Route {
@@ -38,27 +38,35 @@ export enum Route {
 
 export type Station = {
   __typename?: 'Station';
-  id: Scalars['Int'];
-  name?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
 };
 
 export type Train = {
   __typename?: 'Train';
-  arrivalTime?: Maybe<Scalars['String']>;
+  arrivalTime: Scalars['String'];
   delayed: Scalars['Boolean'];
-  destination?: Maybe<Scalars['String']>;
+  destination: Scalars['String'];
   due: Scalars['Boolean'];
-  predictionTime?: Maybe<Scalars['String']>;
-  route?: Maybe<Route>;
+  predictionTime: Scalars['String'];
+  route: Route;
   run: Scalars['Int'];
   scheduled: Scalars['Boolean'];
-  station?: Maybe<Scalars['String']>;
+  station: Scalars['String'];
 };
 
 export type GetStationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetStationsQuery = { __typename?: 'Query', getStations: Array<{ __typename?: 'Station', id: number, name?: string | null }> };
+export type GetStationsQuery = { __typename?: 'Query', getStations: Array<{ __typename?: 'Station', id: string, name: string }> };
+
+export type GetTrainsQueryVariables = Exact<{
+  stationId: Scalars['ID'];
+}>;
+
+
+export type GetTrainsQuery = { __typename?: 'Query', getTrains: Array<{ __typename?: 'Train', route: Route, destination: string, run: number, predictionTime: string, arrivalTime: string, due: boolean, scheduled: boolean, delayed: boolean }> };
 
 
 export const GetStationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetStations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getStations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<GetStationsQuery, GetStationsQueryVariables>;
+export const GetTrainsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetTrains"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"stationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getTrains"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"stationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"stationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"route"}},{"kind":"Field","name":{"kind":"Name","value":"destination"}},{"kind":"Field","name":{"kind":"Name","value":"run"}},{"kind":"Field","name":{"kind":"Name","value":"predictionTime"}},{"kind":"Field","name":{"kind":"Name","value":"arrivalTime"}},{"kind":"Field","name":{"kind":"Name","value":"due"}},{"kind":"Field","name":{"kind":"Name","value":"scheduled"}},{"kind":"Field","name":{"kind":"Name","value":"delayed"}}]}}]}}]} as unknown as DocumentNode<GetTrainsQuery, GetTrainsQueryVariables>;

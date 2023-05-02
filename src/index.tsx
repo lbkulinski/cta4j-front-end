@@ -6,8 +6,20 @@ import reportWebVitals from './reportWebVitals';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 const client = new ApolloClient({
-    uri: 'http://localhost:8080/graphql',
-    cache: new InMemoryCache(),
+    uri: 'https://cta4j-back-end.herokuapp.com/graphql',
+    cache: new InMemoryCache({
+        typePolicies: {
+            Query: {
+                fields: {
+                    getTrains: {
+                        merge(existing, incoming){
+                            return incoming;
+                        }
+                    }
+                }
+            }
+        }
+    }),
 });
 
 const root = ReactDOM.createRoot(
