@@ -51,15 +51,15 @@ function getRow(train: Train) {
 
     if (train.due) {
         rowStyles = {
-            backgroundColor: "#d1e7dd"
+            backgroundColor: "#13251f"
         };
     } else if (train.scheduled) {
         rowStyles = {
-            backgroundColor: "#badce3"
+            backgroundColor: "#172038"
         }
     } else if (train.delayed) {
         rowStyles = {
-            backgroundColor: "#f8d7da"
+            backgroundColor: "#381717"
         }
     }
 
@@ -122,10 +122,10 @@ function getTable(trains: Train[] | null) {
                 <Table size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell>Route</TableCell>
-                            <TableCell>Destination</TableCell>
-                            <TableCell>Run</TableCell>
-                            <TableCell>ETA</TableCell>
+                            <TableCell sx={{fontWeight: "bold"}}>Route</TableCell>
+                            <TableCell sx={{fontWeight: "bold"}}>Destination</TableCell>
+                            <TableCell sx={{fontWeight: "bold"}}>Run</TableCell>
+                            <TableCell sx={{fontWeight: "bold"}}>ETA</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
