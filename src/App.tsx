@@ -9,11 +9,9 @@ import Stations from "./Stations";
 function App() {
     const searchParams = new URLSearchParams(window.location.search);
 
-    const stationIdString = searchParams.get("stationId");
+    const defaultStationId = searchParams.get("stationId");
 
-    const defaultStationId = (stationIdString === null) ? null : parseInt(stationIdString);
-
-    const [stationId, setStationId] = React.useState<number | null>(defaultStationId);
+    const [stationId, setStationId] = React.useState<string | null>(defaultStationId);
 
     return (
         <div>

@@ -4,8 +4,8 @@ import {Autocomplete, TextField} from "@mui/material";
 import {gql} from "./__generated__";
 
 interface StationsProps {
-    stationId: number | null,
-    setStationId: (stationId: number | null) => void
+    stationId: string | null,
+    setStationId: (stationId: string | null) => void
 }
 
 const GET_STATIONS = gql(`
@@ -18,7 +18,7 @@ query GetStations {
 `);
 
 interface Option {
-    id: number;
+    id: string;
     label: string;
 }
 
@@ -80,9 +80,11 @@ function Stations(props: StationsProps) {
     return (
         <Autocomplete
             sx={{p: 2, maxWidth: 500}}
+            size={"small"}
             renderInput={(params) => <TextField {...params} label="Station"/>}
             options={options}
-            defaultValue={defaultOption}
+            value={defaultOption}
+            defaultValue={null}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             onChange={(event, value) => {
                 if (!value) {

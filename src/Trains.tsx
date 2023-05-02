@@ -4,11 +4,11 @@ import {gql} from "./__generated__";
 import {useQuery} from "@apollo/client";
 
 interface TrainsProps {
-    stationId: number | null
+    stationId: string | null
 }
 
 const GET_TRAINS = gql(`
-query GetTrains($stationId: Int!) {
+query GetTrains($stationId: ID!) {
     getTrains(stationId: $stationId) {
         route
         destination
@@ -45,6 +45,8 @@ interface Train {
 }
 
 function getRow(train: Train) {
+    const key = JSON.stringify(train);
+
     let rowStyles = {};
 
     if (train.due) {
@@ -84,7 +86,7 @@ function getRow(train: Train) {
     const eta = (difference <= 1) ? "Due" : `${difference} min`;
 
     return (
-        <TableRow key={train.run} sx={rowStyles}>
+        <TableRow key={key} sx={rowStyles}>
             <TableCell sx={routeStyles}>
                 {
                     train.route

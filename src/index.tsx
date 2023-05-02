@@ -9,11 +9,14 @@ const client = new ApolloClient({
     uri: 'http://localhost:8080/graphql',
     cache: new InMemoryCache({
         typePolicies: {
-            Station: {
-                keyFields: ["id", "name"]
-            },
-            Train: {
-                keyFields: ["run", "route"]
+            Query: {
+                fields: {
+                    getTrains: {
+                        merge(existing, incoming){
+                            return incoming;
+                        }
+                    }
+                }
             }
         }
     }),
