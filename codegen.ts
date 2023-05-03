@@ -1,7 +1,7 @@
 import { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
-    schema: 'https://cta4j-back-end.herokuapp.com/graphql',
+    schema: `${process.env.REACT_APP_BACK_END_URL}/graphql`,
     documents: ['src/**/*.tsx'],
     generates: {
         './src/__generated__/': {
