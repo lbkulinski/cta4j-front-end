@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 const client = new ApolloClient({
-    uri: 'https://cta4j-back-end.herokuapp.com/graphql',
+    uri: `${process.env.REACT_APP_BACK_END_URL}/graphql`,
     cache: new InMemoryCache({
         typePolicies: {
             Query: {
