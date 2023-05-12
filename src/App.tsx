@@ -17,7 +17,11 @@ const darkTheme = createTheme({
 function App() {
     const searchParams = new URLSearchParams(window.location.search);
 
-    const defaultStationId = searchParams.get("stationId");
+    let defaultStationId = searchParams.get("stationId");
+
+    if (defaultStationId === null) {
+        defaultStationId = localStorage.getItem("stationId");
+    }
 
     const [stationId, setStationId] = React.useState<string | null>(defaultStationId);
 

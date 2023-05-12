@@ -93,9 +93,7 @@ function Stations(props: StationsProps) {
 
                 props.setStationId(value.id);
 
-                const optionString = JSON.stringify(value);
-
-                sessionStorage.setItem("option", optionString);
+                localStorage.setItem("stationId", value.id);
             }}
         />
     );
