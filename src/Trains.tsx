@@ -10,7 +10,7 @@ interface TrainsProps {
 const GET_TRAINS = gql(`
 query GetTrains($stationId: ID!) {
     getTrains(stationId: $stationId) {
-        route
+        line
         destination
         run
         predictionTime
@@ -22,7 +22,7 @@ query GetTrains($stationId: ID!) {
 }
 `);
 
-const routeToHexColor = new Map([
+const lineToHexColor = new Map([
     ["RED", "#C60C30"],
     ["BLUE", "#00A1DE"],
     ["BROWN", "#62361B"],
@@ -34,7 +34,7 @@ const routeToHexColor = new Map([
 ]);
 
 interface Train {
-    route: string,
+    line: string,
     destination: string,
     run: number,
     predictionTime: string,
@@ -63,9 +63,9 @@ function getRow(train: Train) {
         }
     }
 
-    const routeColor = routeToHexColor.get(train.route);
+    const lineColor = lineToHexColor.get(train.line);
 
-    const routeStyles = (routeColor === undefined) ? {} : {color: routeColor};
+    const lineStyles = (lineColor === undefined) ? {} : {color: lineColor};
 
     const arrivalDate = new Date(train.arrivalTime);
 
@@ -87,9 +87,9 @@ function getRow(train: Train) {
 
     return (
         <TableRow key={key} sx={rowStyles}>
-            <TableCell sx={routeStyles}>
+            <TableCell sx={lineStyles}>
                 {
-                    train.route
+                    train.line
                 }
             </TableCell>
             <TableCell>
@@ -122,7 +122,7 @@ function getTable(trains: Train[] | null) {
                 <Table size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{fontWeight: "bold"}}>Route</TableCell>
+                            <TableCell sx={{fontWeight: "bold"}}>Line</TableCell>
                             <TableCell sx={{fontWeight: "bold"}}>Destination</TableCell>
                             <TableCell sx={{fontWeight: "bold"}}>Run</TableCell>
                             <TableCell sx={{fontWeight: "bold"}}>ETA</TableCell>
@@ -140,21 +140,21 @@ function getTable(trains: Train[] | null) {
 }
 
 function compareTrains(train0: Train, train1: Train) {
-    let route0 = train0.route;
+    let line0 = train0.line;
 
     let destination0 = train0.destination;
 
     let date0 = new Date(train0.arrivalTime);
 
-    let route1 = train1.route;
+    let line1 = train1.line;
 
     let destination1 = train1.destination;
 
     let date1 = new Date(train1.arrivalTime);
 
-    if (route0 < route1) {
+    if (line0 < line1) {
         return -1;
-    } else if (route0 > route1) {
+    } else if (line0 > line1) {
         return 1;
     } else if (destination0 < destination1) {
         return -1;
