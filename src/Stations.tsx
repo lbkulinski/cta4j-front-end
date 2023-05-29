@@ -1,5 +1,4 @@
 import {useQuery} from "@apollo/client";
-import React from "react";
 import {Autocomplete, TextField} from "@mui/material";
 import {gql} from "./__generated__";
 
@@ -86,7 +85,7 @@ function Stations(props: StationsProps) {
             value={defaultOption}
             defaultValue={null}
             isOptionEqualToValue={(option, value) => option.id === value.id}
-            onChange={(event, value) => {
+            onChange={(_, value) => {
                 if (!value) {
                     return;
                 }

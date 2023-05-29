@@ -1,5 +1,4 @@
 import {Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
-import React from "react";
 import {gql} from "./__generated__";
 import {useQuery} from "@apollo/client";
 
@@ -140,17 +139,17 @@ function getTable(trains: Train[] | null) {
 }
 
 function compareTrains(train0: Train, train1: Train) {
-    let line0 = train0.line;
+    const line0 = train0.line;
 
-    let destination0 = train0.destination;
+    const destination0 = train0.destination;
 
-    let date0 = new Date(train0.arrivalTime);
+    const date0 = new Date(train0.arrivalTime);
 
-    let line1 = train1.line;
+    const line1 = train1.line;
 
-    let destination1 = train1.destination;
+    const destination1 = train1.destination;
 
-    let date1 = new Date(train1.arrivalTime);
+    const date1 = new Date(train1.arrivalTime);
 
     if (line0 < line1) {
         return -1;
