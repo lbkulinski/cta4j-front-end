@@ -1,8 +1,5 @@
 import React from 'react';
 import './App.css';
-import {
-    Stack
-} from "@mui/material";
 import Trains from "./Trains";
 import Stations from "./Stations";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -29,10 +26,8 @@ function App() {
         <ThemeProvider theme={darkTheme}>
             <CssBaseline />
             <div>
-                <Stack spacing={2}>
-                    <Stations stationId={stationId} setStationId={setStationId} />
-                    <Trains stationId={stationId}/>
-                </Stack>
+                <Stations stationId={stationId} setStationId={setStationId} />
+                <Trains stationId={stationId}/>
             </div>
         </ThemeProvider>
     );
