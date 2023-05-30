@@ -19,8 +19,10 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.2",
     "@types/node": "^20.2.3",
+    "babel-plugin-add-react-displayname": "^0.0.5",
     "graphql": "^16.6.0",
     "logrocket": "^4.0.2",
+    "logrocket-react": "^5.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
