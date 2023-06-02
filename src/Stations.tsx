@@ -32,7 +32,7 @@ function Stations(props: StationsProps) {
         return (
             <p>
                 {
-                    `Error: ${error.message}`
+                    "Error: The stations could not be loaded. Please refresh the page or try again later."
                 }
             </p>
         );
