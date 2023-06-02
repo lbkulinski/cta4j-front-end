@@ -39,13 +39,7 @@ function Stations(props: StationsProps) {
     }
 
     if (!data) {
-        return (
-            <p>
-                {
-                    "Error: The stations could not be loaded. Please refresh the page or try again later."
-                }
-            </p>
-        );
+        return null;
     }
 
     const stations = data.getStations;
