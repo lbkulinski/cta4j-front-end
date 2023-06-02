@@ -4,6 +4,7 @@ import Trains from "./Trains";
 import Stations from "./Stations";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import MenuBar from "./MenuBar.tsx";
 
 const darkTheme = createTheme({
     palette: {
@@ -26,6 +27,7 @@ function App() {
         <ThemeProvider theme={darkTheme}>
             <CssBaseline />
             <div>
+                <MenuBar title="Trains" />
                 <Stations stationId={stationId} setStationId={setStationId} />
                 <Trains stationId={stationId}/>
             </div>
