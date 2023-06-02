@@ -93,6 +93,8 @@ function Stations(props: StationsProps) {
                 props.setStationId(value.id);
 
                 localStorage.setItem("stationId", value.id);
+
+                window.history.replaceState(null, "", window.location.pathname);
             }}
         />
     );
