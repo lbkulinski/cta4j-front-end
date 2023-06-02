@@ -185,11 +185,23 @@ function Trains(props: TrainsProps) {
     }
 
     if (error) {
-        return null;
+        return (
+            <p>
+                {
+                    "Error: The trains could not be loaded. Please refresh the page or try again later."
+                }
+            </p>
+        );
     }
 
     if (!data) {
-        return null;
+        return (
+            <p>
+                {
+                    "Error: The trains could not be loaded. Please refresh the page or try again later."
+                }
+            </p>
+        );
     }
 
     startPolling(60000);
