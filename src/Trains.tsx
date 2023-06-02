@@ -195,13 +195,7 @@ function Trains(props: TrainsProps) {
     }
 
     if (!data) {
-        return (
-            <p>
-                {
-                    "Error: The trains could not be loaded. Please refresh the page or try again later."
-                }
-            </p>
-        );
+        return null;
     }
 
     startPolling(60000);
