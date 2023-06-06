@@ -1,6 +1,7 @@
 import {useQuery} from "@apollo/client";
-import {Autocomplete, TextField} from "@mui/material";
+import {Alert, Autocomplete, TextField} from "@mui/material";
 import {gql} from "./__generated__";
+import {useRollbar} from "@rollbar/react";
 
 interface StationsProps {
     stationId: string | null,
@@ -29,12 +30,14 @@ function Stations(props: StationsProps) {
     }
 
     if (error) {
+        const rollbar = useRollbar();
+
+        rollbar.error("An error occurred when trying to fetch the stations", error, data);
+
         return (
-            <p>
-                {
-                    "Error: The stations could not be loaded. Please refresh the page or try again later."
-                }
-            </p>
+            <Alert severity="error">
+                Error: The stations could not be loaded. Please refresh the page or try again later.
+            </Alert>
         );
     }
 

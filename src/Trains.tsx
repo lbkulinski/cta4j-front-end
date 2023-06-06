@@ -1,6 +1,7 @@
-import {Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {gql} from "./__generated__";
 import {useQuery} from "@apollo/client";
+import {useRollbar} from "@rollbar/react";
 
 interface TrainsProps {
     stationId: string | null
@@ -185,12 +186,14 @@ function Trains(props: TrainsProps) {
     }
 
     if (error) {
+        const rollbar = useRollbar();
+
+        rollbar.error("An error occurred when trying to fetch the trains", error, data);
+
         return (
-            <p>
-                {
-                    "Error: The trains could not be loaded. Please refresh the page or try again later."
-                }
-            </p>
+            <Alert severity="error">
+                Error: The trains could not be loaded. Please refresh the page or try again later.
+            </Alert>
         );
     }
 
