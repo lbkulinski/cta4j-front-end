@@ -5,6 +5,12 @@ import Stations from "./Stations";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MenuBar from "./MenuBar.tsx";
+import { Provider, ErrorBoundary } from '@rollbar/react';
+
+const rollbarConfig = {
+    accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
+    environment: import.meta.env.VITE_ROLLBAR_ENVIRONMENT
+};
 
 const darkTheme = createTheme({
     palette: {
@@ -24,14 +30,18 @@ function App() {
     const [stationId, setStationId] = React.useState<string | null>(defaultStationId);
 
     return (
-        <ThemeProvider theme={darkTheme}>
-            <CssBaseline />
-            <div>
-                <MenuBar title="Trains" />
-                <Stations stationId={stationId} setStationId={setStationId} />
-                <Trains stationId={stationId}/>
-            </div>
-        </ThemeProvider>
+        <Provider config={rollbarConfig}>
+            <ErrorBoundary>
+                <ThemeProvider theme={darkTheme}>
+                    <CssBaseline />
+                    <div>
+                        <MenuBar title="Trains" />
+                        <Stations stationId={stationId} setStationId={setStationId} />
+                        <Trains stationId={stationId}/>
+                    </div>
+                </ThemeProvider>
+            </ErrorBoundary>
+        </Provider>
     );
 }
 
