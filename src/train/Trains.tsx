@@ -1,5 +1,5 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
-import {gql} from "./__generated__";
+import {gql} from "../__generated__";
 import {useQuery} from "@apollo/client";
 import {useRollbar} from "@rollbar/react";
 
