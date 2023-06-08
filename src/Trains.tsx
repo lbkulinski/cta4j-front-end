@@ -188,7 +188,14 @@ function Trains(props: TrainsProps) {
     if (error) {
         const rollbar = useRollbar();
 
-        rollbar.error("An error occurred when trying to fetch the trains", error, data);
+        const errorData = {
+            error: error,
+            data: data
+        }
+
+        const errorDataString = JSON.stringify(errorData);
+
+        rollbar.error("An error occurred when trying to fetch the trains", errorDataString);
 
         return (
             <Alert severity="error">

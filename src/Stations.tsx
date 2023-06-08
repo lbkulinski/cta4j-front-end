@@ -32,7 +32,14 @@ function Stations(props: StationsProps) {
     if (error) {
         const rollbar = useRollbar();
 
-        rollbar.error("An error occurred when trying to fetch the stations", error, data);
+        const errorData = {
+            error: error,
+            data: data
+        }
+
+        const errorDataString = JSON.stringify(errorData);
+
+        rollbar.error("An error occurred when trying to fetch the stations", errorDataString);
 
         return (
             <Alert severity="error">
