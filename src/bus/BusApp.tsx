@@ -2,6 +2,7 @@ import React from 'react';
 import '../App.css';
 import Routes from "./Routes.tsx";
 import Directions from "./Directions.tsx";
+import Stops from "./Stops.tsx";
 
 function BusApp() {
     /*
@@ -19,10 +20,13 @@ function BusApp() {
 
     const [direction, setDirection] = React.useState<string | null>(null);
 
+    const [stopId, setStopId] = React.useState<string | null>(null);
+
     return (
         <div>
             <Routes routeId={routeId} setRouteId={setRouteId} />
             <Directions routeId={routeId} direction={direction} setDirection={setDirection} />
+            <Stops routeId={routeId} direction={direction} stopId={stopId} setStopId={setStopId} />
         </div>
     );
 }

@@ -3,16 +3,20 @@ import {Alert, Autocomplete, TextField} from "@mui/material";
 import {gql} from "../__generated__";
 import {useRollbar} from "@rollbar/react";
 
-interface DirectionsProps {
+interface StopsProps {
     routeId: string | null,
     direction: string | null,
-    setDirection: (direction: string | null) => void
+    stopId: string | null,
+    setStopId: (stopId: string | null) => void
 }
 
-const GET_DIRECTIONS = gql(`
-query GetRouteDirections($id: ID!) {
-    getRouteDirections(id: $id) {
+const GET_STOPS = gql(`
+query GetRouteStops($id: ID!, $direction: String!) {
+    getRouteStops(id: $id, direction: $direction) {
+        id
         name
+        latitude
+        longitude
     }
 }
 `);
@@ -22,20 +26,27 @@ interface Option {
     label: string;
 }
 
-function Directions(props: DirectionsProps) {
+function Stops(props: StopsProps) {
     const routeId = props.routeId;
 
     if (routeId === null) {
         return null;
     }
 
+    const direction = props.direction;
+
+    if (direction === null) {
+        return null;
+    }
+
     const queryOptions = {
         variables: {
-            id: routeId!
+            id: routeId,
+            direction: direction
         }
     }
 
-    const {loading, error, data} = useQuery(GET_DIRECTIONS,
+    const {loading, error, data} = useQuery(GET_STOPS,
         queryOptions);
 
     if (loading) {
@@ -52,11 +63,11 @@ function Directions(props: DirectionsProps) {
 
         const errorDataString = JSON.stringify(errorData);
 
-        rollbar.error("An error occurred when trying to fetch the directions", errorDataString);
+        rollbar.error("An error occurred when trying to fetch the stops", errorDataString);
 
         return (
             <Alert severity="error">
-                Error: The directions could not be loaded. Please refresh the page or try again later.
+                Error: The stops could not be loaded. Please refresh the page or try again later.
             </Alert>
         );
     }
@@ -65,7 +76,7 @@ function Directions(props: DirectionsProps) {
         return null;
     }
 
-    const directions = data.getRouteDirections;
+    const stops = data.getRouteStops;
 
     const names = new Set<string>();
 
@@ -73,12 +84,14 @@ function Directions(props: DirectionsProps) {
 
     let defaultOption: Option | null = null;
 
-    directions.forEach(direction => {
-        const name = direction.name;
+    stops.forEach(stop => {
+        const id = stop.id;
 
-        if ((name === props.direction)) {
+        const name = stop.name;
+
+        if ((id === props.stopId)) {
             defaultOption = {
-                id: name,
+                id: id,
                 label: name
             };
         }
@@ -90,7 +103,7 @@ function Directions(props: DirectionsProps) {
         names.add(name);
 
         options.push({
-            id: name,
+            id: id,
             label: name
         });
     });
@@ -101,7 +114,7 @@ function Directions(props: DirectionsProps) {
         <Autocomplete
             sx={{p: 2, maxWidth: 500}}
             size={"small"}
-            renderInput={(params) => <TextField {...params} label="Direction"/>}
+            renderInput={(params) => <TextField {...params} label="Stop"/>}
             options={options}
             value={defaultOption}
             defaultValue={null}
@@ -111,9 +124,9 @@ function Directions(props: DirectionsProps) {
                     return;
                 }
 
-                props.setDirection(value.id);
+                props.setStopId(value.id);
 
-                localStorage.setItem("direction", value.id);
+                localStorage.setItem("stopId", value.id);
 
                 window.history.replaceState(null, "", window.location.pathname);
             }}
@@ -121,4 +134,4 @@ function Directions(props: DirectionsProps) {
     );
 }
 
-export default Directions;
+export default Stops;
