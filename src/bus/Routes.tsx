@@ -5,7 +5,9 @@ import {useRollbar} from "@rollbar/react";
 
 interface RoutesProps {
     routeId: string | null,
-    setRouteId: (routeId: string | null) => void
+    setRouteId: (routeId: string | null) => void,
+    setDirection: (direction: string | null) => void,
+    setStopId: (stopId: string | null) => void
 }
 
 const GET_ROUTES = gql(`
@@ -98,7 +100,15 @@ function Routes(props: RoutesProps) {
 
                 props.setRouteId(value.id);
 
+                props.setDirection(null);
+
+                props.setStopId(null);
+
                 localStorage.setItem("routeId", value.id);
+
+                localStorage.removeItem("direction");
+
+                localStorage.removeItem("stopId");
 
                 window.history.replaceState(null, "", window.location.pathname);
             }}

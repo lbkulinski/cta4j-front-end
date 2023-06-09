@@ -34,8 +34,8 @@ function BusApp() {
 
     return (
         <div>
-            <Routes routeId={routeId} setRouteId={setRouteId} />
-            <Directions routeId={routeId} direction={direction} setDirection={setDirection} />
+            <Routes routeId={routeId} setRouteId={setRouteId} setDirection={setDirection} setStopId={setStopId} />
+            <Directions routeId={routeId} direction={direction} setDirection={setDirection} setStopId={setStopId} />
             <Stops routeId={routeId} direction={direction} stopId={stopId} setStopId={setStopId} />
             <Buses routeId={routeId} stopId={stopId} />
         </div>
