@@ -181,13 +181,15 @@ function Trains(props: TrainsProps) {
 
     const {loading, error, data, startPolling} = useQuery(GET_TRAINS, options);
 
+    startPolling(60000);
+
+    const rollbar = useRollbar();
+
     if (loading) {
         return null;
     }
 
     if (error) {
-        const rollbar = useRollbar();
-
         const errorData = {
             error: error,
             data: data
@@ -207,8 +209,6 @@ function Trains(props: TrainsProps) {
     if (!data) {
         return null;
     }
-
-    startPolling(60000);
 
     const trains = Array.from(data.getTrains);
 

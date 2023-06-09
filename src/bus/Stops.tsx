@@ -29,33 +29,26 @@ interface Option {
 function Stops(props: StopsProps) {
     const routeId = props.routeId;
 
-    if (routeId === null) {
-        return null;
-    }
-
     const direction = props.direction;
 
-    if (direction === null) {
-        return null;
-    }
-
     const queryOptions = {
+        skip: (routeId === null) || (direction === null),
         variables: {
-            id: routeId,
-            direction: direction
+            id: routeId!,
+            direction: direction!
         }
     }
 
     const {loading, error, data} = useQuery(GET_STOPS,
         queryOptions);
 
+    const rollbar = useRollbar();
+
     if (loading) {
         return null;
     }
 
     if (error) {
-        const rollbar = useRollbar();
-
         const errorData = {
             error: error,
             data: data

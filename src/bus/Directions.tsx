@@ -25,11 +25,8 @@ interface Option {
 function Directions(props: DirectionsProps) {
     const routeId = props.routeId;
 
-    if (routeId === null) {
-        return null;
-    }
-
     const queryOptions = {
+        skip: routeId === null,
         variables: {
             id: routeId!
         }
@@ -38,13 +35,13 @@ function Directions(props: DirectionsProps) {
     const {loading, error, data} = useQuery(GET_DIRECTIONS,
         queryOptions);
 
+    const rollbar = useRollbar();
+
     if (loading) {
         return null;
     }
 
     if (error) {
-        const rollbar = useRollbar();
-
         const errorData = {
             error: error,
             data: data

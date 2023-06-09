@@ -25,13 +25,13 @@ interface Option {
 function Stations(props: StationsProps) {
     const {loading, error, data} = useQuery(GET_STATIONS);
 
+    const rollbar = useRollbar();
+
     if (loading) {
         return null;
     }
 
     if (error) {
-        const rollbar = useRollbar();
-
         const errorData = {
             error: error,
             data: data

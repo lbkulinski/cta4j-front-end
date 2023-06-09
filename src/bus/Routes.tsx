@@ -25,13 +25,13 @@ interface Option {
 function Routes(props: RoutesProps) {
     const {loading, error, data} = useQuery(GET_ROUTES);
 
+    const rollbar = useRollbar();
+
     if (loading) {
         return null;
     }
 
     if (error) {
-        const rollbar = useRollbar();
-
         const errorData = {
             error: error,
             data: data
@@ -65,10 +65,12 @@ function Routes(props: RoutesProps) {
 
         const name = route.name;
 
+        const label = `${name} (${route.id})`;
+
         if ((id === props.routeId)) {
             defaultOption = {
                 id: id,
-                label: name
+                label: label
             };
         }
 
@@ -77,8 +79,6 @@ function Routes(props: RoutesProps) {
         }
 
         names.add(name);
-
-        const label = `${name} (${route.id})`;
 
         options.push({
             id: route.id,

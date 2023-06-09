@@ -138,32 +138,27 @@ function compareBuses(bus0: Bus, bus1: Bus) {
 function Buses(props: BusesProps) {
     const routeId = props.routeId;
 
-    if (routeId === null) {
-        return null;
-    }
-
     const stopId = props.stopId;
 
-    if (stopId === null) {
-        return null;
-    }
-
     const options = {
+        skip: (routeId === null) || (stopId === null),
         variables: {
-            routeId: routeId,
-            stopId: stopId
+            routeId: routeId!,
+            stopId: stopId!
         }
     }
 
     const {loading, error, data, startPolling} = useQuery(GET_BUSES, options);
+
+    startPolling(60000);
+
+    const rollbar = useRollbar();
 
     if (loading) {
         return null;
     }
 
     if (error) {
-        const rollbar = useRollbar();
-
         const errorData = {
             error: error,
             data: data
@@ -183,8 +178,6 @@ function Buses(props: BusesProps) {
     if (!data) {
         return null;
     }
-
-    startPolling(60000);
 
     const buses = Array.from(data.getBuses);
 
