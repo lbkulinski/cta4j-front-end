@@ -41,6 +41,10 @@ const client = new ApolloClient({
 
 const router = createBrowserRouter([
     {
+        path: "*",
+        element: <TrainApp />
+    },
+    {
         path: "/",
         element: <TrainApp />
     },
