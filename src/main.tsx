@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client'
 import TrainApp from './train/TrainApp.tsx'
 import './index.css'
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import MenuBar from "./MenuBar.tsx";
 import CssBaseline from "@mui/material/CssBaseline";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
@@ -39,6 +39,21 @@ const client = new ApolloClient({
     }),
 });
 
+const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <TrainApp />
+    },
+    {
+        path: "/trains",
+        element: <TrainApp />
+    },
+    {
+        path: "/buses",
+        element: <BusApp />
+    }
+]);
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <Provider config={rollbarConfig}>
@@ -46,14 +61,8 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
                 <ThemeProvider theme={darkTheme}>
                     <CssBaseline />
                     <ApolloProvider client={client}>
-                        <BrowserRouter>
-                            <MenuBar />
-                            <Routes>
-                                <Route path="/" element={<TrainApp />} />
-                                <Route path="/trains" element={<TrainApp />} />
-                                <Route path="/buses" element={<BusApp />} />
-                            </Routes>
-                        </BrowserRouter>
+                        <MenuBar />
+                        <RouterProvider router={router} />
                     </ApolloProvider>
                 </ThemeProvider>
             </ErrorBoundary>

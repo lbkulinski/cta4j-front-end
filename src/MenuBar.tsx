@@ -3,12 +3,9 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import {Button} from "@mui/material";
-import {useNavigate} from "react-router-dom";
 
 function MenuBar() {
     const handleContactClick = () => window.location.href = "mailto:admin@cta4j.app";
-
-    const navigate = useNavigate();
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -17,10 +14,10 @@ function MenuBar() {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         cta4j
                     </Typography>
-                    <Button color="inherit" onClick={() => navigate("/trains")}>
+                    <Button color="inherit" href="/trains">
                         Trains
                     </Button>
-                    <Button color="inherit" onClick={() => navigate("/buses")}>
+                    <Button color="inherit" href="/buses">
                         Buses
                     </Button>
                     <Button color="inherit" onClick={handleContactClick}>
