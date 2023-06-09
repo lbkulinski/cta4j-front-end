@@ -2,27 +2,25 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import {Button} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 
-interface MenuBarProps {
-    title: string
-}
-
-function MenuBar(props: MenuBarProps) {
-    const handleBusesClick = () => window.location.href = "https://cta4j.com/buses.html";
-
+function MenuBar() {
     const handleContactClick = () => window.location.href = "mailto:admin@cta4j.app";
+
+    const navigate = useNavigate();
 
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
                 <Toolbar variant="dense">
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        {
-                            props.title
-                        }
+                        cta4j
                     </Typography>
-                    <Button color="inherit" onClick={handleBusesClick}>
+                    <Button color="inherit" onClick={() => navigate("/trains")}>
+                        Trains
+                    </Button>
+                    <Button color="inherit" onClick={() => navigate("/buses")}>
                         Buses
                     </Button>
                     <Button color="inherit" onClick={handleContactClick}>

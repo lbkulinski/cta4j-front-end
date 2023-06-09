@@ -1,5 +1,5 @@
-import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
-import {gql} from "./__generated__";
+import {Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import {gql} from "../__generated__";
 import {useQuery} from "@apollo/client";
 import {useRollbar} from "@rollbar/react";
 
@@ -181,13 +181,15 @@ function Trains(props: TrainsProps) {
 
     const {loading, error, data, startPolling} = useQuery(GET_TRAINS, options);
 
+    startPolling(60000);
+
+    const rollbar = useRollbar();
+
     if (loading) {
         return null;
     }
 
     if (error) {
-        const rollbar = useRollbar();
-
         const errorData = {
             error: error,
             data: data
@@ -196,19 +198,11 @@ function Trains(props: TrainsProps) {
         const errorDataString = JSON.stringify(errorData);
 
         rollbar.error("An error occurred when trying to fetch the trains", errorDataString);
-
-        return (
-            <Alert severity="error">
-                Error: The trains could not be loaded. Please refresh the page or try again later.
-            </Alert>
-        );
     }
 
     if (!data) {
         return null;
     }
-
-    startPolling(60000);
 
     const trains = Array.from(data.getTrains);
 

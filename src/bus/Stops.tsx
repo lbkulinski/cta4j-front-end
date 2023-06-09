@@ -1,18 +1,22 @@
 import {useQuery} from "@apollo/client";
-import {Alert, Autocomplete, TextField} from "@mui/material";
-import {gql} from "./__generated__";
+import {Autocomplete, TextField} from "@mui/material";
+import {gql} from "../__generated__";
 import {useRollbar} from "@rollbar/react";
 
-interface StationsProps {
-    stationId: string | null,
-    setStationId: (stationId: string | null) => void
+interface StopsProps {
+    routeId: string | null,
+    direction: string | null,
+    stopId: string | null,
+    setStopId: (stopId: string | null) => void
 }
 
-const GET_STATIONS = gql(`
-query GetStations {
-    getStations {
+const GET_STOPS = gql(`
+query GetRouteStops($id: ID!, $direction: String!) {
+    getRouteStops(id: $id, direction: $direction) {
         id
         name
+        latitude
+        longitude
     }
 }
 `);
@@ -22,16 +26,29 @@ interface Option {
     label: string;
 }
 
-function Stations(props: StationsProps) {
-    const {loading, error, data} = useQuery(GET_STATIONS);
+function Stops(props: StopsProps) {
+    const routeId = props.routeId;
+
+    const direction = props.direction;
+
+    const queryOptions = {
+        skip: (routeId === null) || (direction === null),
+        variables: {
+            id: routeId!,
+            direction: direction!
+        }
+    }
+
+    const {loading, error, data} = useQuery(GET_STOPS,
+        queryOptions);
+
+    const rollbar = useRollbar();
 
     if (loading) {
         return null;
     }
 
     if (error) {
-        const rollbar = useRollbar();
-
         const errorData = {
             error: error,
             data: data
@@ -39,20 +56,14 @@ function Stations(props: StationsProps) {
 
         const errorDataString = JSON.stringify(errorData);
 
-        rollbar.error("An error occurred when trying to fetch the stations", errorDataString);
-
-        return (
-            <Alert severity="error">
-                Error: The stations could not be loaded. Please refresh the page or try again later.
-            </Alert>
-        );
+        rollbar.error("An error occurred when trying to fetch the stops", errorDataString);
     }
 
     if (!data) {
         return null;
     }
 
-    const stations = data.getStations;
+    const stops = data.getRouteStops;
 
     const names = new Set<string>();
 
@@ -60,12 +71,12 @@ function Stations(props: StationsProps) {
 
     let defaultOption: Option | null = null;
 
-    stations.forEach(station => {
-        const id = station.id;
+    stops.forEach(stop => {
+        const id = stop.id;
 
-        const name = station.name;
+        const name = stop.name;
 
-        if ((id === props.stationId)) {
+        if ((id === props.stopId)) {
             defaultOption = {
                 id: id,
                 label: name
@@ -79,7 +90,7 @@ function Stations(props: StationsProps) {
         names.add(name);
 
         options.push({
-            id: station.id,
+            id: id,
             label: name
         });
     });
@@ -90,7 +101,7 @@ function Stations(props: StationsProps) {
         <Autocomplete
             sx={{p: 2, maxWidth: 500}}
             size={"small"}
-            renderInput={(params) => <TextField {...params} label="Station"/>}
+            renderInput={(params) => <TextField {...params} label="Stop"/>}
             options={options}
             value={defaultOption}
             defaultValue={null}
@@ -100,9 +111,9 @@ function Stations(props: StationsProps) {
                     return;
                 }
 
-                props.setStationId(value.id);
+                props.setStopId(value.id);
 
-                localStorage.setItem("stationId", value.id);
+                localStorage.setItem("stopId", value.id);
 
                 window.history.replaceState(null, "", window.location.pathname);
             }}
@@ -110,4 +121,4 @@ function Stations(props: StationsProps) {
     );
 }
 
-export default Stations;
+export default Stops;
