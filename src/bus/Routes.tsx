@@ -1,5 +1,5 @@
 import {useQuery} from "@apollo/client";
-import {Alert, Autocomplete, TextField} from "@mui/material";
+import {Autocomplete, TextField} from "@mui/material";
 import {gql} from "../__generated__";
 import {useRollbar} from "@rollbar/react";
 
@@ -40,12 +40,6 @@ function Routes(props: RoutesProps) {
         const errorDataString = JSON.stringify(errorData);
 
         rollbar.error("An error occurred when trying to fetch the routes", errorDataString);
-
-        return (
-            <Alert severity="error">
-                Error: The routes could not be loaded. Please refresh the page or try again later.
-            </Alert>
-        );
     }
 
     if (!data) {

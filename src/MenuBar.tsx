@@ -17,13 +17,13 @@ function MenuBar() {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         cta4j
                     </Typography>
-                    <Button onClick={() => navigate("/trains")}>
+                    <Button color="inherit" onClick={() => navigate("/trains")}>
                         Trains
                     </Button>
-                    <Button onClick={() => navigate("/buses")}>
+                    <Button color="inherit" onClick={() => navigate("/buses")}>
                         Buses
                     </Button>
-                    <Button onClick={handleContactClick}>
+                    <Button color="inherit" onClick={handleContactClick}>
                         Contact
                     </Button>
                 </Toolbar>

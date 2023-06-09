@@ -1,4 +1,4 @@
-import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import {Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {gql} from "../__generated__";
 import {useQuery} from "@apollo/client";
 import {useRollbar} from "@rollbar/react";
@@ -167,12 +167,6 @@ function Buses(props: BusesProps) {
         const errorDataString = JSON.stringify(errorData);
 
         rollbar.error("An error occurred when trying to fetch the buses", errorDataString);
-
-        return (
-            <Alert severity="error">
-                Error: The buses could not be loaded. Please refresh the page or try again later.
-            </Alert>
-        );
     }
 
     if (!data) {
