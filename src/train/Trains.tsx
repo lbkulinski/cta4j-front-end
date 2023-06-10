@@ -196,6 +196,14 @@ function Trains(props: TrainsProps) {
     }
 
     if (error) {
+        const classifications = error.graphQLErrors.map(graphQLError => graphQLError.extensions.classification);
+
+        const set = new Set(classifications);
+
+        if (set.has("NOT_FOUND")) {
+            return getTable([]);
+        }
+
         const errorData = {
             error: error,
             data: data
