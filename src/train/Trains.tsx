@@ -44,6 +44,26 @@ interface Train {
     delayed: boolean
 }
 
+function getEta(train: Train) {
+    const arrivalDate = new Date(train.arrivalTime);
+
+    const arrivalMillis = arrivalDate.getTime();
+
+    const predictionDate = new Date(train.predictionTime);
+
+    const predictionMillis = predictionDate.getTime();
+
+    let difference = arrivalMillis - predictionMillis;
+
+    const minuteMillis = 60000;
+
+    difference /= minuteMillis;
+
+    difference = Math.floor(difference);
+
+    return difference;
+}
+
 function getRow(train: Train) {
     const key = JSON.stringify(train);
 
@@ -67,23 +87,9 @@ function getRow(train: Train) {
 
     const lineStyles = (lineColor === undefined) ? {} : {color: lineColor};
 
-    const arrivalDate = new Date(train.arrivalTime);
+    const eta = getEta(train);
 
-    const arrivalMillis = arrivalDate.getTime();
-
-    const predictionDate = new Date(train.predictionTime);
-
-    const predictionMillis = predictionDate.getTime();
-
-    let difference = arrivalMillis - predictionMillis;
-
-    const minuteMillis = 60000;
-
-    difference /= minuteMillis;
-
-    difference = Math.floor(difference);
-
-    const eta = (difference <= 1) ? "Due" : `${difference} min`;
+    const etaString = (eta <= 1) ? "Due" : `${eta} min`;
 
     return (
         <TableRow key={key} sx={rowStyles}>
@@ -104,7 +110,7 @@ function getRow(train: Train) {
             </TableCell>
             <TableCell>
                 {
-                    eta
+                    etaString
                 }
             </TableCell>
         </TableRow>
