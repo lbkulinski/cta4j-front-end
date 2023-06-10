@@ -16,8 +16,9 @@ query GetBuses($routeId: ID!, $stopId: ID!) {
         stop
         route
         destination
+        predictionTime
+        arrivalTime
         delayed
-        eta
     }
 }
 `);
@@ -28,8 +29,27 @@ interface Bus {
     stop: string,
     route: string,
     destination: string,
-    delayed: boolean,
-    eta: number
+    predictionTime: string,
+    arrivalTime: string,
+    delayed: boolean
+}
+
+function getEta(bus: Bus) {
+    const arrivalDate = new Date(bus.arrivalTime);
+
+    const arrivalMillis = arrivalDate.getTime();
+
+    const predictionDate = new Date(bus.predictionTime);
+
+    const predictionMillis = predictionDate.getTime();
+
+    let difference = arrivalMillis - predictionMillis;
+
+    const minuteMillis = 60000;
+
+    difference /= minuteMillis;
+
+    return Math.floor(difference);
 }
 
 function getRow(bus: Bus) {
@@ -37,7 +57,7 @@ function getRow(bus: Bus) {
 
     let rowStyles = {};
 
-    const eta = bus.eta;
+    const eta = getEta(bus);
 
     if (eta <= 1) {
         rowStyles = {
@@ -110,13 +130,13 @@ function compareBuses(bus0: Bus, bus1: Bus) {
 
     const destination0 = bus0.destination;
 
-    const eta0 = bus0.eta;
+    const date0 = new Date(bus0.arrivalTime);
 
     const route1 = bus1.route;
 
     const destination1 = bus1.destination;
 
-    const eta1 = bus1.eta;
+    const date1 = new Date(bus1.arrivalTime);
 
     if (route0 < route1) {
         return -1;
@@ -126,9 +146,9 @@ function compareBuses(bus0: Bus, bus1: Bus) {
         return -1;
     } else if (destination0 > destination1) {
         return 1;
-    } else if (eta0 < eta1) {
+    } else if (date0 < date1) {
         return -1;
-    } else if (eta0 === eta1) {
+    } else if (date0 === date1) {
         return 0;
     } else {
         return 1;
