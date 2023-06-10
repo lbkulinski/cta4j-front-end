@@ -1,4 +1,4 @@
-import {Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {gql} from "../__generated__";
 import {useQuery} from "@apollo/client";
 import {useRollbar} from "@rollbar/react";
@@ -184,7 +184,11 @@ function Buses(props: BusesProps) {
         const set = new Set(classifications);
 
         if (set.has("NOT_FOUND")) {
-            return getTable([]);
+            return (
+                <Alert severity="warning">
+                    There are no upcoming buses at this time. Please check back later.
+                </Alert>
+            );
         }
 
         const errorData = {
