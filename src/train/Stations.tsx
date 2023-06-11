@@ -1,21 +1,10 @@
-import {useQuery} from "@apollo/client";
 import {Autocomplete, TextField} from "@mui/material";
-import {gql} from "../__generated__";
-import {useRollbar} from "@rollbar/react";
+import {stations} from "../../stations.ts";
 
 interface StationsProps {
     stationId: string | null,
     setStationId: (stationId: string | null) => void
 }
-
-const GET_STATIONS = gql(`
-query GetStations {
-    getStations {
-        id
-        name
-    }
-}
-`);
 
 interface Option {
     id: string;
@@ -23,31 +12,6 @@ interface Option {
 }
 
 function Stations(props: StationsProps) {
-    const {loading, error, data} = useQuery(GET_STATIONS);
-
-    const rollbar = useRollbar();
-
-    if (loading) {
-        return null;
-    }
-
-    if (error) {
-        const errorData = {
-            error: error,
-            data: data
-        }
-
-        const errorDataString = JSON.stringify(errorData);
-
-        rollbar.error("An error occurred when trying to fetch the stations", errorDataString);
-    }
-
-    if (!data) {
-        return null;
-    }
-
-    const stations = data.getStations;
-
     const names = new Set<string>();
 
     const options = new Array<Option>();
@@ -73,7 +37,7 @@ function Stations(props: StationsProps) {
         names.add(name);
 
         options.push({
-            id: station.id,
+            id: id,
             label: name
         });
     });
