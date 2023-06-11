@@ -55,6 +55,10 @@ const router = createBrowserRouter([
     {
         path: "/buses",
         element: <BusApp />
+    },
+    {
+        path: "/public/buses.html",
+        element: <BusApp />
     }
 ]);
 
