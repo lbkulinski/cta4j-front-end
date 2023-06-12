@@ -1,5 +1,5 @@
 import {Autocomplete, TextField} from "@mui/material";
-import {stations} from "../../stations.ts";
+import {stations} from "../stations.ts";
 
 interface StationsProps {
     stationId: string | null,
