@@ -1,5 +1,5 @@
 import {useQuery} from "@apollo/client";
-import {Alert, Autocomplete, TextField} from "@mui/material";
+import {Autocomplete, TextField} from "@mui/material";
 import {gql} from "../__generated__";
 import {useRollbar} from "@rollbar/react";
 
@@ -60,11 +60,7 @@ function Stops(props: StopsProps) {
     }
 
     if (!data) {
-        return (
-            <Alert severity="error">
-                The stops could not be retrieved at this time. Please check back later.
-            </Alert>
-        );
+        return null;
     }
 
     const stops = data.getRouteStops;

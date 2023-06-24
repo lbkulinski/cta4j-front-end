@@ -202,11 +202,7 @@ function Buses(props: BusesProps) {
     }
 
     if (!data) {
-        return (
-            <Alert severity="error">
-                The upcoming buses could not be retrieved at this time. Please check back later.
-            </Alert>
-        );
+        return null;
     }
 
     const buses = Array.from(data.getBuses);

@@ -219,11 +219,7 @@ function Trains(props: TrainsProps) {
     }
 
     if (!data) {
-        return (
-            <Alert severity="error">
-                The upcoming trains could not be retrieved at this time. Please check back later.
-            </Alert>
-        );
+        return null;
     }
 
     const trains = Array.from(data.getTrains);

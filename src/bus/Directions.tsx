@@ -1,5 +1,5 @@
 import {useQuery} from "@apollo/client";
-import {Alert, Autocomplete, TextField} from "@mui/material";
+import {Autocomplete, TextField} from "@mui/material";
 import {gql} from "../__generated__";
 import {useRollbar} from "@rollbar/react";
 
@@ -54,11 +54,7 @@ function Directions(props: DirectionsProps) {
     }
 
     if (!data) {
-        return (
-            <Alert severity="error">
-                The directions could not be retrieved at this time. Please check back later.
-            </Alert>
-        );
+        return null;
     }
 
     const directions = data.getRouteDirections;
