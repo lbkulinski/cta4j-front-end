@@ -203,7 +203,7 @@ function Trains(props: TrainsProps) {
         if (set.has("NOT_FOUND")) {
             return (
                 <Alert severity="warning">
-                    There are no upcoming buses at this time. Please check back later.
+                    There are no upcoming trains at this time. Please check back later.
                 </Alert>
             );
         }
