@@ -15,8 +15,6 @@ query GetRouteStops($id: ID!, $direction: String!) {
     getRouteStops(id: $id, direction: $direction) {
         id
         name
-        latitude
-        longitude
     }
 }
 `);
