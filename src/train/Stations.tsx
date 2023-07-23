@@ -1,6 +1,7 @@
 import {Autocomplete, TextField} from "@mui/material";
-import {gql, useQuery} from "@apollo/client";
+import {useQuery} from "@apollo/client";
 import {useRollbar} from "@rollbar/react";
+import {gql} from "../__generated__";
 
 interface StationsProps {
     stationId: string | null,
