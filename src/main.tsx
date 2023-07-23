@@ -3,14 +3,13 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import TrainApp from './train/TrainApp.tsx'
 import './index.css'
-import {ApolloClient, InMemoryCache, ApolloProvider, ApolloLink, HttpLink} from '@apollo/client';
+import {ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import MenuBar from "./MenuBar.tsx";
 import CssBaseline from "@mui/material/CssBaseline";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {ErrorBoundary, Provider} from "@rollbar/react";
 import BusApp from "./bus/BusApp.tsx";
-import {RetryLink} from "@apollo/client/link/retry";
 
 const rollbarConfig = {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
@@ -23,11 +22,8 @@ const darkTheme = createTheme({
     },
 });
 
-const httpLink = new HttpLink({uri: `${import.meta.env.VITE_BACK_END_URL}/graphql`});
-
-const retryLink = new RetryLink();
-
 const client = new ApolloClient({
+    uri: `${import.meta.env.VITE_BACK_END_URL}/graphql`,
     cache: new InMemoryCache({
         typePolicies: {
             Query: {
@@ -40,11 +36,7 @@ const client = new ApolloClient({
                 }
             }
         }
-    }),
-    link: ApolloLink.from([
-        retryLink,
-        httpLink
-    ])
+    })
 });
 
 const router = createBrowserRouter([
