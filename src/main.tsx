@@ -23,6 +23,7 @@ const darkTheme = createTheme({
 });
 
 const client = new ApolloClient({
+    uri: `${import.meta.env.VITE_BACK_END_URL}/graphql`,
     cache: new InMemoryCache({
         typePolicies: {
             Query: {
