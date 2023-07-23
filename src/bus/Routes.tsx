@@ -1,7 +1,5 @@
+import {routes} from "../routes.ts";
 import {Autocomplete, TextField} from "@mui/material";
-import {gql} from "../__generated__";
-import {useQuery} from "@apollo/client";
-import {useRollbar} from "@rollbar/react";
 
 interface RoutesProps {
     routeId: string | null,
@@ -10,46 +8,12 @@ interface RoutesProps {
     setStopId: (stopId: string | null) => void
 }
 
-const GET_ROUTES = gql(`
-query GetRoutes {
-    getRoutes {
-        id
-        name
-    }
-}
-`);
-
 interface Option {
     id: string;
     label: string;
 }
 
 function Routes(props: RoutesProps) {
-    const {loading, error, data} = useQuery(GET_ROUTES);
-
-    const rollbar = useRollbar();
-
-    if (loading) {
-        return null;
-    }
-
-    if (error) {
-        const errorData = {
-            error: error,
-            data: data
-        }
-
-        const errorDataString = JSON.stringify(errorData);
-
-        rollbar.error("An error occurred when trying to fetch the routes", errorDataString);
-    }
-
-    if (!data) {
-        return null;
-    }
-
-    const routes = data.getRoutes;
-
     const names = new Set<string>();
 
     const options = new Array<Option>();
