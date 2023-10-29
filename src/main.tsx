@@ -3,7 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import TrainApp from './train/TrainApp.tsx'
 import './index.css'
-import {ApolloClient, InMemoryCache, ApolloProvider, HttpLink, ApolloLink} from '@apollo/client';
+import {ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache} from '@apollo/client';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import MenuBar from "./MenuBar.tsx";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -11,6 +11,7 @@ import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {ErrorBoundary, Provider} from "@rollbar/react";
 import BusApp from "./bus/BusApp.tsx";
 import {RetryLink} from "@apollo/client/link/retry";
+import HolidayTrainApp from "./holiday-train/HolidayTrainApp.tsx";
 
 const rollbarConfig = {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
     {
         path: "/buses",
         element: <BusApp />
+    },
+    {
+        path: "/holiday-train",
+        element: <HolidayTrainApp />
     }
 ]);
 
