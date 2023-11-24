@@ -33,6 +33,7 @@ const lineToHexColor = new Map([
 interface Train {
     line: string,
     destination: string,
+    station: string,
     run: number,
     predictionTime: string,
     arrivalTime: string,
@@ -97,7 +98,7 @@ function getRow(train: Train) {
             </TableCell>
             <TableCell>
                 {
-                    train.destination
+                    train.station
                 }
             </TableCell>
             <TableCell>
@@ -126,7 +127,7 @@ function getTable(trains: Train[] | null) {
                     <TableHead>
                         <TableRow>
                             <TableCell sx={{fontWeight: "bold"}}>Line</TableCell>
-                            <TableCell sx={{fontWeight: "bold"}}>Destination</TableCell>
+                            <TableCell sx={{fontWeight: "bold"}}>Station</TableCell>
                             <TableCell sx={{fontWeight: "bold"}}>Run</TableCell>
                             <TableCell sx={{fontWeight: "bold"}}>ETA</TableCell>
                         </TableRow>
@@ -145,23 +146,15 @@ function getTable(trains: Train[] | null) {
 function compareTrains(train0: Train, train1: Train) {
     const line0 = train0.line;
 
-    const destination0 = train0.destination;
-
     const date0 = new Date(train0.arrivalTime);
 
     const line1 = train1.line;
-
-    const destination1 = train1.destination;
 
     const date1 = new Date(train1.arrivalTime);
 
     if (line0 < line1) {
         return -1;
     } else if (line0 > line1) {
-        return 1;
-    } else if (destination0 < destination1) {
-        return -1;
-    } else if (destination0 > destination1) {
         return 1;
     } else if (date0 < date1) {
         return -1;
