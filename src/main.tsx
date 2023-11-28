@@ -11,7 +11,7 @@ import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {ErrorBoundary, Provider} from "@rollbar/react";
 import BusApp from "./bus/BusApp.tsx";
 import {RetryLink} from "@apollo/client/link/retry";
-import HolidayTrainApp from "./holiday-train/HolidayTrainApp.tsx";
+import HolidayApp from "./holiday-train/HolidayApp.tsx";
 
 const rollbarConfig = {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
@@ -70,7 +70,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/holiday-train",
-        element: <HolidayTrainApp />
+        element: <HolidayApp />
     }
 ]);
 
