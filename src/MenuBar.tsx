@@ -21,7 +21,7 @@ function MenuBar() {
                         Buses
                     </Button>
                     <Button color="inherit" href="/holiday-train">
-                        &#127877;&#128647;
+                        &#127877;
                     </Button>
                     <Button color="inherit" onClick={handleContactClick}>
                         Contact
