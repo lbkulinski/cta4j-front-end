@@ -40,8 +40,16 @@ const client = new ApolloClient({
                         merge(_, incoming){
                             return incoming;
                         }
+                    },
+                    followBus: {
+                        merge(_, incoming){
+                            return incoming;
+                        }
                     }
                 }
+            },
+            Bus: {
+                keyFields: ["id", "stop"]
             }
         }
     }),

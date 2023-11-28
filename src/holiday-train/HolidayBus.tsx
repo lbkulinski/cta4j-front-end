@@ -70,7 +70,7 @@ function getRow(bus: Bus) {
         <TableRow key={key} sx={rowStyles}>
             <TableCell>
                 {
-                    bus.id
+                    bus.route
                 }
             </TableCell>
             <TableCell>
@@ -103,7 +103,7 @@ function getTable(buses: Bus[] | null) {
                 <Table size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{fontWeight: "bold"}}>ID</TableCell>
+                            <TableCell sx={{fontWeight: "bold"}}>Route</TableCell>
                             <TableCell sx={{fontWeight: "bold"}}>Type</TableCell>
                             <TableCell sx={{fontWeight: "bold"}}>Stop</TableCell>
                             <TableCell sx={{fontWeight: "bold"}}>ETA</TableCell>
@@ -175,8 +175,6 @@ function HolidayBus() {
     const buses = Array.from(data.followBus);
 
     buses.sort(compareBuses);
-
-    console.log(buses);
 
     return getTable(buses);
 }
