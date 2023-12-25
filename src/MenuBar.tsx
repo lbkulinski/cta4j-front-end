@@ -20,9 +20,6 @@ function MenuBar() {
                     <Button color="inherit" href="/buses">
                         Buses
                     </Button>
-                    <Button color="inherit" href="/holiday-train">
-                        &#127877;
-                    </Button>
                     <Button color="inherit" onClick={handleContactClick}>
                         Contact
                     </Button>
