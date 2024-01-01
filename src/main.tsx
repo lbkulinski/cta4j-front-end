@@ -36,12 +36,42 @@ const client = new ApolloClient({
         typePolicies: {
             Query: {
                 fields: {
-                    getTrains: {
+                    getBuses: {
+                        merge(_, incoming){
+                            return incoming;
+                        }
+                    },
+                    getRouteDirections: {
+                        merge(_, incoming){
+                            return incoming;
+                        }
+                    },
+                    getRoutes: {
+                        merge(_, incoming){
+                            return incoming;
+                        }
+                    },
+                    getRouteStops: {
                         merge(_, incoming){
                             return incoming;
                         }
                     },
                     followBus: {
+                        merge(_, incoming){
+                            return incoming;
+                        }
+                    },
+                    followTrain: {
+                        merge(_, incoming){
+                            return incoming;
+                        }
+                    },
+                    getStations: {
+                        merge(_, incoming){
+                            return incoming;
+                        }
+                    },
+                    getTrains: {
                         merge(_, incoming){
                             return incoming;
                         }
