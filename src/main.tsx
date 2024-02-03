@@ -8,10 +8,11 @@ import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import MenuBar from "./MenuBar.tsx";
 import CssBaseline from "@mui/material/CssBaseline";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
-import {ErrorBoundary, Provider} from "@rollbar/react";
+import {ErrorBoundary, Provider, useRollbar} from "@rollbar/react";
 import BusApp from "./bus/BusApp.tsx";
 import {RetryLink} from "@apollo/client/link/retry";
 import HolidayApp from "./holiday-train/HolidayApp.tsx";
+import {onError} from "@apollo/client/link/error";
 
 const rollbarConfig = {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
@@ -22,6 +23,20 @@ const darkTheme = createTheme({
     palette: {
         mode: "dark",
     },
+});
+
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+    const rollbar = useRollbar();
+
+    if (graphQLErrors) {
+        graphQLErrors.forEach(({ message, locations, path }) =>
+            rollbar.error(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+        );
+    }
+
+    if (networkError) {
+        rollbar.error(`[Network error]: ${networkError}`);
+    }
 });
 
 const httpLink = new HttpLink({
@@ -85,6 +100,7 @@ const client = new ApolloClient({
     }),
     link: ApolloLink.from([
         retryLink,
+        errorLink,
         httpLink
     ])
 });
