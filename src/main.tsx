@@ -10,8 +10,9 @@ import CssBaseline from "@mui/material/CssBaseline";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {ErrorBoundary, Provider} from "@rollbar/react";
 import BusApp from "./bus/BusApp.tsx";
-import {RetryLink} from "@apollo/client/link/retry";
 import HolidayApp from "./holiday-train/HolidayApp.tsx";
+import {onError} from "@apollo/client/link/error";
+import Rollbar from "rollbar";
 
 const rollbarConfig = {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
@@ -24,11 +25,29 @@ const darkTheme = createTheme({
     },
 });
 
+const errorLink = onError(({graphQLErrors, networkError, operation, forward}) => {
+    if (graphQLErrors) {
+        graphQLErrors.forEach(({ message, locations, path }) => {
+            const rollbar = new Rollbar(rollbarConfig);
+
+            rollbar.error(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
+        });
+
+        return forward(operation);
+    }
+
+    if (networkError) {
+        const rollbar = new Rollbar(rollbarConfig);
+
+        rollbar.error(`[Network error]: ${networkError}`);
+
+        return forward(operation);
+    }
+});
+
 const httpLink = new HttpLink({
     uri: `${import.meta.env.VITE_BACK_END_URL}/graphql`
 });
-
-const retryLink = new RetryLink();
 
 const client = new ApolloClient({
     uri: `${import.meta.env.VITE_BACK_END_URL}/graphql`,
@@ -84,7 +103,7 @@ const client = new ApolloClient({
         }
     }),
     link: ApolloLink.from([
-        retryLink,
+        errorLink,
         httpLink
     ])
 });
