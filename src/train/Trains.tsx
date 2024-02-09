@@ -196,18 +196,6 @@ function Trains(props: TrainsProps) {
     }
 
     if (error) {
-        const classifications = error.graphQLErrors.map(graphQLError => graphQLError.extensions.classification);
-
-        const set = new Set(classifications);
-
-        if (set.has("NOT_FOUND")) {
-            return (
-                <Alert severity="warning">
-                    There are no upcoming trains at this time. Please check back later.
-                </Alert>
-            );
-        }
-
         const errorData = {
             error: error,
             data: data
@@ -223,6 +211,14 @@ function Trains(props: TrainsProps) {
     }
 
     const trains = Array.from(data.getTrains);
+
+    if (trains.length === 0) {
+        return (
+            <Alert severity="warning">
+                There are no upcoming trains at this time. Please check back later.
+            </Alert>
+        );
+    }
 
     trains.sort(compareTrains);
 

@@ -179,18 +179,6 @@ function Buses(props: BusesProps) {
     }
 
     if (error) {
-        const classifications = error.graphQLErrors.map(graphQLError => graphQLError.extensions.classification);
-
-        const set = new Set(classifications);
-
-        if (set.has("NOT_FOUND")) {
-            return (
-                <Alert severity="warning">
-                    There are no upcoming buses at this time. Please check back later.
-                </Alert>
-            );
-        }
-
         const errorData = {
             error: error,
             data: data
@@ -206,6 +194,14 @@ function Buses(props: BusesProps) {
     }
 
     const buses = Array.from(data.getBuses);
+
+    if (buses.length === 0) {
+        return (
+            <Alert severity="warning">
+                There are no upcoming buses at this time. Please check back later.
+            </Alert>
+        );
+    }
 
     buses.sort(compareBuses);
 
