@@ -13,6 +13,7 @@ import BusApp from "./bus/BusApp.tsx";
 import HolidayApp from "./holiday-train/HolidayApp.tsx";
 import {onError} from "@apollo/client/link/error";
 import Rollbar from "rollbar";
+import {RetryLink} from "@apollo/client/link/retry";
 
 const rollbarConfig = {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
@@ -40,14 +41,14 @@ const errorLink = onError(({graphQLErrors, networkError, operation, forward}) =>
         const rollbar = new Rollbar(rollbarConfig);
 
         rollbar.error(`[Network error]: ${networkError}`);
-
-        return forward(operation);
     }
 });
 
 const httpLink = new HttpLink({
     uri: `${import.meta.env.VITE_BACK_END_URL}/graphql`
 });
+
+const retryLink = new RetryLink();
 
 const client = new ApolloClient({
     uri: `${import.meta.env.VITE_BACK_END_URL}/graphql`,
@@ -103,6 +104,7 @@ const client = new ApolloClient({
         }
     }),
     link: ApolloLink.from([
+        retryLink,
         errorLink,
         httpLink
     ])
