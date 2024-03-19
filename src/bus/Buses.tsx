@@ -179,9 +179,9 @@ function Buses(props: BusesProps) {
     }
 
     if (error) {
-        const classifications = error.graphQLErrors.map(graphQLError => graphQLError.extensions.classification);
+        const errorTypes = error.graphQLErrors.map(graphQLError => graphQLError.extensions.errorType);
 
-        const set = new Set(classifications);
+        const set = new Set(errorTypes);
 
         if (set.has("NOT_FOUND")) {
             return (
