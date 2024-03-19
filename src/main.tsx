@@ -28,10 +28,14 @@ const darkTheme = createTheme({
 
 const errorLink = onError(({graphQLErrors, networkError, operation, forward}) => {
     if (graphQLErrors) {
-        graphQLErrors.forEach(({ message, locations, path }) => {
+        graphQLErrors.forEach(error => {
+            if (error.extensions.errorType === "NOT_FOUND") {
+                return;
+            }
+
             const rollbar = new Rollbar(rollbarConfig);
 
-            rollbar.error(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`);
+            rollbar.error(`[GraphQL error]: Message: ${error.message}, Location: ${error.locations}, Path: ${error.path}`);
         });
 
         return forward(operation);
