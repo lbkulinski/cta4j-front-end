@@ -1,18 +1,19 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {gql} from "../__generated__";
-import {useQuery} from "@apollo/client";
+import {useSubscription} from "@apollo/client";
 import {useRollbar} from "@rollbar/react";
 
 interface TrainsProps {
     stationId: string | null
 }
 
-const GET_TRAINS = gql(`
-query GetTrains($stationId: ID!) {
-    getTrains(stationId: $stationId) {
+const TRAIN_ARRIVALS = gql(`
+subscription TrainArrivals($stationId: ID!) {
+    trainArrivals(stationId: $stationId) {
+        run
         line
         destination
-        run
+        station
         predictionTime
         arrivalTime
         due
@@ -185,9 +186,7 @@ function Trains(props: TrainsProps) {
         }
     }
 
-    const {loading, error, data, startPolling} = useQuery(GET_TRAINS, options);
-
-    startPolling(60000);
+    const {loading, error, data} = useSubscription(TRAIN_ARRIVALS, options);
 
     const rollbar = useRollbar();
 
@@ -222,7 +221,7 @@ function Trains(props: TrainsProps) {
         return null;
     }
 
-    const trains = Array.from(data.getTrains);
+    const trains = Array.from(data.trainArrivals);
 
     if (trains.length === 0) {
         return (

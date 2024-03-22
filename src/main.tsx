@@ -3,7 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import TrainApp from './train/TrainApp.tsx'
 import './index.css'
-import {ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache} from '@apollo/client';
+import {ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache, split} from '@apollo/client';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import MenuBar from "./MenuBar.tsx";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,6 +14,9 @@ import HolidayApp from "./holiday-train/HolidayApp.tsx";
 import {onError} from "@apollo/client/link/error";
 import Rollbar from "rollbar";
 import {RetryLink} from "@apollo/client/link/retry";
+import {GraphQLWsLink} from "@apollo/client/link/subscriptions";
+import {createClient} from "graphql-ws";
+import {getMainDefinition} from "@apollo/client/utilities";
 
 const rollbarConfig = {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
@@ -49,8 +52,22 @@ const errorLink = onError(({graphQLErrors, networkError, operation, forward}) =>
 });
 
 const httpLink = new HttpLink({
-    uri: `${import.meta.env.VITE_BACK_END_URL}/graphql`
+    uri: `https://${import.meta.env.VITE_BACK_END_URL}/graphql`
 });
+
+const wsLink = new GraphQLWsLink(createClient({
+    url: `ws://${import.meta.env.VITE_BACK_END_URL}/subscriptions`,
+}));
+
+const splitLink = split(
+    ({ query }) => {
+        const definition = getMainDefinition(query);
+
+        return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
+    },
+    wsLink,
+    httpLink,
+);
 
 const retryLink = new RetryLink();
 
@@ -110,7 +127,7 @@ const client = new ApolloClient({
     link: ApolloLink.from([
         retryLink,
         errorLink,
-        httpLink
+        splitLink
     ])
 });
 

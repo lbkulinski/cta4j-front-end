@@ -20,7 +20,7 @@ const documents = {
     "\nquery FollowBus {\n    followBus(id: \"4374\") {\n        id\n        type\n        stop\n        route\n        destination\n        predictionTime\n        arrivalTime\n        delayed\n    }\n}\n": types.FollowBusDocument,
     "\nquery FollowTrain {\n    followTrain(run: 1225) {\n        run\n        line\n        destination\n        station\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n": types.FollowTrainDocument,
     "\nquery GetStations {\n    getStations {\n        id\n        name\n    }\n}\n": types.GetStationsDocument,
-    "\nquery GetTrains($stationId: ID!) {\n    getTrains(stationId: $stationId) {\n        line\n        destination\n        run\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n": types.GetTrainsDocument,
+    "\nsubscription TrainArrivals($stationId: ID!) {\n    trainArrivals(stationId: $stationId) {\n        run\n        line\n        destination\n        station\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n": types.TrainArrivalsDocument,
 };
 
 /**
@@ -68,7 +68,7 @@ export function gql(source: "\nquery GetStations {\n    getStations {\n        i
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nquery GetTrains($stationId: ID!) {\n    getTrains(stationId: $stationId) {\n        line\n        destination\n        run\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n"): (typeof documents)["\nquery GetTrains($stationId: ID!) {\n    getTrains(stationId: $stationId) {\n        line\n        destination\n        run\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n"];
+export function gql(source: "\nsubscription TrainArrivals($stationId: ID!) {\n    trainArrivals(stationId: $stationId) {\n        run\n        line\n        destination\n        station\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n"): (typeof documents)["\nsubscription TrainArrivals($stationId: ID!) {\n    trainArrivals(stationId: $stationId) {\n        run\n        line\n        destination\n        station\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};
