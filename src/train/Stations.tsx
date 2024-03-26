@@ -8,9 +8,9 @@ interface StationsProps {
     setStationId: (stationId: string | null) => void
 }
 
-const GET_STATIONS = gql(`
-query GetStations {
-    getStations {
+const STATIONS = gql(`
+query Stations {
+    stations {
         id
         name
     }
@@ -23,7 +23,7 @@ interface Option {
 }
 
 function Stations(props: StationsProps) {
-    const {loading, error, data} = useQuery(GET_STATIONS);
+    const {loading, error, data} = useQuery(STATIONS);
 
     const rollbar = useRollbar();
 
@@ -46,7 +46,7 @@ function Stations(props: StationsProps) {
         return null;
     }
 
-    const stations = data.getStations;
+    const stations = data.stations;
 
     const names = new Set<string>();
 

@@ -10,9 +10,9 @@ interface RoutesProps {
     setStopId: (stopId: string | null) => void
 }
 
-const GET_ROUTES = gql(`
-query GetRoutes {
-    getRoutes {
+const ROUTES = gql(`
+query Routes {
+    routes {
         id
         name
     }
@@ -25,7 +25,7 @@ interface Option {
 }
 
 function Routes(props: RoutesProps) {
-    const {loading, error, data} = useQuery(GET_ROUTES);
+    const {loading, error, data} = useQuery(ROUTES);
 
     const rollbar = useRollbar();
 
@@ -48,7 +48,7 @@ function Routes(props: RoutesProps) {
         return null;
     }
 
-    const routes = data.getRoutes;
+    const routes = data.routes;
 
     const names = new Set<string>();
 

@@ -10,9 +10,9 @@ interface StopsProps {
     setStopId: (stopId: string | null) => void
 }
 
-const GET_STOPS = gql(`
-query GetRouteStops($id: ID!, $direction: String!) {
-    getRouteStops(id: $id, direction: $direction) {
+const STOPS = gql(`
+query RouteStops($id: ID!, $direction: String!) {
+    routeStops(id: $id, direction: $direction) {
         id
         name
     }
@@ -37,7 +37,7 @@ function Stops(props: StopsProps) {
         }
     }
 
-    const {loading, error, data} = useQuery(GET_STOPS,
+    const {loading, error, data} = useQuery(STOPS,
         queryOptions);
 
     const rollbar = useRollbar();
@@ -61,7 +61,7 @@ function Stops(props: StopsProps) {
         return null;
     }
 
-    const stops = data.getRouteStops;
+    const stops = data.routeStops;
 
     const names = new Set<string>();
 

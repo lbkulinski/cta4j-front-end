@@ -10,9 +10,9 @@ interface DirectionsProps {
     setStopId: (stopId: string | null) => void
 }
 
-const GET_DIRECTIONS = gql(`
-query GetRouteDirections($id: ID!) {
-    getRouteDirections(id: $id) {
+const DIRECTIONS = gql(`
+query RouteDirections($id: ID!) {
+    routeDirections(id: $id) {
         name
     }
 }
@@ -33,7 +33,7 @@ function Directions(props: DirectionsProps) {
         }
     }
 
-    const {loading, error, data} = useQuery(GET_DIRECTIONS,
+    const {loading, error, data} = useQuery(DIRECTIONS,
         queryOptions);
 
     const rollbar = useRollbar();
@@ -57,7 +57,7 @@ function Directions(props: DirectionsProps) {
         return null;
     }
 
-    const directions = data.getRouteDirections;
+    const directions = data.routeDirections;
 
     const names = new Set<string>();
 

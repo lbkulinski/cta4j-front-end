@@ -3,9 +3,9 @@ import {gql} from "../__generated__";
 import {useQuery} from "@apollo/client";
 import {useRollbar} from "@rollbar/react";
 
-const FOLLOW_TRAIN = gql(`
-query FollowTrain {
-    followTrain(run: 1225) {
+const TRAIN = gql(`
+query Train {
+    train(run: 1225) {
         run
         line
         destination
@@ -166,7 +166,7 @@ function compareTrains(train0: Train, train1: Train) {
 }
 
 function HolidayTrain() {
-    const {loading, error, data, startPolling} = useQuery(FOLLOW_TRAIN);
+    const {loading, error, data, startPolling} = useQuery(TRAIN);
 
     startPolling(60000);
 
@@ -203,7 +203,7 @@ function HolidayTrain() {
         return null;
     }
 
-    const trains = Array.from(data.followTrain);
+    const trains = Array.from(data.train);
 
     trains.sort(compareTrains);
 
