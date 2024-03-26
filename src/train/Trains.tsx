@@ -7,9 +7,9 @@ interface TrainsProps {
     stationId: string | null
 }
 
-const GET_TRAINS = gql(`
-query GetTrains($stationId: ID!) {
-    getTrains(stationId: $stationId) {
+const TRAINS = gql(`
+query Trains($stationId: ID!) {
+    trains(stationId: $stationId) {
         line
         destination
         run
@@ -185,7 +185,7 @@ function Trains(props: TrainsProps) {
         }
     }
 
-    const {loading, error, data, startPolling} = useQuery(GET_TRAINS, options);
+    const {loading, error, data, startPolling} = useQuery(TRAINS, options);
 
     startPolling(60000);
 
@@ -222,7 +222,7 @@ function Trains(props: TrainsProps) {
         return null;
     }
 
-    const trains = Array.from(data.getTrains);
+    const trains = Array.from(data.trains);
 
     if (trains.length === 0) {
         return (

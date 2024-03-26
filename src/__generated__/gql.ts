@@ -13,14 +13,14 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\nquery GetBuses($routeId: ID!, $stopId: ID!) {\n    getBuses(routeId: $routeId, stopId: $stopId) {\n        id\n        type\n        stop\n        route\n        destination\n        predictionTime\n        arrivalTime\n        delayed\n    }\n}\n": types.GetBusesDocument,
-    "\nquery GetRouteDirections($id: ID!) {\n    getRouteDirections(id: $id) {\n        name\n    }\n}\n": types.GetRouteDirectionsDocument,
-    "\nquery GetRoutes {\n    getRoutes {\n        id\n        name\n    }\n}\n": types.GetRoutesDocument,
-    "\nquery GetRouteStops($id: ID!, $direction: String!) {\n    getRouteStops(id: $id, direction: $direction) {\n        id\n        name\n    }\n}\n": types.GetRouteStopsDocument,
-    "\nquery FollowBus {\n    followBus(id: \"4374\") {\n        id\n        type\n        stop\n        route\n        destination\n        predictionTime\n        arrivalTime\n        delayed\n    }\n}\n": types.FollowBusDocument,
-    "\nquery FollowTrain {\n    followTrain(run: 1225) {\n        run\n        line\n        destination\n        station\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n": types.FollowTrainDocument,
-    "\nquery GetStations {\n    getStations {\n        id\n        name\n    }\n}\n": types.GetStationsDocument,
-    "\nquery GetTrains($stationId: ID!) {\n    getTrains(stationId: $stationId) {\n        line\n        destination\n        run\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n": types.GetTrainsDocument,
+    "\nquery Buses($routeId: ID!, $stopId: ID!) {\n    buses(routeId: $routeId, stopId: $stopId) {\n        id\n        type\n        stop\n        route\n        destination\n        predictionTime\n        arrivalTime\n        delayed\n    }\n}\n": types.BusesDocument,
+    "\nquery RouteDirections($id: ID!) {\n    routeDirections(id: $id) {\n        name\n    }\n}\n": types.RouteDirectionsDocument,
+    "\nquery Routes {\n    routes {\n        id\n        name\n    }\n}\n": types.RoutesDocument,
+    "\nquery RouteStops($id: ID!, $direction: String!) {\n    routeStops(id: $id, direction: $direction) {\n        id\n        name\n    }\n}\n": types.RouteStopsDocument,
+    "\nquery Bus {\n    bus(id: \"4374\") {\n        id\n        type\n        stop\n        route\n        destination\n        predictionTime\n        arrivalTime\n        delayed\n    }\n}\n": types.BusDocument,
+    "\nquery Train {\n    train(run: 1225) {\n        run\n        line\n        destination\n        station\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n": types.TrainDocument,
+    "\nquery Stations {\n    stations {\n        id\n        name\n    }\n}\n": types.StationsDocument,
+    "\nquery Trains($stationId: ID!) {\n    trains(stationId: $stationId) {\n        line\n        destination\n        run\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n": types.TrainsDocument,
 };
 
 /**
@@ -40,35 +40,35 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nquery GetBuses($routeId: ID!, $stopId: ID!) {\n    getBuses(routeId: $routeId, stopId: $stopId) {\n        id\n        type\n        stop\n        route\n        destination\n        predictionTime\n        arrivalTime\n        delayed\n    }\n}\n"): (typeof documents)["\nquery GetBuses($routeId: ID!, $stopId: ID!) {\n    getBuses(routeId: $routeId, stopId: $stopId) {\n        id\n        type\n        stop\n        route\n        destination\n        predictionTime\n        arrivalTime\n        delayed\n    }\n}\n"];
+export function gql(source: "\nquery Buses($routeId: ID!, $stopId: ID!) {\n    buses(routeId: $routeId, stopId: $stopId) {\n        id\n        type\n        stop\n        route\n        destination\n        predictionTime\n        arrivalTime\n        delayed\n    }\n}\n"): (typeof documents)["\nquery Buses($routeId: ID!, $stopId: ID!) {\n    buses(routeId: $routeId, stopId: $stopId) {\n        id\n        type\n        stop\n        route\n        destination\n        predictionTime\n        arrivalTime\n        delayed\n    }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nquery GetRouteDirections($id: ID!) {\n    getRouteDirections(id: $id) {\n        name\n    }\n}\n"): (typeof documents)["\nquery GetRouteDirections($id: ID!) {\n    getRouteDirections(id: $id) {\n        name\n    }\n}\n"];
+export function gql(source: "\nquery RouteDirections($id: ID!) {\n    routeDirections(id: $id) {\n        name\n    }\n}\n"): (typeof documents)["\nquery RouteDirections($id: ID!) {\n    routeDirections(id: $id) {\n        name\n    }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nquery GetRoutes {\n    getRoutes {\n        id\n        name\n    }\n}\n"): (typeof documents)["\nquery GetRoutes {\n    getRoutes {\n        id\n        name\n    }\n}\n"];
+export function gql(source: "\nquery Routes {\n    routes {\n        id\n        name\n    }\n}\n"): (typeof documents)["\nquery Routes {\n    routes {\n        id\n        name\n    }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nquery GetRouteStops($id: ID!, $direction: String!) {\n    getRouteStops(id: $id, direction: $direction) {\n        id\n        name\n    }\n}\n"): (typeof documents)["\nquery GetRouteStops($id: ID!, $direction: String!) {\n    getRouteStops(id: $id, direction: $direction) {\n        id\n        name\n    }\n}\n"];
+export function gql(source: "\nquery RouteStops($id: ID!, $direction: String!) {\n    routeStops(id: $id, direction: $direction) {\n        id\n        name\n    }\n}\n"): (typeof documents)["\nquery RouteStops($id: ID!, $direction: String!) {\n    routeStops(id: $id, direction: $direction) {\n        id\n        name\n    }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nquery FollowBus {\n    followBus(id: \"4374\") {\n        id\n        type\n        stop\n        route\n        destination\n        predictionTime\n        arrivalTime\n        delayed\n    }\n}\n"): (typeof documents)["\nquery FollowBus {\n    followBus(id: \"4374\") {\n        id\n        type\n        stop\n        route\n        destination\n        predictionTime\n        arrivalTime\n        delayed\n    }\n}\n"];
+export function gql(source: "\nquery Bus {\n    bus(id: \"4374\") {\n        id\n        type\n        stop\n        route\n        destination\n        predictionTime\n        arrivalTime\n        delayed\n    }\n}\n"): (typeof documents)["\nquery Bus {\n    bus(id: \"4374\") {\n        id\n        type\n        stop\n        route\n        destination\n        predictionTime\n        arrivalTime\n        delayed\n    }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nquery FollowTrain {\n    followTrain(run: 1225) {\n        run\n        line\n        destination\n        station\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n"): (typeof documents)["\nquery FollowTrain {\n    followTrain(run: 1225) {\n        run\n        line\n        destination\n        station\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n"];
+export function gql(source: "\nquery Train {\n    train(run: 1225) {\n        run\n        line\n        destination\n        station\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n"): (typeof documents)["\nquery Train {\n    train(run: 1225) {\n        run\n        line\n        destination\n        station\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nquery GetStations {\n    getStations {\n        id\n        name\n    }\n}\n"): (typeof documents)["\nquery GetStations {\n    getStations {\n        id\n        name\n    }\n}\n"];
+export function gql(source: "\nquery Stations {\n    stations {\n        id\n        name\n    }\n}\n"): (typeof documents)["\nquery Stations {\n    stations {\n        id\n        name\n    }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nquery GetTrains($stationId: ID!) {\n    getTrains(stationId: $stationId) {\n        line\n        destination\n        run\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n"): (typeof documents)["\nquery GetTrains($stationId: ID!) {\n    getTrains(stationId: $stationId) {\n        line\n        destination\n        run\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n"];
+export function gql(source: "\nquery Trains($stationId: ID!) {\n    trains(stationId: $stationId) {\n        line\n        destination\n        run\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n"): (typeof documents)["\nquery Trains($stationId: ID!) {\n    trains(stationId: $stationId) {\n        line\n        destination\n        run\n        predictionTime\n        arrivalTime\n        due\n        scheduled\n        delayed\n    }\n}\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

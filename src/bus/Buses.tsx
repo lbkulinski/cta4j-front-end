@@ -8,9 +8,9 @@ interface BusesProps {
     stopId: string | null
 }
 
-const GET_BUSES = gql(`
-query GetBuses($routeId: ID!, $stopId: ID!) {
-    getBuses(routeId: $routeId, stopId: $stopId) {
+const BUSES = gql(`
+query Buses($routeId: ID!, $stopId: ID!) {
+    buses(routeId: $routeId, stopId: $stopId) {
         id
         type
         stop
@@ -168,7 +168,7 @@ function Buses(props: BusesProps) {
         }
     }
 
-    const {loading, error, data, startPolling} = useQuery(GET_BUSES, options);
+    const {loading, error, data, startPolling} = useQuery(BUSES, options);
 
     startPolling(60000);
 
@@ -205,7 +205,7 @@ function Buses(props: BusesProps) {
         return null;
     }
 
-    const buses = Array.from(data.getBuses);
+    const buses = Array.from(data.buses);
 
     if (buses.length === 0) {
         return (

@@ -3,9 +3,9 @@ import {gql} from "../__generated__";
 import {useQuery} from "@apollo/client";
 import {useRollbar} from "@rollbar/react";
 
-const FOLLOW_BUS = gql(`
-query FollowBus {
-    followBus(id: "4374") {
+const BUS = gql(`
+query Bus {
+    bus(id: "4374") {
         id
         type
         stop
@@ -135,7 +135,7 @@ function compareBuses(bus0: Bus, bus1: Bus) {
 }
 
 function HolidayBus() {
-    const {loading, error, data, startPolling} = useQuery(FOLLOW_BUS);
+    const {loading, error, data, startPolling} = useQuery(BUS);
 
     startPolling(60000);
 
@@ -172,7 +172,7 @@ function HolidayBus() {
         return null;
     }
 
-    const buses = Array.from(data.followBus);
+    const buses = Array.from(data.bus);
 
     buses.sort(compareBuses);
 
