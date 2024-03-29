@@ -1,6 +1,6 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {gql} from "../__generated__";
-import {useQuery} from "@apollo/client";
+import {useSubscription} from "@apollo/client";
 import {useRollbar} from "@rollbar/react";
 
 interface BusesProps {
@@ -8,9 +8,9 @@ interface BusesProps {
     stopId: string | null
 }
 
-const BUSES = gql(`
-query Buses($routeId: ID!, $stopId: ID!) {
-    buses(routeId: $routeId, stopId: $stopId) {
+const BUSES_SUBSCRIBE = gql(`
+subscription BusesSubscribe($routeId: ID!, $stopId: ID!) {
+    busesSubscribe(routeId: $routeId, stopId: $stopId) {
         id
         type
         stop
@@ -168,9 +168,7 @@ function Buses(props: BusesProps) {
         }
     }
 
-    const {loading, error, data, startPolling} = useQuery(BUSES, options);
-
-    startPolling(60000);
+    const {loading, error, data} = useSubscription(BUSES_SUBSCRIBE, options);
 
     const rollbar = useRollbar();
 
@@ -205,7 +203,7 @@ function Buses(props: BusesProps) {
         return null;
     }
 
-    const buses = Array.from(data.buses);
+    const buses = Array.from(data.busesSubscribe);
 
     if (buses.length === 0) {
         return (

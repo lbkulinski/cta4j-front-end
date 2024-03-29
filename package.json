@@ -22,6 +22,7 @@
     "@types/node": "^20.2.3",
     "babel-plugin-add-react-displayname": "^0.0.5",
     "graphql": "^16.6.0",
+    "graphql-ws": "^5.16.0",
     "logrocket": "^8.0.0",
     "logrocket-react": "^6.0.1",
     "react": "^18.2.0",
