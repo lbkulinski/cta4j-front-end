@@ -177,26 +177,20 @@ function Buses(props: BusesProps) {
     }
 
     if (error) {
-        const errorTypes = error.graphQLErrors.map(graphQLError => graphQLError.extensions.errorType);
-
-        const set = new Set(errorTypes);
-
-        if (set.has("NOT_FOUND")) {
-            return (
-                <Alert severity="warning">
-                    There are no upcoming buses at this time. Please check back later.
-                </Alert>
-            );
-        }
-
         const errorData = {
             error: error,
             data: data
-        }
+        };
 
         const errorDataString = JSON.stringify(errorData);
 
         rollbar.error("An error occurred when trying to fetch the buses", errorDataString);
+
+        return (
+            <Alert severity="warning">
+                There are no upcoming buses at this time. Please check back later.
+            </Alert>
+        );
     }
 
     if (!data) {

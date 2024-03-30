@@ -194,26 +194,20 @@ function Trains(props: TrainsProps) {
     }
 
     if (error) {
-        const errorTypes = error.graphQLErrors.map(graphQLError => graphQLError.extensions.errorType);
-
-        const set = new Set(errorTypes);
-
-        if (set.has("NOT_FOUND")) {
-            return (
-                <Alert severity="warning">
-                    There are no upcoming trains at this time. Please check back later.
-                </Alert>
-            );
-        }
-
         const errorData = {
             error: error,
             data: data
-        }
+        };
 
         const errorDataString = JSON.stringify(errorData);
 
         rollbar.error("An error occurred when trying to fetch the trains", errorDataString);
+
+        return (
+            <Alert severity="warning">
+                There are no upcoming trains at this time. Please check back later.
+            </Alert>
+        );
     }
 
     if (!data) {
