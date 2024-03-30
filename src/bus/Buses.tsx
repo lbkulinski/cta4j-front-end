@@ -179,7 +179,9 @@ function Buses(props: BusesProps) {
     if (error) {
         const errorData = {
             error: error,
-            data: data
+            data: data,
+            routeId: routeId,
+            stopId: stopId
         };
 
         const errorDataString = JSON.stringify(errorData);
