@@ -1,15 +1,15 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {gql} from "../__generated__";
-import {useQuery} from "@apollo/client";
+import {useSubscription} from "@apollo/client";
 import {useRollbar} from "@rollbar/react";
 
 interface TrainsProps {
     stationId: string | null
 }
 
-const TRAINS = gql(`
-query Trains($stationId: ID!) {
-    trains(stationId: $stationId) {
+const TRAINS_SUBSCRIBE = gql(`
+subscription TrainsSubscribe($stationId: ID!) {
+    trainsSubscribe(stationId: $stationId) {
         line
         destination
         run
@@ -185,9 +185,7 @@ function Trains(props: TrainsProps) {
         }
     }
 
-    const {loading, error, data, startPolling} = useQuery(TRAINS, options);
-
-    startPolling(60000);
+    const {loading, error, data} = useSubscription(TRAINS_SUBSCRIBE, options);
 
     const rollbar = useRollbar();
 
@@ -196,33 +194,27 @@ function Trains(props: TrainsProps) {
     }
 
     if (error) {
-        const errorTypes = error.graphQLErrors.map(graphQLError => graphQLError.extensions.errorType);
-
-        const set = new Set(errorTypes);
-
-        if (set.has("NOT_FOUND")) {
-            return (
-                <Alert severity="warning">
-                    There are no upcoming trains at this time. Please check back later.
-                </Alert>
-            );
-        }
-
         const errorData = {
             error: error,
             data: data
-        }
+        };
 
         const errorDataString = JSON.stringify(errorData);
 
         rollbar.error("An error occurred when trying to fetch the trains", errorDataString);
+
+        return (
+            <Alert severity="warning">
+                There are no upcoming trains at this time. Please check back later.
+            </Alert>
+        );
     }
 
     if (!data) {
         return null;
     }
 
-    const trains = Array.from(data.trains);
+    const trains = Array.from(data.trainsSubscribe);
 
     if (trains.length === 0) {
         return (
