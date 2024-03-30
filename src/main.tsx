@@ -81,50 +81,61 @@ const client = new ApolloClient({
         typePolicies: {
             Query: {
                 fields: {
-                    getBuses: {
+                    buses: {
                         merge(_, incoming){
                             return incoming;
                         }
                     },
-                    getRouteDirections: {
+                    routeDirections: {
                         merge(_, incoming){
                             return incoming;
                         }
                     },
-                    getRoutes: {
+                    routes: {
                         merge(_, incoming){
                             return incoming;
                         }
                     },
-                    getRouteStops: {
+                    routeStops: {
                         merge(_, incoming){
                             return incoming;
                         }
                     },
-                    followBus: {
+                    bus: {
                         merge(_, incoming){
                             return incoming;
                         }
                     },
-                    followTrain: {
+                    train: {
                         merge(_, incoming){
                             return incoming;
                         }
                     },
-                    getStations: {
+                    stations: {
                         merge(_, incoming){
                             return incoming;
                         }
                     },
-                    getTrains: {
+                    trains: {
                         merge(_, incoming){
                             return incoming;
                         }
                     }
                 }
             },
-            Bus: {
-                keyFields: ["id", "stop"]
+            Subscription: {
+                fields: {
+                    busesSubscribe: {
+                        merge(_, incoming){
+                            return incoming;
+                        }
+                    },
+                    trainsSubscribe: {
+                        merge(_, incoming){
+                            return incoming;
+                        }
+                    }
+                }
             }
         }
     }),

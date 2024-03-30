@@ -196,7 +196,8 @@ function Trains(props: TrainsProps) {
     if (error) {
         const errorData = {
             error: error,
-            data: data
+            data: data,
+            stationId: stationId
         };
 
         const errorDataString = JSON.stringify(errorData);
