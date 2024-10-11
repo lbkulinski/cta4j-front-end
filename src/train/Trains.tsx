@@ -163,27 +163,35 @@ function Trains(props: TrainsProps) {
     const rollbar = useRollbar();
 
     useEffect(() => {
-        if (stationId === null) {
-            setArrivals(null);
-            
-            return;
+        const fetchArrivals = () => {
+            if (stationId === null) {
+                setArrivals(null);
+
+                return;
+            }
+
+            const apiConfiguration = new Configuration({
+                basePath: import.meta.env.VITE_BACK_END_URL
+            })
+
+            const stationsApi = new StationsApi(apiConfiguration);
+
+            stationsApi.getArrivals({stationId: stationId})
+                       .then(response => {
+                           setArrivals(response);
+                       })
+                       .catch(error => {
+                           rollbar.error(error);
+
+                           setError(error);
+                       });
         }
 
-        const apiConfiguration = new Configuration({
-            basePath: import.meta.env.VITE_BACK_END_URL
-        })
+        fetchArrivals();
 
-        const stationsApi = new StationsApi(apiConfiguration);
+        const interval = setInterval(fetchArrivals, 60000);
 
-        stationsApi.getArrivals({stationId: stationId})
-                   .then(response => {
-                       setArrivals(response);
-                   })
-                   .catch(error => {
-                       rollbar.error(error);
-
-                       setError(error);
-                   });
+        return () => clearInterval(interval);
     }, [stationId, error, rollbar]);
     
     if (arrivals === null) {

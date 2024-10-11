@@ -141,27 +141,35 @@ function Buses(props: BusesProps) {
     const rollbar = useRollbar();
 
     useEffect(() => {
-        if ((routeId === null) || (stopId === null)) {
-            setArrivals(null);
+        const fetchArrivals = () => {
+            if ((routeId === null) || (stopId === null)) {
+                setArrivals(null);
 
-            return;
-        }
+                return;
+            }
 
-        const apiConfiguration = new Configuration({
-            basePath: import.meta.env.VITE_BACK_END_URL
-        })
+            const apiConfiguration = new Configuration({
+                basePath: import.meta.env.VITE_BACK_END_URL
+            })
 
-        const routesApi = new RoutesApi(apiConfiguration);
+            const routesApi = new RoutesApi(apiConfiguration);
 
-        routesApi.getArrivals1({routeId: routeId, stopId: stopId})
-                 .then(response => {
-                     setArrivals(response);
-                 })
-                 .catch(error => {
-                     rollbar.error(error);
+            routesApi.getArrivals1({routeId: routeId, stopId: stopId})
+                     .then(response => {
+                         setArrivals(response);
+                     })
+                     .catch(error => {
+                         rollbar.error(error);
 
-                     setError(error);
-                 });
+                         setError(error);
+                     });
+        };
+
+        fetchArrivals();
+
+        const interval = setInterval(fetchArrivals, 60000);
+
+        return () => clearInterval(interval);
     }, [error, rollbar, routeId, stopId]);
 
     if (arrivals === null) {
