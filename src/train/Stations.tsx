@@ -1,52 +1,52 @@
-import {Autocomplete, TextField} from "@mui/material";
-import {useQuery} from "@apollo/client";
+import {Alert, Autocomplete, TextField} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
-import {gql} from "../__generated__";
+import {Configuration, Station, StationsApi} from "../client";
+import {useEffect, useState} from "react";
 
 interface StationsProps {
-    stationId: string | null,
-    setStationId: (stationId: string | null) => void
+    stationId: number | null,
+    setStationId: (stationId: number | null) => void
 }
-
-const STATIONS = gql(`
-query Stations {
-    stations {
-        id
-        name
-    }
-}
-`);
 
 interface Option {
-    id: string;
+    id: number;
     label: string;
 }
 
 function Stations(props: StationsProps) {
-    const {loading, error, data} = useQuery(STATIONS);
+    const [stations, setStations] = useState<Station[] | null>(null);
+
+    const [error, setError] = useState<Error | null>(null);
 
     const rollbar = useRollbar();
 
-    if (loading) {
+    useEffect(() => {
+        const apiConfiguration = new Configuration({
+            basePath: import.meta.env.VITE_BACK_END_URL
+        });
+
+        const stationsApi = new StationsApi(apiConfiguration);
+
+        stationsApi.getStations()
+                   .then(response => {
+                       setStations(response);
+                   })
+                   .catch(e => {
+                       rollbar.error(e);
+
+                       setError(e);
+                   });
+    }, [rollbar]);
+
+    if (stations === null) {
         return null;
+    } else if (error) {
+        return (
+            <Alert severity="error">
+                An error occurred while retrieving the station data. Please check back later.
+            </Alert>
+        );
     }
-
-    if (error) {
-        const errorData = {
-            error: error,
-            data: data
-        }
-
-        const errorDataString = JSON.stringify(errorData);
-
-        rollbar.error("An error occurred when trying to fetch the stations", errorDataString);
-    }
-
-    if (!data) {
-        return null;
-    }
-
-    const stations = data.stations;
 
     const names = new Set<string>();
 
@@ -58,6 +58,10 @@ function Stations(props: StationsProps) {
         const id = station.id;
 
         const name = station.name;
+
+        if (!id || !name) {
+            return;
+        }
 
         if ((id === props.stationId)) {
             defaultOption = {
@@ -96,7 +100,7 @@ function Stations(props: StationsProps) {
 
                 props.setStationId(value.id);
 
-                localStorage.setItem("stationId", value.id);
+                localStorage.setItem("stationId", String(value.id));
 
                 window.history.replaceState(null, "", window.location.pathname);
             }}

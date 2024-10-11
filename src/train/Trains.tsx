@@ -1,26 +1,11 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
-import {gql} from "../__generated__";
-import {useQuery} from "@apollo/client";
 import {useRollbar} from "@rollbar/react";
+import {Configuration, StationsApi, Train} from "../client";
+import {useEffect, useState} from "react";
 
 interface TrainsProps {
-    stationId: string | null
+    stationId: number | null
 }
-
-const TRAINS = gql(`
-query Trains($stationId: ID!) {
-    trains(stationId: $stationId) {
-        line
-        destination
-        run
-        predictionTime
-        arrivalTime
-        due
-        scheduled
-        delayed
-    }
-}
-`);
 
 const lineToHexColor = new Map([
     ["RED", "#C60C30"],
@@ -33,21 +18,8 @@ const lineToHexColor = new Map([
     ["YELLOW", "#F9E300"]
 ]);
 
-interface Train {
-    line: string,
-    destination: string,
-    run: number,
-    predictionTime: string,
-    arrivalTime: string,
-    due: boolean,
-    scheduled: boolean,
-    delayed: boolean
-}
-
 function getEta(train: Train) {
-    const arrivalDate = new Date(train.arrivalTime);
-
-    const arrivalMillis = arrivalDate.getTime();
+    const arrivalMillis = train.arrivalTime.getTime();
 
     const predictionDate = new Date(train.predictionTime);
 
@@ -83,7 +55,13 @@ function getRow(train: Train) {
         }
     }
 
-    const lineColor = lineToHexColor.get(train.line);
+    const line = train.line;
+
+    let lineColor = undefined;
+
+    if (line) {
+        lineColor = lineToHexColor.get(line);
+    }
 
     const lineStyles = (lineColor === undefined) ? {} : {color: lineColor};
 
@@ -150,13 +128,13 @@ function compareTrains(train0: Train, train1: Train) {
 
     const destination0 = train0.destination;
 
-    const date0 = new Date(train0.arrivalTime);
+    const date0 = train0.arrivalTime;
 
     const line1 = train1.line;
 
     const destination1 = train1.destination;
 
-    const date1 = new Date(train1.arrivalTime);
+    const date1 = train1.arrivalTime;
 
     if (line0 < line1) {
         return -1;
@@ -178,53 +156,45 @@ function compareTrains(train0: Train, train1: Train) {
 function Trains(props: TrainsProps) {
     const stationId = props.stationId;
 
-    const options = {
-        skip: stationId === null,
-        variables: {
-            stationId: stationId!
-        }
-    }
+    const [arrivals, setArrivals] = useState<Train[] | null>(null);
 
-    const {loading, error, data, startPolling} = useQuery(TRAINS, options);
-
-    startPolling(60000);
+    const [error, setError] = useState<Error | null>(null);
 
     const rollbar = useRollbar();
 
-    if (loading) {
-        return null;
-    }
-
-    if (error) {
-        const errorTypes = error.graphQLErrors.map(graphQLError => graphQLError.extensions.errorType);
-
-        const set = new Set(errorTypes);
-
-        if (set.has("NOT_FOUND")) {
-            return (
-                <Alert severity="warning">
-                    There are no upcoming trains at this time. Please check back later.
-                </Alert>
-            );
+    useEffect(() => {
+        if (stationId === null) {
+            setArrivals(null);
+            
+            return;
         }
 
-        const errorData = {
-            error: error,
-            data: data
-        }
+        const apiConfiguration = new Configuration({
+            basePath: import.meta.env.VITE_BACK_END_URL
+        })
 
-        const errorDataString = JSON.stringify(errorData);
+        const stationsApi = new StationsApi(apiConfiguration);
 
-        rollbar.error("An error occurred when trying to fetch the trains", errorDataString);
-    }
+        stationsApi.getArrivals({stationId: stationId})
+                   .then(response => {
+                       setArrivals(response);
+                   })
+                   .catch(error => {
+                       rollbar.error(error);
 
-    if (!data) {
+                       setError(error);
+                   });
+    }, [stationId, error, rollbar]);
+    
+    if (arrivals === null) {
         return null;
-    }
-
-    const trains = Array.from(data.trains);
-
-    if (trains.length === 0) {
+    } else if (error) {
+        return (
+            <Alert severity="error">
+                An error occurred while retrieving the train data. Please check back later.
+            </Alert>
+        );
+    } else if (arrivals.length === 0) {
         return (
             <Alert severity="warning">
                 There are no upcoming trains at this time. Please check back later.
@@ -232,9 +202,9 @@ function Trains(props: TrainsProps) {
         );
     }
 
-    trains.sort(compareTrains);
+    arrivals.sort(compareTrains);
 
-    return getTable(trains);
+    return getTable(arrivals);
 }
 
 export default Trains;

@@ -20,17 +20,23 @@ function BusApp() {
         defaultDirection = localStorage.getItem("direction");
     }
 
-    let defaultStopId = searchParams.get("stopId");
+    let defaultStopIdString = searchParams.get("stopId");
 
-    if (defaultStopId === null) {
-        defaultStopId = localStorage.getItem("stopId");
+    if (defaultStopIdString === null) {
+        defaultStopIdString = localStorage.getItem("stopId");
+    }
+
+    let defaultStopId = null;
+
+    if (defaultStopIdString !== null) {
+        defaultStopId = parseInt(defaultStopIdString);
     }
 
     const [routeId, setRouteId] = React.useState<string | null>(defaultRouteId);
 
     const [direction, setDirection] = React.useState<string | null>(defaultDirection);
 
-    const [stopId, setStopId] = React.useState<string | null>(defaultStopId);
+    const [stopId, setStopId] = React.useState<number | null>(defaultStopId);
 
     return (
         <div>

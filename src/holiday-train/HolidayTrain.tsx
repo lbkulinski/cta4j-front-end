@@ -1,23 +1,6 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
-import {gql} from "../__generated__";
 import {useQuery} from "@apollo/client";
 import {useRollbar} from "@rollbar/react";
-
-const TRAIN = gql(`
-query Train {
-    train(run: 1225) {
-        run
-        line
-        destination
-        station
-        predictionTime
-        arrivalTime
-        due
-        scheduled
-        delayed
-    }
-}
-`);
 
 const lineToHexColor = new Map([
     ["RED", "#C60C30"],

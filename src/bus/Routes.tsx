@@ -1,23 +1,14 @@
-import {Autocomplete, TextField} from "@mui/material";
-import {gql} from "../__generated__";
-import {useQuery} from "@apollo/client";
+import {Alert, Autocomplete, TextField} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
+import {useEffect, useState} from "react";
+import {Configuration, Route, RoutesApi} from "../client";
 
 interface RoutesProps {
     routeId: string | null,
     setRouteId: (routeId: string | null) => void,
     setDirection: (direction: string | null) => void,
-    setStopId: (stopId: string | null) => void
+    setStopId: (stopId: number | null) => void
 }
-
-const ROUTES = gql(`
-query Routes {
-    routes {
-        id
-        name
-    }
-}
-`);
 
 interface Option {
     id: string;
@@ -25,30 +16,39 @@ interface Option {
 }
 
 function Routes(props: RoutesProps) {
-    const {loading, error, data} = useQuery(ROUTES);
+    const [routes, setRoutes] = useState<Route[] | null>(null);
+
+    const [error, setError] = useState<Error | null>(null);
 
     const rollbar = useRollbar();
 
-    if (loading) {
+    useEffect(() => {
+        const apiConfiguration = new Configuration({
+            basePath: import.meta.env.VITE_BACK_END_URL
+        });
+
+        const routesApi = new RoutesApi(apiConfiguration);
+
+        routesApi.getRoutes()
+                 .then(response => {
+                     setRoutes(response);
+                 })
+                 .catch(e => {
+                     rollbar.error(e);
+
+                     setError(e);
+                 });
+    }, [rollbar]);
+
+    if (routes === null) {
         return null;
+    } else if (error) {
+        return (
+            <Alert severity="error">
+                An error occurred while retrieving the station data. Please check back later.
+            </Alert>
+        );
     }
-
-    if (error) {
-        const errorData = {
-            error: error,
-            data: data
-        }
-
-        const errorDataString = JSON.stringify(errorData);
-
-        rollbar.error("An error occurred when trying to fetch the routes", errorDataString);
-    }
-
-    if (!data) {
-        return null;
-    }
-
-    const routes = data.routes;
 
     const names = new Set<string>();
 

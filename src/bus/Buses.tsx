@@ -1,37 +1,11 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
-import {gql} from "../__generated__";
-import {useQuery} from "@apollo/client";
 import {useRollbar} from "@rollbar/react";
+import {Bus, Configuration, RoutesApi} from "../client";
+import {useEffect, useState} from "react";
 
 interface BusesProps {
     routeId: string | null,
-    stopId: string | null
-}
-
-const BUSES = gql(`
-query Buses($routeId: ID!, $stopId: ID!) {
-    buses(routeId: $routeId, stopId: $stopId) {
-        id
-        type
-        stop
-        route
-        destination
-        predictionTime
-        arrivalTime
-        delayed
-    }
-}
-`);
-
-interface Bus {
-    id: string,
-    type: string,
-    stop: string,
-    route: string,
-    destination: string,
-    predictionTime: string,
-    arrivalTime: string,
-    delayed: boolean
+    stopId: number | null
 }
 
 function getEta(bus: Bus) {
@@ -160,54 +134,45 @@ function Buses(props: BusesProps) {
 
     const stopId = props.stopId;
 
-    const options = {
-        skip: (routeId === null) || (stopId === null),
-        variables: {
-            routeId: routeId!,
-            stopId: stopId!
-        }
-    }
+    const [arrivals, setArrivals] = useState<Bus[] | null>(null);
 
-    const {loading, error, data, startPolling} = useQuery(BUSES, options);
-
-    startPolling(60000);
+    const [error, setError] = useState<Error | null>(null);
 
     const rollbar = useRollbar();
 
-    if (loading) {
-        return null;
-    }
+    useEffect(() => {
+        if ((routeId === null) || (stopId === null)) {
+            setArrivals(null);
 
-    if (error) {
-        const errorTypes = error.graphQLErrors.map(graphQLError => graphQLError.extensions.errorType);
-
-        const set = new Set(errorTypes);
-
-        if (set.has("NOT_FOUND")) {
-            return (
-                <Alert severity="warning">
-                    There are no upcoming buses at this time. Please check back later.
-                </Alert>
-            );
+            return;
         }
 
-        const errorData = {
-            error: error,
-            data: data
-        }
+        const apiConfiguration = new Configuration({
+            basePath: import.meta.env.VITE_BACK_END_URL
+        })
 
-        const errorDataString = JSON.stringify(errorData);
+        const routesApi = new RoutesApi(apiConfiguration);
 
-        rollbar.error("An error occurred when trying to fetch the buses", errorDataString);
-    }
+        routesApi.getArrivals1({routeId: routeId, stopId: stopId})
+                 .then(response => {
+                     setArrivals(response);
+                 })
+                 .catch(error => {
+                     rollbar.error(error);
 
-    if (!data) {
+                     setError(error);
+                 });
+    }, [error, rollbar, routeId, stopId]);
+
+    if (arrivals === null) {
         return null;
-    }
-
-    const buses = Array.from(data.buses);
-
-    if (buses.length === 0) {
+    } else if (error) {
+        return (
+            <Alert severity="error">
+                An error occurred while retrieving the bus data. Please check back later.
+            </Alert>
+        );
+    } else if (arrivals.length === 0) {
         return (
             <Alert severity="warning">
                 There are no upcoming buses at this time. Please check back later.
@@ -215,9 +180,9 @@ function Buses(props: BusesProps) {
         );
     }
 
-    buses.sort(compareBuses);
+    arrivals.sort(compareBuses);
 
-    return getTable(buses);
+    return getTable(arrivals);
 }
 
 export default Buses;

@@ -12,7 +12,9 @@ function TrainApp() {
         defaultStationId = localStorage.getItem("stationId");
     }
 
-    const [stationId, setStationId] = React.useState<string | null>(defaultStationId);
+    const stationIdNumber = defaultStationId ? parseInt(defaultStationId) : null;
+
+    const [stationId, setStationId] = React.useState<number | null>(stationIdNumber);
 
     return (
         <div>

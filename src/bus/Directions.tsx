@@ -1,22 +1,14 @@
-import {useQuery} from "@apollo/client";
-import {Autocomplete, TextField} from "@mui/material";
-import {gql} from "../__generated__";
+import {Alert, Autocomplete, TextField} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
+import {useEffect, useState} from "react";
+import {Configuration, RoutesApi} from "../client";
 
 interface DirectionsProps {
     routeId: string | null,
     direction: string | null,
     setDirection: (direction: string | null) => void,
-    setStopId: (stopId: string | null) => void
+    setStopId: (stopId: number | null) => void
 }
-
-const DIRECTIONS = gql(`
-query RouteDirections($id: ID!) {
-    routeDirections(id: $id) {
-        name
-    }
-}
-`);
 
 interface Option {
     id: string;
@@ -26,38 +18,45 @@ interface Option {
 function Directions(props: DirectionsProps) {
     const routeId = props.routeId;
 
-    const queryOptions = {
-        skip: routeId === null,
-        variables: {
-            id: routeId!
-        }
-    }
+    const [directions, setDirections] = useState<string[] | null>(null);
 
-    const {loading, error, data} = useQuery(DIRECTIONS,
-        queryOptions);
+    const [error, setError] = useState<Error | null>(null);
 
     const rollbar = useRollbar();
 
-    if (loading) {
-        return null;
-    }
+    useEffect(() => {
+        if (routeId === null) {
+            setDirections(null);
 
-    if (error) {
-        const errorData = {
-            error: error,
-            data: data
+            return;
         }
+        
+        const apiConfiguration = new Configuration({
+            basePath: import.meta.env.VITE_BACK_END_URL
+        });
 
-        const errorDataString = JSON.stringify(errorData);
+        const routesApi = new RoutesApi(apiConfiguration);
 
-        rollbar.error("An error occurred when trying to fetch the directions", errorDataString);
-    }
+        routesApi.getDirections({routeId: routeId})
+                 .then(response => {
+                     setDirections(response);
+                 })
+                 .catch(e => {
+                     rollbar.error(e);
 
-    if (!data) {
+                     setError(e);
+                 });
+    }, [rollbar, routeId]);
+
+    if (directions === null) {
         return null;
+    } else if (error) {
+        return (
+            <Alert severity="error">
+                An error occurred while retrieving the direction data. Please check back later.
+            </Alert>
+        );
     }
-
-    const directions = data.routeDirections;
 
     const names = new Set<string>();
 
@@ -66,24 +65,22 @@ function Directions(props: DirectionsProps) {
     let defaultOption: Option | null = null;
 
     directions.forEach(direction => {
-        const name = direction.name;
-
-        if ((name === props.direction)) {
+        if ((direction === props.direction)) {
             defaultOption = {
-                id: name,
-                label: name
+                id: direction,
+                label: direction
             };
         }
 
-        if (names.has(name)) {
+        if (names.has(direction)) {
             return;
         }
 
-        names.add(name);
+        names.add(direction);
 
         options.push({
-            id: name,
-            label: name
+            id: direction,
+            label: direction
         });
     });
 

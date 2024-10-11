@@ -1,26 +1,17 @@
-import {useQuery} from "@apollo/client";
-import {Autocomplete, TextField} from "@mui/material";
-import {gql} from "../__generated__";
+import {Alert, Autocomplete, TextField} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
+import {useEffect, useState} from "react";
+import {Configuration, RoutesApi, Stop} from "../client";
 
 interface StopsProps {
     routeId: string | null,
     direction: string | null,
-    stopId: string | null,
-    setStopId: (stopId: string | null) => void
+    stopId: number | null,
+    setStopId: (stopId: number | null) => void
 }
-
-const STOPS = gql(`
-query RouteStops($id: ID!, $direction: String!) {
-    routeStops(id: $id, direction: $direction) {
-        id
-        name
-    }
-}
-`);
 
 interface Option {
-    id: string;
+    id: number;
     label: string;
 }
 
@@ -29,39 +20,45 @@ function Stops(props: StopsProps) {
 
     const direction = props.direction;
 
-    const queryOptions = {
-        skip: (routeId === null) || (direction === null),
-        variables: {
-            id: routeId!,
-            direction: direction!
-        }
-    }
+    const [stops, setStops] = useState<Stop[] | null>(null);
 
-    const {loading, error, data} = useQuery(STOPS,
-        queryOptions);
+    const [error, setError] = useState<Error | null>(null);
 
     const rollbar = useRollbar();
 
-    if (loading) {
-        return null;
-    }
+    useEffect(() => {
+        if ((routeId === null) || (direction === null)) {
+            setStops(null);
 
-    if (error) {
-        const errorData = {
-            error: error,
-            data: data
+            return;
         }
 
-        const errorDataString = JSON.stringify(errorData);
+        const apiConfiguration = new Configuration({
+            basePath: import.meta.env.VITE_BACK_END_URL
+        });
 
-        rollbar.error("An error occurred when trying to fetch the stops", errorDataString);
-    }
+        const routesApi = new RoutesApi(apiConfiguration);
 
-    if (!data) {
+        routesApi.getStops({routeId: routeId, direction: direction})
+                 .then(response => {
+                     setStops(response);
+                 })
+                 .catch(e => {
+                     rollbar.error(e);
+
+                     setError(e);
+                 });
+    }, [direction, rollbar, routeId]);
+
+    if (stops === null) {
         return null;
+    } else if (error) {
+        return (
+            <Alert severity="error">
+                An error occurred while retrieving the stop data. Please check back later.
+            </Alert>
+        );
     }
-
-    const stops = data.routeStops;
 
     const names = new Set<string>();
 
@@ -111,7 +108,7 @@ function Stops(props: StopsProps) {
 
                 props.setStopId(value.id);
 
-                localStorage.setItem("stopId", value.id);
+                localStorage.setItem("stopId", String(value.id));
 
                 window.history.replaceState(null, "", window.location.pathname);
             }}
