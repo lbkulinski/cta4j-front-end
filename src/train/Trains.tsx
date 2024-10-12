@@ -1,7 +1,7 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
-import {Configuration, StationsApi, Train} from "../client";
-import {useEffect, useState} from "react";
+import {Train, useGetArrivals} from "../api/generated.ts";
+import {UseQueryOptions} from "@tanstack/react-query";
 
 interface TrainsProps {
     stationId: number | null
@@ -19,7 +19,9 @@ const lineToHexColor = new Map([
 ]);
 
 function getEta(train: Train) {
-    const arrivalMillis = train.arrivalTime.getTime();
+    const arrivalDate = new Date(train.arrivalTime);
+
+    const arrivalMillis = arrivalDate.getTime();
 
     const predictionDate = new Date(train.predictionTime);
 
@@ -154,55 +156,25 @@ function compareTrains(train0: Train, train1: Train) {
 }
 
 function Trains(props: TrainsProps) {
-    const stationId = props.stationId;
+    const stationId = props.stationId ?? 0;
 
-    const [arrivals, setArrivals] = useState<Train[] | null>(null);
-
-    const [error, setError] = useState<Error | null>(null);
+    const {data, isLoading, error} = useGetArrivals({stationId}, {
+        enabled: stationId != null,
+    });
 
     const rollbar = useRollbar();
-
-    useEffect(() => {
-        const fetchArrivals = () => {
-            if (stationId === null) {
-                setArrivals(null);
-
-                return;
-            }
-
-            const apiConfiguration = new Configuration({
-                basePath: import.meta.env.VITE_BACK_END_URL
-            })
-
-            const stationsApi = new StationsApi(apiConfiguration);
-
-            stationsApi.getArrivals({stationId: stationId})
-                       .then(response => {
-                           setArrivals(response);
-                       })
-                       .catch(error => {
-                           rollbar.error(error);
-
-                           setError(error);
-                       });
-        }
-
-        fetchArrivals();
-
-        const interval = setInterval(fetchArrivals, 60000);
-
-        return () => clearInterval(interval);
-    }, [stationId, error, rollbar]);
     
-    if (arrivals === null) {
+    if (isLoading) {
         return null;
     } else if (error) {
+        rollbar.error(error);
+
         return (
             <Alert severity="error">
                 An error occurred while retrieving the train data. Please check back later.
             </Alert>
         );
-    } else if (arrivals.length === 0) {
+    } else if (data.length === 0) {
         return (
             <Alert severity="warning">
                 There are no upcoming trains at this time. Please check back later.
@@ -210,9 +182,9 @@ function Trains(props: TrainsProps) {
         );
     }
 
-    arrivals.sort(compareTrains);
+    data.sort(compareTrains);
 
-    return getTable(arrivals);
+    return getTable(data);
 }
 
 export default Trains;

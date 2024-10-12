@@ -1,7 +1,6 @@
 import {Alert, Autocomplete, TextField} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
-import {Configuration, Station, StationsApi} from "../client";
-import {useEffect, useState} from "react";
+import {useGetStations, Station} from "../api/generated.ts";
 
 interface StationsProps {
     stationId: number | null,
@@ -14,36 +13,24 @@ interface Option {
 }
 
 function Stations(props: StationsProps) {
-    const [stations, setStations] = useState<Station[] | null>(null);
-
-    const [error, setError] = useState<Error | null>(null);
+    const {data, isLoading, error} = useGetStations();
 
     const rollbar = useRollbar();
 
-    useEffect(() => {
-        const apiConfiguration = new Configuration({
-            basePath: import.meta.env.VITE_BACK_END_URL
-        });
-
-        const stationsApi = new StationsApi(apiConfiguration);
-
-        stationsApi.getStations()
-                   .then(response => {
-                       setStations(response);
-                   })
-                   .catch(e => {
-                       rollbar.error(e);
-
-                       setError(e);
-                   });
-    }, [rollbar]);
-
-    if (stations === null) {
+    if (isLoading) {
         return null;
     } else if (error) {
+        rollbar.error(error);
+
         return (
             <Alert severity="error">
                 An error occurred while retrieving the station data. Please check back later.
+            </Alert>
+        );
+    } else if ((data === null) || (data.length === 0)) {
+        return (
+            <Alert severity="warning">
+                There are no stations to choose from. Please check back later.
             </Alert>
         );
     }
@@ -54,7 +41,7 @@ function Stations(props: StationsProps) {
 
     let defaultOption: Option | null = null;
 
-    stations.forEach(station => {
+    data.forEach((station: Station) => {
         const id = station.id;
 
         const name = station.name;
