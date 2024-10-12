@@ -1,7 +1,6 @@
 import {Alert, Autocomplete, TextField} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
-import {useEffect, useState} from "react";
-import {Configuration, RoutesApi} from "../client";
+import {useGetDirections} from "../api/generated.ts";
 
 interface DirectionsProps {
     routeId: string | null,
@@ -16,44 +15,32 @@ interface Option {
 }
 
 function Directions(props: DirectionsProps) {
-    const routeId = props.routeId;
+    const routeId = props.routeId ?? "";
 
-    const [directions, setDirections] = useState<string[] | null>(null);
+    const queryOptions = {
+        query: {
+            enabled: routeId != null
+        }
+    };
 
-    const [error, setError] = useState<Error | null>(null);
+    const {data, isLoading, error} = useGetDirections(routeId, queryOptions);
 
     const rollbar = useRollbar();
 
-    useEffect(() => {
-        if (routeId === null) {
-            setDirections(null);
-
-            return;
-        }
-        
-        const apiConfiguration = new Configuration({
-            basePath: import.meta.env.VITE_BACK_END_URL
-        });
-
-        const routesApi = new RoutesApi(apiConfiguration);
-
-        routesApi.getDirections({routeId: routeId})
-                 .then(response => {
-                     setDirections(response);
-                 })
-                 .catch(e => {
-                     rollbar.error(e);
-
-                     setError(e);
-                 });
-    }, [rollbar, routeId]);
-
-    if (directions === null) {
+    if (isLoading) {
         return null;
     } else if (error) {
+        rollbar.error(error);
+
         return (
             <Alert severity="error">
                 An error occurred while retrieving the direction data. Please check back later.
+            </Alert>
+        );
+    } else if (!data || data.length === 0) {
+        return (
+            <Alert severity="warning">
+                There are no directions to choose from. Please check back later.
             </Alert>
         );
     }
@@ -64,7 +51,7 @@ function Directions(props: DirectionsProps) {
 
     let defaultOption: Option | null = null;
 
-    directions.forEach(direction => {
+    data.forEach(direction => {
         if ((direction === props.direction)) {
             defaultOption = {
                 id: direction,

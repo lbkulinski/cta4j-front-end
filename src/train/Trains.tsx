@@ -1,7 +1,6 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
 import {Train, useGetArrivals} from "../api/generated.ts";
-import {UseQueryOptions} from "@tanstack/react-query";
 
 interface TrainsProps {
     stationId: number | null
@@ -158,9 +157,13 @@ function compareTrains(train0: Train, train1: Train) {
 function Trains(props: TrainsProps) {
     const stationId = props.stationId ?? 0;
 
-    const {data, isLoading, error} = useGetArrivals({stationId}, {
-        enabled: stationId != null,
-    });
+    const queryOptions = {
+        query: {
+            enabled: stationId != null
+        }
+    };
+
+    const {data, isLoading, error} = useGetArrivals(stationId, queryOptions);
 
     const rollbar = useRollbar();
     
@@ -174,7 +177,7 @@ function Trains(props: TrainsProps) {
                 An error occurred while retrieving the train data. Please check back later.
             </Alert>
         );
-    } else if (data.length === 0) {
+    } else if (!data || data.length === 0) {
         return (
             <Alert severity="warning">
                 There are no upcoming trains at this time. Please check back later.

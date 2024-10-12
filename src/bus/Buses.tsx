@@ -1,7 +1,6 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
-import {Bus, Configuration, RoutesApi} from "../client";
-import {useEffect, useState} from "react";
+import {Bus, useGetArrivals1} from "../api/generated.ts";
 
 interface BusesProps {
     routeId: string | null,
@@ -130,57 +129,31 @@ function compareBuses(bus0: Bus, bus1: Bus) {
 }
 
 function Buses(props: BusesProps) {
-    const routeId = props.routeId;
+    const routeId = props.routeId ?? "";
 
-    const stopId = props.stopId;
+    const stopId = props.stopId ?? 0;
 
-    const [arrivals, setArrivals] = useState<Bus[] | null>(null);
+    const queryOptions = {
+        query: {
+            enabled: routeId != null
+        }
+    };
 
-    const [error, setError] = useState<Error | null>(null);
+    const {data, isLoading, error} = useGetArrivals1(routeId, stopId, queryOptions);
 
     const rollbar = useRollbar();
 
-    useEffect(() => {
-        const fetchArrivals = () => {
-            if ((routeId === null) || (stopId === null)) {
-                setArrivals(null);
-
-                return;
-            }
-
-            const apiConfiguration = new Configuration({
-                basePath: import.meta.env.VITE_BACK_END_URL
-            })
-
-            const routesApi = new RoutesApi(apiConfiguration);
-
-            routesApi.getArrivals1({routeId: routeId, stopId: stopId})
-                     .then(response => {
-                         setArrivals(response);
-                     })
-                     .catch(error => {
-                         rollbar.error(error);
-
-                         setError(error);
-                     });
-        };
-
-        fetchArrivals();
-
-        const interval = setInterval(fetchArrivals, 60000);
-
-        return () => clearInterval(interval);
-    }, [error, rollbar, routeId, stopId]);
-
-    if (arrivals === null) {
+    if (isLoading) {
         return null;
     } else if (error) {
+        rollbar.error(error);
+
         return (
             <Alert severity="error">
                 An error occurred while retrieving the bus data. Please check back later.
             </Alert>
         );
-    } else if (arrivals.length === 0) {
+    } else if (!data || data.length === 0) {
         return (
             <Alert severity="warning">
                 There are no upcoming buses at this time. Please check back later.
@@ -188,9 +161,9 @@ function Buses(props: BusesProps) {
         );
     }
 
-    arrivals.sort(compareBuses);
+    data.sort(compareBuses);
 
-    return getTable(arrivals);
+    return getTable(data);
 }
 
 export default Buses;

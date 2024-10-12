@@ -1,6 +1,6 @@
 import {Alert, Autocomplete, TextField} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
-import {useGetStations, Station} from "../api/generated.ts";
+import {useGetStations} from "../api/generated.ts";
 
 interface StationsProps {
     stationId: number | null,
@@ -27,7 +27,7 @@ function Stations(props: StationsProps) {
                 An error occurred while retrieving the station data. Please check back later.
             </Alert>
         );
-    } else if ((data === null) || (data.length === 0)) {
+    } else if (!data || (data.length === 0)) {
         return (
             <Alert severity="warning">
                 There are no stations to choose from. Please check back later.
@@ -41,7 +41,7 @@ function Stations(props: StationsProps) {
 
     let defaultOption: Option | null = null;
 
-    data.forEach((station: Station) => {
+    data.forEach(station => {
         const id = station.id;
 
         const name = station.name;

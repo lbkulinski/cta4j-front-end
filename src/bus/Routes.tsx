@@ -1,7 +1,6 @@
 import {Alert, Autocomplete, TextField} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
-import {useEffect, useState} from "react";
-import {Configuration, Route, RoutesApi} from "../client";
+import {useGetStations} from "../api/generated.ts";
 
 interface RoutesProps {
     routeId: string | null,
@@ -16,36 +15,24 @@ interface Option {
 }
 
 function Routes(props: RoutesProps) {
-    const [routes, setRoutes] = useState<Route[] | null>(null);
-
-    const [error, setError] = useState<Error | null>(null);
+    const {data, isLoading, error} = useGetStations();
 
     const rollbar = useRollbar();
 
-    useEffect(() => {
-        const apiConfiguration = new Configuration({
-            basePath: import.meta.env.VITE_BACK_END_URL
-        });
-
-        const routesApi = new RoutesApi(apiConfiguration);
-
-        routesApi.getRoutes()
-                 .then(response => {
-                     setRoutes(response);
-                 })
-                 .catch(e => {
-                     rollbar.error(e);
-
-                     setError(e);
-                 });
-    }, [rollbar]);
-
-    if (routes === null) {
+    if (isLoading) {
         return null;
     } else if (error) {
+        rollbar.error(error);
+
         return (
             <Alert severity="error">
                 An error occurred while retrieving the station data. Please check back later.
+            </Alert>
+        );
+    } else if (!data || (data.length === 0)) {
+        return (
+            <Alert severity="warning">
+                There are no routes to choose from. Please check back later.
             </Alert>
         );
     }
@@ -56,16 +43,18 @@ function Routes(props: RoutesProps) {
 
     let defaultOption: Option | null = null;
 
-    routes.forEach(route => {
+    data.forEach(route => {
         const id = route.id;
+
+        const idString = id.toString();
 
         const name = route.name;
 
         const label = `${name} (${route.id})`;
 
-        if ((id === props.routeId)) {
+        if ((idString === props.routeId)) {
             defaultOption = {
-                id: id,
+                id: idString,
                 label: label
             };
         }
@@ -77,7 +66,7 @@ function Routes(props: RoutesProps) {
         names.add(name);
 
         options.push({
-            id: route.id,
+            id: idString,
             label: label
         });
     });

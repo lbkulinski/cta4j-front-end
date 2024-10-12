@@ -1,7 +1,6 @@
 import {Alert, Autocomplete, TextField} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
-import {useEffect, useState} from "react";
-import {Configuration, RoutesApi, Stop} from "../client";
+import {useGetStops} from "../api/generated.ts";
 
 interface StopsProps {
     routeId: string | null,
@@ -16,46 +15,34 @@ interface Option {
 }
 
 function Stops(props: StopsProps) {
-    const routeId = props.routeId;
+    const routeId = props.routeId ?? "";
 
-    const direction = props.direction;
+    const direction = props.direction ?? "";
 
-    const [stops, setStops] = useState<Stop[] | null>(null);
+    const queryOptions = {
+        query: {
+            enabled: routeId != null
+        }
+    };
 
-    const [error, setError] = useState<Error | null>(null);
+    const {data, isLoading, error} = useGetStops(routeId, direction, queryOptions);
 
     const rollbar = useRollbar();
 
-    useEffect(() => {
-        if ((routeId === null) || (direction === null)) {
-            setStops(null);
-
-            return;
-        }
-
-        const apiConfiguration = new Configuration({
-            basePath: import.meta.env.VITE_BACK_END_URL
-        });
-
-        const routesApi = new RoutesApi(apiConfiguration);
-
-        routesApi.getStops({routeId: routeId, direction: direction})
-                 .then(response => {
-                     setStops(response);
-                 })
-                 .catch(e => {
-                     rollbar.error(e);
-
-                     setError(e);
-                 });
-    }, [direction, rollbar, routeId]);
-
-    if (stops === null) {
+    if (isLoading) {
         return null;
     } else if (error) {
+        rollbar.error(error);
+
         return (
             <Alert severity="error">
                 An error occurred while retrieving the stop data. Please check back later.
+            </Alert>
+        );
+    } else if (!data || data.length === 0) {
+        return (
+            <Alert severity="warning">
+                There are no stops to choose from. Please check back later.
             </Alert>
         );
     }
@@ -66,7 +53,7 @@ function Stops(props: StopsProps) {
 
     let defaultOption: Option | null = null;
 
-    stops.forEach(stop => {
+    data.forEach(stop => {
         const id = stop.id;
 
         const name = stop.name;
