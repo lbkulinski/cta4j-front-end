@@ -10,6 +10,7 @@ import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {ErrorBoundary, Provider} from "@rollbar/react";
 import BusApp from "./bus/BusApp.tsx";
 import HolidayApp from "./holiday-train/HolidayApp.tsx";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const rollbarConfig = {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
@@ -45,6 +46,8 @@ const router = createBrowserRouter([
     }
 ]);
 
+const queryClient = new QueryClient();
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <Provider config={rollbarConfig}>
@@ -52,7 +55,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
                 <ThemeProvider theme={darkTheme}>
                     <CssBaseline />
                     <MenuBar />
-                    <RouterProvider router={router} />
+                    <QueryClientProvider client={queryClient}>
+                        <RouterProvider router={router} />
+                    </QueryClientProvider>
                 </ThemeProvider>
             </ErrorBoundary>
         </Provider>

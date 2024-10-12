@@ -129,13 +129,13 @@ function compareBuses(bus0: Bus, bus1: Bus) {
 }
 
 function Buses(props: BusesProps) {
-    const routeId = props.routeId ?? "";
+    const routeId = props.routeId;
 
-    const stopId = props.stopId ?? 0;
+    const stopId = props.stopId;
 
     const queryOptions = {
         query: {
-            enabled: routeId != null
+            enabled: (routeId != null) && (stopId != null)
         }
     };
 

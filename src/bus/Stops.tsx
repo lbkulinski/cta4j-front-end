@@ -15,13 +15,13 @@ interface Option {
 }
 
 function Stops(props: StopsProps) {
-    const routeId = props.routeId ?? "";
+    const routeId = props.routeId;
 
-    const direction = props.direction ?? "";
+    const direction = props.direction;
 
     const queryOptions = {
         query: {
-            enabled: routeId != null
+            enabled: (routeId != null) && (direction != null)
         }
     };
 

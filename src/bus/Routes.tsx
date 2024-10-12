@@ -1,6 +1,6 @@
 import {Alert, Autocomplete, TextField} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
-import {useGetStations} from "../api/generated.ts";
+import {useGetRoutes} from "../api/generated.ts";
 
 interface RoutesProps {
     routeId: string | null,
@@ -15,7 +15,7 @@ interface Option {
 }
 
 function Routes(props: RoutesProps) {
-    const {data, isLoading, error} = useGetStations();
+    const {data, isLoading, error} = useGetRoutes();
 
     const rollbar = useRollbar();
 

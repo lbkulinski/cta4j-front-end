@@ -15,7 +15,7 @@ interface Option {
 }
 
 function Directions(props: DirectionsProps) {
-    const routeId = props.routeId ?? "";
+    const routeId = props.routeId;
 
     const queryOptions = {
         query: {
