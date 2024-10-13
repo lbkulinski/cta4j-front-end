@@ -1,4 +1,4 @@
-import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,} from '@mui/material';
+import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
 import {Train, useGetArrivals} from '../api/generated';
 import {AxiosError, isAxiosError} from 'axios';
@@ -148,7 +148,7 @@ function Trains(props: TrainsProps) {
         );
     }
 
-    if (!data || data.length === 0) {
+    if (!data || (data.length === 0)) {
         return (
             <Alert severity="warning">
                 There are no upcoming trains at this time. Please check back later.
