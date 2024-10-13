@@ -1,23 +1,15 @@
-import {Autocomplete, TextField} from "@mui/material";
-import {gql} from "../__generated__";
-import {useQuery} from "@apollo/client";
-import {useRollbar} from "@rollbar/react";
+import React from 'react';
+import { Alert, Autocomplete, TextField } from '@mui/material';
+import { useRollbar } from '@rollbar/react';
+import { useGetRoutes } from '../api/generated';
+import {AxiosError, isAxiosError} from 'axios';
 
 interface RoutesProps {
-    routeId: string | null,
-    setRouteId: (routeId: string | null) => void,
-    setDirection: (direction: string | null) => void,
-    setStopId: (stopId: string | null) => void
+    routeId: string | null;
+    setRouteId: (routeId: string | null) => void;
+    setDirection: (direction: string | null) => void;
+    setStopId: (stopId: number | null) => void;
 }
-
-const ROUTES = gql(`
-query Routes {
-    routes {
-        id
-        name
-    }
-}
-`);
 
 interface Option {
     id: string;
@@ -25,76 +17,125 @@ interface Option {
 }
 
 function Routes(props: RoutesProps) {
-    const {loading, error, data} = useQuery(ROUTES);
+    const { data, isLoading, error } = useGetRoutes();
 
     const rollbar = useRollbar();
 
-    if (loading) {
+    const [defaultOption, setDefaultOption] = React.useState<Option | null>(null);
+
+    const options: Option[] = React.useMemo(() => {
+        if (!data) {
+            return [];
+        }
+
+        return data
+            .map((route) => ({ id: route.id, label: `${route.name} (${route.id})` }))
+            .sort((a, b) => a.label.localeCompare(b.label));
+    }, [data]);
+
+    const getDefaultRouteId = React.useCallback((): string | null => {
+        const searchParams = new URLSearchParams(window.location.search);
+
+        const urlRouteId = searchParams.get('routeId');
+
+        const localStorageRouteId = localStorage.getItem('routeId');
+
+        return urlRouteId ?? localStorageRouteId;
+    }, []);
+
+    React.useEffect(() => {
+        if (isLoading || !data) {
+            return;
+        }
+
+        const defaultRouteId = getDefaultRouteId();
+
+        if (defaultRouteId) {
+            const route = data.find((route) => route.id === defaultRouteId);
+
+            if (route) {
+                const id = route.id.toString();
+
+                const label = `${route.name} (${id})`;
+
+                setDefaultOption({id, label});
+
+                props.setRouteId(id);
+            } else {
+                props.setRouteId(null);
+
+                setDefaultOption(null);
+            }
+        }
+    }, [isLoading, data, props]);
+
+    if (isLoading) {
         return null;
     }
 
     if (error) {
-        const errorData = {
-            error: error,
-            data: data
+        rollbar.error(error);
+
+        if (isAxiosError(error)) {
+            const statusCode = (error as AxiosError).response?.status;
+
+            if (statusCode === 404) {
+                return (
+                    <Alert severity='warning'>
+                        There are no routes to choose from. Please check back later.
+                    </Alert>
+                );
+            }
         }
 
-        const errorDataString = JSON.stringify(errorData);
-
-        rollbar.error("An error occurred when trying to fetch the routes", errorDataString);
+        return (
+            <Alert severity='error'>
+                An error occurred while retrieving the route data. Please check back later.
+            </Alert>
+        );
     }
 
-    if (!data) {
-        return null;
+    if (!data || (data.length === 0)) {
+        return (
+            <Alert severity='warning'>
+                There are no routes to choose from. Please check back later.
+            </Alert>
+        );
     }
-
-    const routes = data.routes;
-
-    const names = new Set<string>();
-
-    const options = new Array<Option>();
-
-    let defaultOption: Option | null = null;
-
-    routes.forEach(route => {
-        const id = route.id;
-
-        const name = route.name;
-
-        const label = `${name} (${route.id})`;
-
-        if ((id === props.routeId)) {
-            defaultOption = {
-                id: id,
-                label: label
-            };
-        }
-
-        if (names.has(name)) {
-            return;
-        }
-
-        names.add(name);
-
-        options.push({
-            id: route.id,
-            label: label
-        });
-    });
-
-    options.sort((option0, option1) => option0.label.localeCompare(option1.label));
 
     return (
         <Autocomplete
-            sx={{p: 2, maxWidth: 500}}
-            size={"small"}
-            renderInput={(params) => <TextField {...params} label="Route"/>}
+            sx={{ p: 2, maxWidth: 500 }}
+            size='small'
+            renderInput={(params) => <TextField {...params} label='Route' />}
             options={options}
             value={defaultOption}
             defaultValue={null}
+            getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderOption={(props, option) => (
+                <li {...props} key={option.id}>
+                    {option.label}
+                </li>
+            )}
             onChange={(_, value) => {
                 if (!value) {
+                    props.setRouteId(null);
+
+                    props.setDirection(null);
+
+                    props.setStopId(null);
+
+                    setDefaultOption(null);
+
+                    localStorage.removeItem('routeId');
+
+                    localStorage.removeItem('direction');
+
+                    localStorage.removeItem('stopId');
+
+                    window.history.replaceState(null, '', window.location.pathname);
+
                     return;
                 }
 
@@ -104,13 +145,15 @@ function Routes(props: RoutesProps) {
 
                 props.setStopId(null);
 
-                localStorage.setItem("routeId", value.id);
+                setDefaultOption(value);
 
-                localStorage.removeItem("direction");
+                localStorage.setItem('routeId', value.id);
 
-                localStorage.removeItem("stopId");
+                localStorage.removeItem('direction');
 
-                window.history.replaceState(null, "", window.location.pathname);
+                localStorage.removeItem('stopId');
+
+                window.history.replaceState(null, '', window.location.pathname);
             }}
         />
     );

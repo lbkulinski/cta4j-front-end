@@ -4,15 +4,7 @@ import Trains from "./Trains.tsx";
 import Stations from "./Stations.tsx";
 
 function TrainApp() {
-    const searchParams = new URLSearchParams(window.location.search);
-
-    let defaultStationId = searchParams.get("stationId");
-
-    if (defaultStationId === null) {
-        defaultStationId = localStorage.getItem("stationId");
-    }
-
-    const [stationId, setStationId] = React.useState<string | null>(defaultStationId);
+    const [stationId, setStationId] = React.useState<number | null>(null);
 
     return (
         <div>

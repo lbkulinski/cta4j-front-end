@@ -1,119 +1,117 @@
-import {useQuery} from "@apollo/client";
-import {Autocomplete, TextField} from "@mui/material";
-import {gql} from "../__generated__";
-import {useRollbar} from "@rollbar/react";
+import React from 'react';
+import {Alert, Autocomplete, TextField} from '@mui/material';
+import {useRollbar} from '@rollbar/react';
+import {useGetStops} from '../api/generated';
+import {AxiosError, isAxiosError} from 'axios';
 
 interface StopsProps {
-    routeId: string | null,
-    direction: string | null,
-    stopId: string | null,
-    setStopId: (stopId: string | null) => void
+    routeId: string | null;
+    direction: string | null;
+    stopId: number | null;
+    setStopId: (stopId: number | null) => void;
 }
-
-const STOPS = gql(`
-query RouteStops($id: ID!, $direction: String!) {
-    routeStops(id: $id, direction: $direction) {
-        id
-        name
-    }
-}
-`);
 
 interface Option {
-    id: string;
+    id: number;
     label: string;
 }
 
 function Stops(props: StopsProps) {
-    const routeId = props.routeId;
-
-    const direction = props.direction;
-
-    const queryOptions = {
-        skip: (routeId === null) || (direction === null),
-        variables: {
-            id: routeId!,
-            direction: direction!
-        }
-    }
-
-    const {loading, error, data} = useQuery(STOPS,
-        queryOptions);
+    const { routeId, direction, stopId, setStopId } = props;
 
     const rollbar = useRollbar();
 
-    if (loading) {
+    const normalizedRouteId = routeId ?? '';
+
+    const normalizedDirectionValue = direction ?? '';
+
+    const { data, isLoading, error } = useGetStops(normalizedRouteId, normalizedDirectionValue, {
+        query: {
+            enabled: routeId != null && direction != null,
+        },
+    });
+
+    const options: Option[] = React.useMemo(() => {
+        if (!data) {
+            return [];
+        }
+
+        return data
+            .map((stop) => ({ id: stop.id, label: stop.name }))
+            .sort((a, b) => a.label.localeCompare(b.label));
+    }, [data]);
+
+    if ((routeId == null) || (direction == null)) {
+        return null;
+    }
+
+    if (isLoading) {
         return null;
     }
 
     if (error) {
-        const errorData = {
-            error: error,
-            data: data
+        rollbar.error(error);
+
+        if (isAxiosError(error)) {
+            const statusCode = (error as AxiosError).response?.status;
+
+            if (statusCode === 404) {
+                return (
+                    <Alert severity='warning'>
+                        There are no stops to choose from. Please check back later.
+                    </Alert>
+                );
+            }
         }
 
-        const errorDataString = JSON.stringify(errorData);
-
-        rollbar.error("An error occurred when trying to fetch the stops", errorDataString);
+        return (
+            <Alert severity='error'>
+                An error occurred while retrieving the stop data. Please check back later.
+            </Alert>
+        );
     }
 
-    if (!data) {
-        return null;
+    if (!data || (data.length === 0)) {
+        return (
+            <Alert severity='warning'>
+                There are no stops to choose from. Please check back later.
+            </Alert>
+        );
     }
 
-    const stops = data.routeStops;
-
-    const names = new Set<string>();
-
-    const options = new Array<Option>();
-
-    let defaultOption: Option | null = null;
-
-    stops.forEach(stop => {
-        const id = stop.id;
-
-        const name = stop.name;
-
-        if ((id === props.stopId)) {
-            defaultOption = {
-                id: id,
-                label: name
-            };
-        }
-
-        if (names.has(name)) {
-            return;
-        }
-
-        names.add(name);
-
-        options.push({
-            id: id,
-            label: name
-        });
-    });
-
-    options.sort((option0, option1) => option0.label.localeCompare(option1.label));
+    const selectedOption = options.find((option) => option.id === stopId) || null;
 
     return (
         <Autocomplete
-            sx={{p: 2, maxWidth: 500}}
-            size={"small"}
-            renderInput={(params) => <TextField {...params} label="Stop"/>}
+            sx={{ p: 2, maxWidth: 500 }}
+            size='small'
+            renderInput={(params) => <TextField {...params} label='Stop' />}
             options={options}
-            value={defaultOption}
+            value={selectedOption}
             defaultValue={null}
+            getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderOption={(props, option) => (
+                <li {...props} key={option.id}>
+                    {option.label}
+                </li>
+            )}
             onChange={(_, value) => {
                 if (!value) {
+                    setStopId(null);
+                    
+                    localStorage.removeItem('stopId');
+                    
+                    window.history.replaceState(null, '', window.location.pathname);
+                    
                     return;
                 }
 
-                props.setStopId(value.id);
-
-                localStorage.setItem("stopId", value.id);
-
-                window.history.replaceState(null, "", window.location.pathname);
+                setStopId(value.id);
+                
+                localStorage.setItem('stopId', String(value.id));
+                
+                window.history.replaceState(null, '', window.location.pathname);
             }}
         />
     );
