@@ -9,7 +9,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {ErrorBoundary, Provider} from "@rollbar/react";
 import BusApp from "./bus/BusApp.tsx";
-import HolidayApp from "./holiday-train/HolidayApp.tsx";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {AxiosError} from "axios";
 import {isAxiosError} from "./api/axios-instance.ts";
@@ -41,10 +40,6 @@ const router = createBrowserRouter([
     {
         path: "/buses",
         element: <BusApp />
-    },
-    {
-        path: "/holiday-train",
-        element: <HolidayApp />
     }
 ]);
 
