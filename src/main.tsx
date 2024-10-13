@@ -11,6 +11,8 @@ import {ErrorBoundary, Provider} from "@rollbar/react";
 import BusApp from "./bus/BusApp.tsx";
 import HolidayApp from "./holiday-train/HolidayApp.tsx";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {AxiosError} from "axios";
+import {isAxiosError} from "./api/axios-instance.ts";
 
 const rollbarConfig = {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
@@ -46,7 +48,24 @@ const router = createBrowserRouter([
     }
 ]);
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            retry: (failureCount, error) => {
+                if (isAxiosError(error)) {
+                    const status = (error as AxiosError)?.response?.status;
+
+                    if (status === 404) {
+                        return false;
+                    }
+                }
+
+                return failureCount < 2;
+            },
+            retryDelay: () => 500
+        },
+    },
+});
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>

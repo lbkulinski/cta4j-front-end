@@ -119,11 +119,7 @@ function Routes(props: RoutesProps) {
                 </li>
             )}
             onChange={(_, value) => {
-                console.log('changed');
-
                 if (!value) {
-                    console.log('no value');
-
                     props.setRouteId(null);
 
                     props.setDirection(null);
