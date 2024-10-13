@@ -29,9 +29,7 @@ function getRow(bus: Bus) {
         backgroundColor = '#381717';
     }
 
-    const rowStyles = {
-        backgroundColor
-    };
+    const rowStyles = { backgroundColor };
 
     const etaString = eta <= 1 ? 'Due' : `${eta} min`;
 
@@ -86,7 +84,7 @@ function compareBuses(bus0: Bus, bus1: Bus) {
 }
 
 function Buses(props: BusesProps) {
-    const {routeId, stopId} = props;
+    const { routeId, stopId } = props;
 
     const rollbar = useRollbar();
 
@@ -94,7 +92,7 @@ function Buses(props: BusesProps) {
 
     const normalizedStopId = stopId ?? -1;
 
-    const {data, isLoading, error} = useGetArrivals1(normalizedRouteId, normalizedStopId, {
+    const { data, isLoading, error } = useGetArrivals1(normalizedRouteId, normalizedStopId, {
         query: {
             enabled: (routeId != null) && (stopId != null),
             refetchInterval: 60000,

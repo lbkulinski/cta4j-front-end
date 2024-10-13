@@ -1,41 +1,40 @@
 import React from 'react';
-import { useGetStations } from '../api/generated.ts';
-import { Station } from '../api/generated';
 import { Alert, Autocomplete, TextField } from '@mui/material';
 import { useRollbar } from '@rollbar/react';
-import {AxiosError, isAxiosError} from 'axios';
+import { useGetStations } from '../api/generated';
+import { AxiosError, isAxiosError } from 'axios';
+
+interface StationsProps {
+    stationId: number | null;
+    setStationId: (stationId: number | null) => void;
+}
 
 interface Option {
     id: number;
     label: string;
 }
 
-interface StationsProps {
-    stationId: number | null;
-    setStationId: (id: number | null) => void;
-}
-
 function Stations(props: StationsProps) {
     const { data, isLoading, error } = useGetStations();
-
+    
     const rollbar = useRollbar();
-
-    const [defaultOption, setDefaultOption] = React.useState<Option | null>(null);
 
     const options: Option[] = React.useMemo(() => {
         if (!data) {
             return [];
         }
 
-        return data.map((station) => ({id: station.id, label: station.name,}))
+        return data.map((station) => ({ id: station.id, label: station.name }))
                    .sort((a, b) => a.label.localeCompare(b.label));
     }, [data]);
+    
+    const selectedOption = options.find((option) => option.id === props.stationId) || null;
 
     const getDefaultStationId = React.useCallback((): number | null => {
         const searchParams = new URLSearchParams(window.location.search);
 
         const urlStationId = searchParams.get('stationId');
-
+        
         const localStorageStationId = localStorage.getItem('stationId');
 
         const defaultStationId = urlStationId ?? localStorageStationId;
@@ -51,16 +50,12 @@ function Stations(props: StationsProps) {
         const defaultStationId = getDefaultStationId();
 
         if (defaultStationId != null) {
-            const station = data.find((station: Station) => station.id === defaultStationId);
+            const station = data.find((station) => station.id === defaultStationId);
 
             if (station) {
                 props.setStationId(defaultStationId);
-
-                setDefaultOption({ id: station.id, label: station.name });
             } else {
                 props.setStationId(null);
-
-                setDefaultOption(null);
             }
         }
     }, [isLoading, data, getDefaultStationId, props]);
@@ -105,14 +100,17 @@ function Stations(props: StationsProps) {
             size='small'
             renderInput={(params) => <TextField {...params} label='Station' />}
             options={options}
-            value={defaultOption}
-            defaultValue={null}
+            value={selectedOption}
+            getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderOption={(props, option) => (
+                <li {...props} key={option.id}>
+                    {option.label}
+                </li>
+            )}
             onChange={(_, value) => {
                 if (!value) {
                     props.setStationId(null);
-
-                    setDefaultOption(null);
 
                     localStorage.removeItem('stationId');
 
@@ -122,8 +120,6 @@ function Stations(props: StationsProps) {
                 }
 
                 props.setStationId(value.id);
-
-                setDefaultOption(value);
 
                 localStorage.setItem('stationId', String(value.id));
 

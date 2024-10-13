@@ -17,7 +17,7 @@ interface Option {
 }
 
 function Routes(props: RoutesProps) {
-    const {data, isLoading, error} = useGetRoutes();
+    const { data, isLoading, error } = useGetRoutes();
 
     const rollbar = useRollbar();
 
@@ -28,22 +28,9 @@ function Routes(props: RoutesProps) {
             return [];
         }
 
-        const uniqueRoutes = new Map<string, Option>();
-
-        data.forEach((route) => {
-            const id = route.id.toString();
-
-            const name = route.name;
-
-            const label = `${name} (${id})`;
-
-            if (!uniqueRoutes.has(name)) {
-                uniqueRoutes.set(name, { id, label });
-            }
-        });
-
-        return Array.from(uniqueRoutes.values())
-                    .sort((a, b) => a.label.localeCompare(b.label));
+        return data
+            .map((route) => ({ id: route.id, label: `${route.name} (${route.id})` }))
+            .sort((a, b) => a.label.localeCompare(b.label));
     }, [data]);
 
     const getDefaultRouteId = React.useCallback((): string | null => {
@@ -124,9 +111,19 @@ function Routes(props: RoutesProps) {
             options={options}
             value={defaultOption}
             defaultValue={null}
+            getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderOption={(props, option) => (
+                <li {...props} key={option.id}>
+                    {option.label}
+                </li>
+            )}
             onChange={(_, value) => {
+                console.log('changed');
+
                 if (!value) {
+                    console.log('no value');
+
                     props.setRouteId(null);
 
                     props.setDirection(null);

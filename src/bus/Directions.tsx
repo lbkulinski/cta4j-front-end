@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert, Autocomplete, TextField } from '@mui/material';
 import { useRollbar } from '@rollbar/react';
-import {GetDirections200Item, useGetDirections} from '../api/generated';
+import {useGetDirections} from '../api/generated';
 import {AxiosError, isAxiosError} from 'axios';
 
 interface DirectionsProps {
@@ -17,56 +17,27 @@ interface Option {
 }
 
 function Directions(props: DirectionsProps) {
-    const routeId = props.routeId;
+    const { routeId, direction, setDirection, setStopId } = props;
 
     const rollbar = useRollbar();
 
-    const normalizedStationId = routeId ?? '';
+    const normalizedRouteId = routeId ?? '';
 
-    const {data, isLoading, error} = useGetDirections(normalizedStationId, {
+    const { data, isLoading, error } = useGetDirections(normalizedRouteId, {
         query: {
             enabled: routeId != null,
         },
     });
-
-    const [defaultOption, setDefaultOption] = React.useState<Option | null>(null);
 
     const options: Option[] = React.useMemo(() => {
         if (!data) {
             return [];
         }
 
-        const uniqueDirections = Array.from(new Set(data));
-
-        return uniqueDirections.map((direction) => ({id: direction, label: direction }))
-                               .sort((a, b) => a.label.localeCompare(b.label));
+        return data
+            .map((direction) => ({ id: direction, label: direction }))
+            .sort((a, b) => a.label.localeCompare(b.label));
     }, [data]);
-
-    React.useEffect(() => {
-        if (isLoading || !data) {
-            return;
-        }
-
-        const searchParams = new URLSearchParams(window.location.search);
-
-        const urlDirection = searchParams.get('direction');
-
-        const localStorageDirection = localStorage.getItem('direction');
-
-        const defaultDirection = urlDirection ?? localStorageDirection;
-
-        if (defaultDirection) {
-            if (data.includes((defaultDirection as GetDirections200Item))) {
-                setDefaultOption({ id: defaultDirection, label: defaultDirection });
-
-                props.setDirection(defaultDirection);
-            } else {
-                props.setDirection(null);
-
-                setDefaultOption(null);
-            }
-        }
-    }, [isLoading, data, props]);
 
     if (routeId == null) {
         return null;
@@ -106,22 +77,28 @@ function Directions(props: DirectionsProps) {
         );
     }
 
+    const selectedOption = options.find((option) => option.id === direction) || null;
+
     return (
         <Autocomplete
             sx={{ p: 2, maxWidth: 500 }}
             size='small'
             renderInput={(params) => <TextField {...params} label='Direction' />}
             options={options}
-            value={defaultOption}
+            value={selectedOption}
             defaultValue={null}
+            getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderOption={(props, option) => (
+                <li {...props} key={option.id}>
+                    {option.label}
+                </li>
+            )}
             onChange={(_, value) => {
                 if (!value) {
-                    props.setDirection(null);
+                    setDirection(null);
 
-                    props.setStopId(null);
-
-                    setDefaultOption(null);
+                    setStopId(null);
 
                     localStorage.removeItem('direction');
 
@@ -132,14 +109,12 @@ function Directions(props: DirectionsProps) {
                     return;
                 }
 
-                props.setDirection(value.id);
+                setDirection(value.id);
 
-                props.setStopId(null);
-
-                setDefaultOption(value);
+                setStopId(null);
 
                 localStorage.setItem('direction', value.id);
-                
+
                 localStorage.removeItem('stopId');
 
                 window.history.replaceState(null, '', window.location.pathname);
