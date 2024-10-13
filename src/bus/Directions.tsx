@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert, Autocomplete, TextField } from '@mui/material';
 import { useRollbar } from '@rollbar/react';
-import {useGetDirections} from '../api/generated';
+import {GetDirections200Item, useGetDirections} from '../api/generated';
 import {AxiosError, isAxiosError} from 'axios';
 
 interface DirectionsProps {
@@ -17,7 +17,7 @@ interface Option {
 }
 
 function Directions(props: DirectionsProps) {
-    const { routeId, direction, setDirection, setStopId } = props;
+    const { routeId, setDirection, setStopId } = props;
 
     const rollbar = useRollbar();
 
@@ -29,6 +29,8 @@ function Directions(props: DirectionsProps) {
         },
     });
 
+    const [defaultOption, setDefaultOption] = React.useState<Option | null>(null);
+
     const options: Option[] = React.useMemo(() => {
         if (!data) {
             return [];
@@ -38,6 +40,45 @@ function Directions(props: DirectionsProps) {
             .map((direction) => ({ id: direction, label: direction }))
             .sort((a, b) => a.label.localeCompare(b.label));
     }, [data]);
+
+    const getDefaultDirection = React.useCallback((): string | null => {
+        const searchParams = new URLSearchParams(window.location.search);
+
+        const urlDirection = searchParams.get('direction');
+
+        const localStorageDirection = localStorage.getItem('direction');
+
+        return urlDirection ?? localStorageDirection;
+    }, []);
+
+    React.useEffect(() => {
+        if (isLoading || !data) {
+            return;
+        }
+
+        const defaultDirection = getDefaultDirection();
+
+        if (defaultDirection) {
+            const directionExists = data.includes(defaultDirection as GetDirections200Item);
+            if (directionExists) {
+                setDefaultOption({ id: defaultDirection, label: defaultDirection });
+
+                setDirection(defaultDirection);
+            } else {
+                setDefaultOption(null);
+
+                setDirection(null);
+
+                setStopId(null);
+
+                localStorage.removeItem('direction');
+
+                localStorage.removeItem('stopId');
+            }
+        } else {
+            setDefaultOption(null);
+        }
+    }, [isLoading, data, getDefaultDirection, setDirection, setStopId]);
 
     if (routeId == null) {
         return null;
@@ -77,15 +118,13 @@ function Directions(props: DirectionsProps) {
         );
     }
 
-    const selectedOption = options.find((option) => option.id === direction) || null;
-
     return (
         <Autocomplete
             sx={{ p: 2, maxWidth: 500 }}
             size='small'
             renderInput={(params) => <TextField {...params} label='Direction' />}
             options={options}
-            value={selectedOption}
+            value={defaultOption}
             defaultValue={null}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.id === value.id}

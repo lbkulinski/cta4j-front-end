@@ -17,7 +17,7 @@ interface Option {
 }
 
 function Stops(props: StopsProps) {
-    const { routeId, direction, stopId, setStopId } = props;
+    const { routeId, direction, setStopId } = props;
 
     const rollbar = useRollbar();
 
@@ -31,6 +31,8 @@ function Stops(props: StopsProps) {
         },
     });
 
+    const [defaultOption, setDefaultOption] = React.useState<Option | null>(null);
+
     const options: Option[] = React.useMemo(() => {
         if (!data) {
             return [];
@@ -40,6 +42,46 @@ function Stops(props: StopsProps) {
             .map((stop) => ({ id: stop.id, label: stop.name }))
             .sort((a, b) => a.label.localeCompare(b.label));
     }, [data]);
+
+    const getDefaultStopId = React.useCallback((): number | null => {
+        const searchParams = new URLSearchParams(window.location.search);
+
+        const urlStopId = searchParams.get('stopId');
+
+        const localStorageStopId = localStorage.getItem('stopId');
+
+        const defaultStopIdString = urlStopId ?? localStorageStopId;
+
+        return defaultStopIdString ? parseInt(defaultStopIdString, 10) : null;
+    }, []);
+
+    React.useEffect(() => {
+        if (isLoading || !data) {
+            return;
+        }
+
+        const defaultStopId = getDefaultStopId();
+
+        if (defaultStopId != null) {
+            const stopExists = data.some((stop) => stop.id === defaultStopId);
+
+            if (stopExists) {
+                const stop = data.find((stop) => stop.id === defaultStopId)!;
+
+                setDefaultOption({ id: stop.id, label: stop.name });
+
+                setStopId(defaultStopId);
+            } else {
+                setDefaultOption(null);
+
+                setStopId(null);
+
+                localStorage.removeItem('stopId');
+            }
+        } else {
+            setDefaultOption(null);
+        }
+    }, [isLoading, data, getDefaultStopId, setStopId]);
 
     if ((routeId == null) || (direction == null)) {
         return null;
@@ -79,15 +121,13 @@ function Stops(props: StopsProps) {
         );
     }
 
-    const selectedOption = options.find((option) => option.id === stopId) || null;
-
     return (
         <Autocomplete
             sx={{ p: 2, maxWidth: 500 }}
             size='small'
             renderInput={(params) => <TextField {...params} label='Stop' />}
             options={options}
-            value={selectedOption}
+            value={defaultOption}
             defaultValue={null}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.id === value.id}
