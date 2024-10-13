@@ -16,7 +16,7 @@ interface Option {
 }
 
 function Routes(props: RoutesProps) {
-    const { routeId, setRouteId } = props;
+    const { routeId, setRouteId, setDirection, setStopId } = props;
 
     const { data, isLoading, error } = useGetRoutes();
 
@@ -81,6 +81,10 @@ function Routes(props: RoutesProps) {
                 if (!value) {
                     setRouteId(null);
 
+                    setDirection(null);
+
+                    setStopId(null);
+
                     localStorage.removeItem('routeId');
 
                     window.history.replaceState(null, '', window.location.pathname);
@@ -89,6 +93,10 @@ function Routes(props: RoutesProps) {
                 }
 
                 setRouteId(value.id);
+
+                setDirection(null);
+
+                setStopId(null);
 
                 localStorage.setItem('routeId', value.id);
 
