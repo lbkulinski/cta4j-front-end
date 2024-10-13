@@ -25,8 +25,6 @@ function Stations(props: StationsProps) {
     }
 
     if (error) {
-        rollbar.error(error);
-
         if (isAxiosError(error)) {
             const statusCode = (error as AxiosError).response?.status;
 
@@ -38,6 +36,8 @@ function Stations(props: StationsProps) {
                 );
             }
         }
+
+        rollbar.error(error);
 
         return (
             <Alert severity='error'>

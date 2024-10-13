@@ -108,8 +108,6 @@ function Buses(props: BusesProps) {
     }
 
     if (error) {
-        rollbar.error(error);
-
         if (isAxiosError(error)) {
             const statusCode = (error as AxiosError).response?.status;
 
@@ -121,6 +119,8 @@ function Buses(props: BusesProps) {
                 );
             }
         }
+
+        rollbar.error(error);
 
         return (
             <Alert severity="error">

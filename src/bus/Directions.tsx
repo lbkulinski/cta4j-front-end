@@ -37,8 +37,6 @@ function Directions(props: DirectionsProps) {
     }
 
     if (error) {
-        rollbar.error(error);
-
         if (isAxiosError(error)) {
             const statusCode = (error as AxiosError).response?.status;
 
@@ -50,6 +48,8 @@ function Directions(props: DirectionsProps) {
                 );
             }
         }
+
+        rollbar.error(error);
 
         return (
             <Alert severity='error'>

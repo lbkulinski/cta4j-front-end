@@ -127,8 +127,6 @@ function Trains(props: TrainsProps) {
     }
 
     if (error) {
-        rollbar.error(error);
-
         if (isAxiosError(error)) {
             const statusCode = (error as AxiosError).response?.status;
 
@@ -140,6 +138,8 @@ function Trains(props: TrainsProps) {
                 );
             }
         }
+
+        rollbar.error(error);
 
         return (
             <Alert severity="error">

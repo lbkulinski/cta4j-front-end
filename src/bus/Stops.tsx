@@ -39,8 +39,6 @@ function Stops(props: StopsProps) {
     }
 
     if (error) {
-        rollbar.error(error);
-
         if (isAxiosError(error)) {
             const statusCode = (error as AxiosError).response?.status;
 
@@ -52,6 +50,8 @@ function Stops(props: StopsProps) {
                 );
             }
         }
+
+        rollbar.error(error);
 
         return (
             <Alert severity='error'>
