@@ -1,4 +1,3 @@
-import React from 'react';
 import { Alert, Autocomplete, TextField } from '@mui/material';
 import { useRollbar } from '@rollbar/react';
 import { useGetStations } from '../api/generated';
@@ -15,50 +14,11 @@ interface Option {
 }
 
 function Stations(props: StationsProps) {
+    const { stationId, setStationId } = props;
+
     const { data, isLoading, error } = useGetStations();
     
     const rollbar = useRollbar();
-
-    const options: Option[] = React.useMemo(() => {
-        if (!data) {
-            return [];
-        }
-
-        return data.map((station) => ({ id: station.id, label: station.name }))
-                   .sort((a, b) => a.label.localeCompare(b.label));
-    }, [data]);
-    
-    const selectedOption = options.find((option) => option.id === props.stationId) || null;
-
-    const getDefaultStationId = React.useCallback((): number | null => {
-        const searchParams = new URLSearchParams(window.location.search);
-
-        const urlStationId = searchParams.get('stationId');
-        
-        const localStorageStationId = localStorage.getItem('stationId');
-
-        const defaultStationId = urlStationId ?? localStorageStationId;
-
-        return defaultStationId ? parseInt(defaultStationId, 10) : null;
-    }, []);
-
-    React.useEffect(() => {
-        if (isLoading || !data) {
-            return;
-        }
-
-        const defaultStationId = getDefaultStationId();
-
-        if (defaultStationId != null) {
-            const station = data.find((station) => station.id === defaultStationId);
-
-            if (station) {
-                props.setStationId(defaultStationId);
-            } else {
-                props.setStationId(null);
-            }
-        }
-    }, [isLoading, data, getDefaultStationId, props]);
 
     if (isLoading) {
         return null;
@@ -94,6 +54,11 @@ function Stations(props: StationsProps) {
         );
     }
 
+    const options: Option[] = data.map((station) => ({ id: station.id, label: station.name }))
+                                  .sort((a, b) => a.label.localeCompare(b.label));
+
+    const selectedOption = options.find((option) => option.id === stationId) || null;
+
     return (
         <Autocomplete
             sx={{ p: 2, maxWidth: 500 }}
@@ -110,7 +75,7 @@ function Stations(props: StationsProps) {
             )}
             onChange={(_, value) => {
                 if (!value) {
-                    props.setStationId(null);
+                    setStationId(null);
 
                     localStorage.removeItem('stationId');
 
@@ -119,7 +84,7 @@ function Stations(props: StationsProps) {
                     return;
                 }
 
-                props.setStationId(value.id);
+                setStationId(value.id);
 
                 localStorage.setItem('stationId', String(value.id));
 

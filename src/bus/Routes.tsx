@@ -1,4 +1,3 @@
-import React from 'react';
 import { Alert, Autocomplete, TextField } from '@mui/material';
 import { useRollbar } from '@rollbar/react';
 import { useGetRoutes } from '../api/generated';
@@ -17,57 +16,11 @@ interface Option {
 }
 
 function Routes(props: RoutesProps) {
+    const { routeId, setRouteId } = props;
+
     const { data, isLoading, error } = useGetRoutes();
 
     const rollbar = useRollbar();
-
-    const [defaultOption, setDefaultOption] = React.useState<Option | null>(null);
-
-    const options: Option[] = React.useMemo(() => {
-        if (!data) {
-            return [];
-        }
-
-        return data
-            .map((route) => ({ id: route.id, label: `${route.name} (${route.id})` }))
-            .sort((a, b) => a.label.localeCompare(b.label));
-    }, [data]);
-
-    const getDefaultRouteId = React.useCallback((): string | null => {
-        const searchParams = new URLSearchParams(window.location.search);
-
-        const urlRouteId = searchParams.get('routeId');
-
-        const localStorageRouteId = localStorage.getItem('routeId');
-
-        return urlRouteId ?? localStorageRouteId;
-    }, []);
-
-    React.useEffect(() => {
-        if (isLoading || !data) {
-            return;
-        }
-
-        const defaultRouteId = getDefaultRouteId();
-
-        if (defaultRouteId) {
-            const route = data.find((route) => route.id === defaultRouteId);
-
-            if (route) {
-                const id = route.id.toString();
-
-                const label = `${route.name} (${id})`;
-
-                setDefaultOption({id, label});
-
-                props.setRouteId(id);
-            } else {
-                props.setRouteId(null);
-
-                setDefaultOption(null);
-            }
-        }
-    }, [isLoading, data, props]);
 
     if (isLoading) {
         return null;
@@ -103,13 +56,19 @@ function Routes(props: RoutesProps) {
         );
     }
 
+    const options: Option[] = data
+        .map((route) => ({ id: route.id, label: `${route.name} (${route.id})` }))
+        .sort((a, b) => a.label.localeCompare(b.label));
+
+    const selectedOption = options.find((option) => option.id === routeId) || null;
+
     return (
         <Autocomplete
             sx={{ p: 2, maxWidth: 500 }}
             size='small'
             renderInput={(params) => <TextField {...params} label='Route' />}
             options={options}
-            value={defaultOption}
+            value={selectedOption}
             defaultValue={null}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -120,38 +79,18 @@ function Routes(props: RoutesProps) {
             )}
             onChange={(_, value) => {
                 if (!value) {
-                    props.setRouteId(null);
-
-                    props.setDirection(null);
-
-                    props.setStopId(null);
-
-                    setDefaultOption(null);
+                    setRouteId(null);
 
                     localStorage.removeItem('routeId');
-
-                    localStorage.removeItem('direction');
-
-                    localStorage.removeItem('stopId');
 
                     window.history.replaceState(null, '', window.location.pathname);
 
                     return;
                 }
 
-                props.setRouteId(value.id);
-
-                props.setDirection(null);
-
-                props.setStopId(null);
-
-                setDefaultOption(value);
+                setRouteId(value.id);
 
                 localStorage.setItem('routeId', value.id);
-
-                localStorage.removeItem('direction');
-
-                localStorage.removeItem('stopId');
 
                 window.history.replaceState(null, '', window.location.pathname);
             }}

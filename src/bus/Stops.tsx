@@ -1,4 +1,3 @@
-import React from 'react';
 import {Alert, Autocomplete, TextField} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
 import {useGetStops} from '../api/generated';
@@ -30,16 +29,6 @@ function Stops(props: StopsProps) {
             enabled: routeId != null && direction != null,
         },
     });
-
-    const options: Option[] = React.useMemo(() => {
-        if (!data) {
-            return [];
-        }
-
-        return data
-            .map((stop) => ({ id: stop.id, label: stop.name }))
-            .sort((a, b) => a.label.localeCompare(b.label));
-    }, [data]);
 
     if ((routeId == null) || (direction == null)) {
         return null;
@@ -79,6 +68,8 @@ function Stops(props: StopsProps) {
         );
     }
 
+    const options: Option[] = data.map((stop) => ({ id: stop.id, label: stop.name }));
+
     const selectedOption = options.find((option) => option.id === stopId) || null;
 
     return (
@@ -102,16 +93,12 @@ function Stops(props: StopsProps) {
                     
                     localStorage.removeItem('stopId');
                     
-                    window.history.replaceState(null, '', window.location.pathname);
-                    
                     return;
                 }
 
                 setStopId(value.id);
                 
                 localStorage.setItem('stopId', String(value.id));
-                
-                window.history.replaceState(null, '', window.location.pathname);
             }}
         />
     );

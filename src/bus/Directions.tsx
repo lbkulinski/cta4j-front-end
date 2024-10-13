@@ -1,4 +1,3 @@
-import React from 'react';
 import { Alert, Autocomplete, TextField } from '@mui/material';
 import { useRollbar } from '@rollbar/react';
 import {useGetDirections} from '../api/generated';
@@ -28,16 +27,6 @@ function Directions(props: DirectionsProps) {
             enabled: routeId != null,
         },
     });
-
-    const options: Option[] = React.useMemo(() => {
-        if (!data) {
-            return [];
-        }
-
-        return data
-            .map((direction) => ({ id: direction, label: direction }))
-            .sort((a, b) => a.label.localeCompare(b.label));
-    }, [data]);
 
     if (routeId == null) {
         return null;
@@ -77,6 +66,8 @@ function Directions(props: DirectionsProps) {
         );
     }
 
+    const options: Option[] = data.map((dir) => ({ id: dir, label: dir }));
+
     const selectedOption = options.find((option) => option.id === direction) || null;
 
     return (
@@ -104,8 +95,6 @@ function Directions(props: DirectionsProps) {
 
                     localStorage.removeItem('stopId');
 
-                    window.history.replaceState(null, '', window.location.pathname);
-
                     return;
                 }
 
@@ -116,8 +105,6 @@ function Directions(props: DirectionsProps) {
                 localStorage.setItem('direction', value.id);
 
                 localStorage.removeItem('stopId');
-
-                window.history.replaceState(null, '', window.location.pathname);
             }}
         />
     );
