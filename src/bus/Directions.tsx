@@ -15,11 +15,11 @@ interface Option {
 }
 
 function Directions(props: DirectionsProps) {
-    const routeId = props.routeId;
+    const routeId = props.routeId ?? "";
 
     const queryOptions = {
         query: {
-            enabled: routeId != null
+            enabled: props.routeId != null
         }
     };
 
@@ -27,7 +27,7 @@ function Directions(props: DirectionsProps) {
 
     const rollbar = useRollbar();
 
-    if (isLoading) {
+    if (isLoading || !data) {
         return null;
     } else if (error) {
         rollbar.error(error);
@@ -37,7 +37,7 @@ function Directions(props: DirectionsProps) {
                 An error occurred while retrieving the direction data. Please check back later.
             </Alert>
         );
-    } else if (!data || data.length === 0) {
+    } else if (data.length === 0) {
         return (
             <Alert severity="warning">
                 There are no directions to choose from. Please check back later.

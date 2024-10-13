@@ -129,13 +129,14 @@ function compareBuses(bus0: Bus, bus1: Bus) {
 }
 
 function Buses(props: BusesProps) {
-    const routeId = props.routeId;
+    const routeId = props.routeId ?? "";
 
-    const stopId = props.stopId;
+    const stopId = props.stopId ?? 0;
 
     const queryOptions = {
         query: {
-            enabled: (routeId != null) && (stopId != null)
+            enabled: (props.routeId != null) && (props.stopId != null),
+            refetchInterval: 60000
         }
     };
 
@@ -143,7 +144,7 @@ function Buses(props: BusesProps) {
 
     const rollbar = useRollbar();
 
-    if (isLoading) {
+    if (isLoading || !data) {
         return null;
     } else if (error) {
         rollbar.error(error);
@@ -153,7 +154,7 @@ function Buses(props: BusesProps) {
                 An error occurred while retrieving the bus data. Please check back later.
             </Alert>
         );
-    } else if (!data || data.length === 0) {
+    } else if (data.length === 0) {
         return (
             <Alert severity="warning">
                 There are no upcoming buses at this time. Please check back later.

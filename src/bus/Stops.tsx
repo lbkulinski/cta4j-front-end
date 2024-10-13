@@ -15,13 +15,13 @@ interface Option {
 }
 
 function Stops(props: StopsProps) {
-    const routeId = props.routeId;
+    const routeId = props.routeId ?? "";
 
-    const direction = props.direction;
+    const direction = props.direction ?? "";
 
     const queryOptions = {
         query: {
-            enabled: (routeId != null) && (direction != null)
+            enabled: (props.routeId != null) && (props.direction != null)
         }
     };
 
@@ -29,7 +29,7 @@ function Stops(props: StopsProps) {
 
     const rollbar = useRollbar();
 
-    if (isLoading) {
+    if (isLoading || !data) {
         return null;
     } else if (error) {
         rollbar.error(error);
@@ -39,7 +39,7 @@ function Stops(props: StopsProps) {
                 An error occurred while retrieving the stop data. Please check back later.
             </Alert>
         );
-    } else if (!data || data.length === 0) {
+    } else if (data.length === 0) {
         return (
             <Alert severity="warning">
                 There are no stops to choose from. Please check back later.
