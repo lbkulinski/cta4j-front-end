@@ -1,104 +1,94 @@
-import {Autocomplete, TextField} from "@mui/material";
-import {useQuery} from "@apollo/client";
-import {useRollbar} from "@rollbar/react";
-import {gql} from "../__generated__";
+import { Alert, Autocomplete, TextField } from '@mui/material';
+import { useRollbar } from '@rollbar/react';
+import { useGetStations } from '../api/generated';
+import { AxiosError, isAxiosError } from 'axios';
 
 interface StationsProps {
-    stationId: string | null,
-    setStationId: (stationId: string | null) => void
+    stationId: number | null;
+    setStationId: (stationId: number | null) => void;
 }
-
-const STATIONS = gql(`
-query Stations {
-    stations {
-        id
-        name
-    }
-}
-`);
 
 interface Option {
-    id: string;
+    id: number;
     label: string;
 }
 
 function Stations(props: StationsProps) {
-    const {loading, error, data} = useQuery(STATIONS);
+    const { stationId, setStationId } = props;
 
+    const { data, isLoading, error } = useGetStations();
+    
     const rollbar = useRollbar();
 
-    if (loading) {
+    if (isLoading) {
         return null;
     }
 
     if (error) {
-        const errorData = {
-            error: error,
-            data: data
+        if (isAxiosError(error)) {
+            const statusCode = (error as AxiosError).response?.status;
+
+            if (statusCode === 404) {
+                return (
+                    <Alert severity='warning'>
+                        There are no stations to choose from. Please check back later.
+                    </Alert>
+                );
+            }
         }
 
-        const errorDataString = JSON.stringify(errorData);
+        rollbar.error(error);
 
-        rollbar.error("An error occurred when trying to fetch the stations", errorDataString);
+        return (
+            <Alert severity='error'>
+                An error occurred while retrieving the station data. Please check back later.
+            </Alert>
+        );
     }
 
-    if (!data) {
-        return null;
+    if (!data || (data.length === 0)) {
+        return (
+            <Alert severity='warning'>
+                There are no stations to choose from. Please check back later.
+            </Alert>
+        );
     }
 
-    const stations = data.stations;
+    const options: Option[] = data.map((station) => ({ id: station.id, label: station.name }))
+                                  .sort((a, b) => a.label.localeCompare(b.label));
 
-    const names = new Set<string>();
-
-    const options = new Array<Option>();
-
-    let defaultOption: Option | null = null;
-
-    stations.forEach(station => {
-        const id = station.id;
-
-        const name = station.name;
-
-        if ((id === props.stationId)) {
-            defaultOption = {
-                id: id,
-                label: name
-            };
-        }
-
-        if (names.has(name)) {
-            return;
-        }
-
-        names.add(name);
-
-        options.push({
-            id: id,
-            label: name
-        });
-    });
-
-    options.sort((option0, option1) => option0.label.localeCompare(option1.label));
+    const selectedOption = options.find((option) => option.id === stationId) || null;
 
     return (
         <Autocomplete
-            sx={{p: 2, maxWidth: 500}}
-            size={"small"}
-            renderInput={(params) => <TextField {...params} label="Station"/>}
+            sx={{ p: 2, maxWidth: 500 }}
+            size='small'
+            renderInput={(params) => <TextField {...params} label='Station' />}
             options={options}
-            value={defaultOption}
-            defaultValue={null}
+            value={selectedOption}
+            getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.id === value.id}
+            renderOption={(props, option) => (
+                <li {...props} key={option.id}>
+                    {option.label}
+                </li>
+            )}
             onChange={(_, value) => {
                 if (!value) {
+                    setStationId(null);
+
+                    localStorage.removeItem('stationId');
+
+                    window.history.replaceState(null, '', window.location.pathname);
+
                     return;
                 }
 
-                props.setStationId(value.id);
+                setStationId(value.id);
 
-                localStorage.setItem("stationId", value.id);
+                localStorage.setItem('stationId', String(value.id));
 
-                window.history.replaceState(null, "", window.location.pathname);
+                window.history.replaceState(null, '', window.location.pathname);
             }}
         />
     );

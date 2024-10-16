@@ -6,37 +6,70 @@ import Stops from "./Stops.tsx";
 import Buses from "./Buses.tsx";
 
 function BusApp() {
-    const searchParams = new URLSearchParams(window.location.search);
+    const [routeId, setRouteId] = React.useState<string | null>(null);
 
-    let defaultRouteId = searchParams.get("routeId");
+    const [direction, setDirection] = React.useState<string | null>(null);
 
-    if (defaultRouteId === null) {
-        defaultRouteId = localStorage.getItem("routeId");
-    }
+    const [stopId, setStopId] = React.useState<number | null>(null);
 
-    let defaultDirection = searchParams.get("direction");
+    React.useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
 
-    if (defaultDirection === null) {
-        defaultDirection = localStorage.getItem("direction");
-    }
+        const urlRouteId = searchParams.get('routeId');
 
-    let defaultStopId = searchParams.get("stopId");
+        const localStorageRouteId = localStorage.getItem('routeId');
 
-    if (defaultStopId === null) {
-        defaultStopId = localStorage.getItem("stopId");
-    }
+        const initialRouteId = urlRouteId ?? localStorageRouteId;
 
-    const [routeId, setRouteId] = React.useState<string | null>(defaultRouteId);
+        if (initialRouteId) {
+            setRouteId(initialRouteId);
+        }
 
-    const [direction, setDirection] = React.useState<string | null>(defaultDirection);
+        const urlDirection = searchParams.get('direction');
 
-    const [stopId, setStopId] = React.useState<string | null>(defaultStopId);
+        const localStorageDirection = localStorage.getItem('direction');
+
+        const initialDirection = urlDirection ?? localStorageDirection;
+
+        if (initialDirection) {
+            setDirection(initialDirection);
+        }
+
+        const urlStopId = searchParams.get('stopId');
+
+        const localStorageStopId = localStorage.getItem('stopId');
+
+        const initialStopIdString = urlStopId ?? localStorageStopId;
+
+        if (initialStopIdString) {
+            const initialStopId = parseInt(initialStopIdString, 10);
+
+            if (!isNaN(initialStopId)) {
+                setStopId(initialStopId);
+            }
+        }
+    }, []);
 
     return (
         <div>
-            <Routes routeId={routeId} setRouteId={setRouteId} setDirection={setDirection} setStopId={setStopId} />
-            <Directions routeId={routeId} direction={direction} setDirection={setDirection} setStopId={setStopId} />
-            <Stops routeId={routeId} direction={direction} stopId={stopId} setStopId={setStopId} />
+            <Routes
+                routeId={routeId}
+                setRouteId={setRouteId}
+                setDirection={setDirection}
+                setStopId={setStopId}
+            />
+            <Directions
+                routeId={routeId}
+                direction={direction}
+                setDirection={setDirection}
+                setStopId={setStopId}
+            />
+            <Stops
+                routeId={routeId}
+                direction={direction}
+                stopId={stopId}
+                setStopId={setStopId}
+            />
             <Buses routeId={routeId} stopId={stopId} />
         </div>
     );

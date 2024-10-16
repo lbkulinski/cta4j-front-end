@@ -1,124 +1,62 @@
-import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
-import {gql} from "../__generated__";
-import {useQuery} from "@apollo/client";
-import {useRollbar} from "@rollbar/react";
+import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,} from '@mui/material';
+import {useRollbar} from '@rollbar/react';
+import {Bus, useGetArrivals1} from '../api/generated';
+import {AxiosError, isAxiosError} from 'axios';
 
 interface BusesProps {
-    routeId: string | null,
-    stopId: string | null
-}
-
-const BUSES = gql(`
-query Buses($routeId: ID!, $stopId: ID!) {
-    buses(routeId: $routeId, stopId: $stopId) {
-        id
-        type
-        stop
-        route
-        destination
-        predictionTime
-        arrivalTime
-        delayed
-    }
-}
-`);
-
-interface Bus {
-    id: string,
-    type: string,
-    stop: string,
-    route: string,
-    destination: string,
-    predictionTime: string,
-    arrivalTime: string,
-    delayed: boolean
+    routeId: string | null;
+    stopId: number | null;
 }
 
 function getEta(bus: Bus) {
-    const arrivalDate = new Date(bus.arrivalTime);
+    const arrivalTime = new Date(bus.arrivalTime).getTime();
 
-    const arrivalMillis = arrivalDate.getTime();
+    const predictionTime = new Date(bus.predictionTime).getTime();
 
-    const predictionDate = new Date(bus.predictionTime);
-
-    const predictionMillis = predictionDate.getTime();
-
-    let difference = arrivalMillis - predictionMillis;
-
-    const minuteMillis = 60000;
-
-    difference /= minuteMillis;
-
-    return Math.floor(difference);
+    return Math.floor((arrivalTime - predictionTime) / 60000);
 }
 
 function getRow(bus: Bus) {
     const key = JSON.stringify(bus);
 
-    let rowStyles = {};
+    let backgroundColor: string | undefined;
 
     const eta = getEta(bus);
 
     if (eta <= 1) {
-        rowStyles = {
-            backgroundColor: "#13251f"
-        };
+        backgroundColor = '#13251f';
     } else if (bus.delayed) {
-        rowStyles = {
-            backgroundColor: "#381717"
-        }
+        backgroundColor = '#381717';
     }
 
-    const etaString = (eta <= 1) ? "Due" : `${eta} min`;
+    const rowStyles = { backgroundColor };
+
+    const etaString = eta <= 1 ? 'Due' : `${eta} min`;
 
     return (
         <TableRow key={key} sx={rowStyles}>
-            <TableCell>
-                {
-                    bus.id
-                }
-            </TableCell>
-            <TableCell>
-                {
-                    bus.type
-                }
-            </TableCell>
-            <TableCell>
-                {
-                    bus.destination
-                }
-            </TableCell>
-            <TableCell>
-                {
-                    etaString
-                }
-            </TableCell>
+            <TableCell>{bus.id}</TableCell>
+            <TableCell>{bus.type}</TableCell>
+            <TableCell>{bus.destination}</TableCell>
+            <TableCell>{etaString}</TableCell>
         </TableRow>
     );
 }
 
-function getTable(buses: Bus[] | null) {
-    if (buses === null) {
-        return null;
-    }
-
+function getTable(buses: Bus[]) {
     return (
-        <Box sx={{p: 2}}>
+        <Box sx={{ p: 2 }}>
             <TableContainer component={Paper}>
                 <Table size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{fontWeight: "bold"}}>ID</TableCell>
-                            <TableCell sx={{fontWeight: "bold"}}>Type</TableCell>
-                            <TableCell sx={{fontWeight: "bold"}}>Destination</TableCell>
-                            <TableCell sx={{fontWeight: "bold"}}>ETA</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>ID</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Type</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Destination</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>ETA</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>
-                        {
-                            buses.map((bus) => getRow(bus))
-                        }
-                    </TableBody>
+                    <TableBody>{buses.map((bus) => getRow(bus))}</TableBody>
                 </Table>
             </TableContainer>
         </Box>
@@ -126,88 +64,72 @@ function getTable(buses: Bus[] | null) {
 }
 
 function compareBuses(bus0: Bus, bus1: Bus) {
-    const route0 = bus0.route;
+    const routeComparison = bus0.route.localeCompare(bus1.route);
 
-    const destination0 = bus0.destination;
-
-    const date0 = new Date(bus0.arrivalTime);
-
-    const route1 = bus1.route;
-
-    const destination1 = bus1.destination;
-
-    const date1 = new Date(bus1.arrivalTime);
-
-    if (route0 < route1) {
-        return -1;
-    } else if (route0 > route1) {
-        return 1;
-    } else if (destination0 < destination1) {
-        return -1;
-    } else if (destination0 > destination1) {
-        return 1;
-    } else if (date0 < date1) {
-        return -1;
-    } else if (date0 === date1) {
-        return 0;
-    } else {
-        return 1;
+    if (routeComparison !== 0) {
+        return routeComparison;
     }
+
+    const destinationComparison = bus0.destination.localeCompare(bus1.destination);
+
+    if (destinationComparison !== 0) {
+        return destinationComparison;
+    }
+
+    const date0 = new Date(bus0.arrivalTime).getTime();
+
+    const date1 = new Date(bus1.arrivalTime).getTime();
+
+    return date0 - date1;
 }
 
 function Buses(props: BusesProps) {
-    const routeId = props.routeId;
-
-    const stopId = props.stopId;
-
-    const options = {
-        skip: (routeId === null) || (stopId === null),
-        variables: {
-            routeId: routeId!,
-            stopId: stopId!
-        }
-    }
-
-    const {loading, error, data, startPolling} = useQuery(BUSES, options);
-
-    startPolling(60000);
+    const { routeId, stopId } = props;
 
     const rollbar = useRollbar();
 
-    if (loading) {
+    const normalizedRouteId = routeId ?? '';
+
+    const normalizedStopId = stopId ?? -1;
+
+    const { data, isLoading, error } = useGetArrivals1(normalizedRouteId, normalizedStopId, {
+        query: {
+            enabled: (routeId != null) && (stopId != null),
+            refetchInterval: 60000,
+        },
+    });
+
+    if ((routeId == null) || (stopId == null)) {
+        return null;
+    }
+
+    if (isLoading) {
         return null;
     }
 
     if (error) {
-        const errorTypes = error.graphQLErrors.map(graphQLError => graphQLError.extensions.errorType);
+        if (isAxiosError(error)) {
+            const statusCode = (error as AxiosError).response?.status;
 
-        const set = new Set(errorTypes);
-
-        if (set.has("NOT_FOUND")) {
-            return (
-                <Alert severity="warning">
-                    There are no upcoming buses at this time. Please check back later.
-                </Alert>
-            );
+            if (statusCode === 404) {
+                return (
+                    <Alert severity="warning">
+                        There are no upcoming buses at this time. Please check back later.
+                    </Alert>
+                );
+            }
         }
 
-        const errorData = {
-            error: error,
-            data: data
-        }
+        rollbar.error(error);
 
-        const errorDataString = JSON.stringify(errorData);
-
-        rollbar.error("An error occurred when trying to fetch the buses", errorDataString);
+        return (
+            <Alert severity="error">
+                An error occurred while retrieving the bus data. Please check back later.
+            </Alert>
+        );
     }
 
-    if (!data) {
-        return null;
-    }
-
-    const buses = Array.from(data.buses);
-
-    if (buses.length === 0) {
+    if (!data || (data.length === 0)) {
         return (
             <Alert severity="warning">
                 There are no upcoming buses at this time. Please check back later.
@@ -215,9 +137,9 @@ function Buses(props: BusesProps) {
         );
     }
 
-    buses.sort(compareBuses);
+    const sortedData = [...data].sort(compareBuses);
 
-    return getTable(buses);
+    return getTable(sortedData);
 }
 
 export default Buses;
