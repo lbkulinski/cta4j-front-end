@@ -12,6 +12,7 @@ import BusApp from "./bus/BusApp.tsx";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {AxiosError} from "axios";
 import {isAxiosError} from "./api/axios-instance.ts";
+import HolidayApp from "./holiday-train/HolidayApp.tsx";
 
 const rollbarConfig = {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
     {
         path: "/buses",
         element: <BusApp />
+    },
+    {
+        path: "/holiday-train",
+        element: <HolidayApp />
     }
 ]);
 
