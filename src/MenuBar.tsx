@@ -2,7 +2,11 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import {Button} from "@mui/material";
+import {IconButton} from "@mui/material";
+import DirectionsSubwayIcon from '@mui/icons-material/DirectionsSubway';
+import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
+import CoffeeIcon from '@mui/icons-material/Coffee';
+import MailIcon from '@mui/icons-material/Mail';
 
 function MenuBar() {
     const handleContactClick = () => window.location.href = "mailto:admin@cta4j.app";
@@ -14,22 +18,23 @@ function MenuBar() {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         cta4j
                     </Typography>
-                    <Button color="inherit" href="/trains">
-                        Trains
-                    </Button>
-                    <Button color="inherit" href="/buses">
-                        Buses
-                    </Button>
-                    <Button sx={{ fontSize: "1.2rem" }} color="inherit" href="/holiday-train">
-                        &#127877;
-                    </Button>
-                    <Button sx={{ fontSize: "1.2rem" }} color="inherit" href="https://buymeacoffee.com/cta4j"
-                            target="_blank">
-                        &#x2615;
-                    </Button>
-                    <Button color="inherit" onClick={handleContactClick}>
-                        Contact
-                    </Button>
+                    <IconButton color="inherit" href="/trains">
+                        <DirectionsSubwayIcon />
+                    </IconButton>
+                    <IconButton color="inherit" href="/buses">
+                        <DirectionsBusIcon />
+                    </IconButton>
+                    <IconButton color="inherit" href="/holiday-train">
+                        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                            &#127877;
+                        </Typography>
+                    </IconButton>
+                    <IconButton color="inherit" href="https://buymeacoffee.com/cta4j" target="_blank">
+                        <CoffeeIcon />
+                    </IconButton>
+                    <IconButton color="inherit" onClick={handleContactClick}>
+                        <MailIcon />
+                    </IconButton>
                 </Toolbar>
             </AppBar>
         </Box>
