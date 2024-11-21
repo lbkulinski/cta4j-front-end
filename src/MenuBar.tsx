@@ -20,8 +20,12 @@ function MenuBar() {
                     <Button color="inherit" href="/buses">
                         Buses
                     </Button>
-                    <Button color="inherit" href="/holiday-train">
-                        &#127877;&#128647;&#128652;
+                    <Button sx={{ fontSize: "1.2rem" }} color="inherit" href="/holiday-train">
+                        &#127877;
+                    </Button>
+                    <Button sx={{ fontSize: "1.2rem" }} color="inherit" href="https://buymeacoffee.com/cta4j"
+                            target="_blank">
+                        &#x2615;
                     </Button>
                     <Button color="inherit" onClick={handleContactClick}>
                         Contact
