@@ -44,16 +44,6 @@ function getRow(bus: Bus) {
         <TableRow key={key} sx={rowStyles}>
             <TableCell>
                 {
-                    bus.route
-                }
-            </TableCell>
-            <TableCell>
-                {
-                    bus.type
-                }
-            </TableCell>
-            <TableCell>
-                {
                     bus.stop
                 }
             </TableCell>
@@ -72,25 +62,21 @@ function getTable(buses: Bus[] | null) {
     }
 
     return (
-        <Box sx={{p: 2}}>
-            <TableContainer component={Paper}>
-                <Table size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={{fontWeight: "bold"}}>Route</TableCell>
-                            <TableCell sx={{fontWeight: "bold"}}>Type</TableCell>
-                            <TableCell sx={{fontWeight: "bold"}}>Stop</TableCell>
-                            <TableCell sx={{fontWeight: "bold"}}>ETA</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {
-                            buses.map((bus) => getRow(bus))
-                        }
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Box>
+        <TableContainer component={Paper}>
+            <Table size="small">
+                <TableHead>
+                    <TableRow>
+                        <TableCell sx={{fontWeight: "bold"}}>Stop</TableCell>
+                        <TableCell sx={{fontWeight: "bold"}}>ETA</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {
+                        buses.map((bus) => getRow(bus))
+                    }
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
 }
 
@@ -132,9 +118,12 @@ function HolidayBus() {
 
             if (statusCode === 404) {
                 return (
-                    <Alert severity="warning">
-                        The Holiday Bus does not appear to be running at this time. Please check back later.
-                    </Alert>
+                    <Box sx={{p: 2}}>
+                        <h2 style={{color: "#B3000C"}}>Holiday Bus &#127877;</h2>
+                        <Alert severity="warning">
+                            The Holiday Bus does not appear to be running at this time. Please check back later.
+                        </Alert>
+                    </Box>
                 );
             }
         }
@@ -142,23 +131,41 @@ function HolidayBus() {
         rollbar.error(error);
 
         return (
-            <Alert severity="error">
-                An error occurred while retrieving the Holiday Bus data. Please check back later.
-            </Alert>
+            <Box sx={{p: 2}}>
+                <h2 style={{color: "#B3000C"}}>Holiday Bus &#127877;</h2>
+                <Alert severity="error">
+                    An error occurred while retrieving the Holiday Bus data. Please check back later.
+                </Alert>
+            </Box>
         );
     }
 
     if (!data || (data.length === 0)) {
         return (
-            <Alert severity="warning">
-                The Holiday Bus does not appear to be running at this time. Please check back later.
-            </Alert>
+            <Box sx={{p: 2}}>
+                <h2 style={{color: "#B3000C"}}>Holiday Bus &#127877;</h2>
+                <Alert severity="warning">
+                    The Holiday Bus does not appear to be running at this time. Please check back later.
+                </Alert>
+            </Box>
         );
     }
 
     const sortedData = [...data].sort(compareBuses);
 
-    return getTable(sortedData);
+    const destination = sortedData[0].destination;
+
+    const route = sortedData[0].route;
+
+    const table = getTable(sortedData);
+
+    return (
+        <Box sx={{p: 2}}>
+            <h2 style={{color: "#B3000C"}}>Holiday Bus &#127877;</h2>
+            <h3>{destination}-bound Route {route} (VID {id})</h3>
+            {table}
+        </Box>
+    );
 }
 
 export default HolidayBus;

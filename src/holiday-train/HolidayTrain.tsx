@@ -53,29 +53,15 @@ function getRow(train: Train) {
         }
     }
 
-    const lineColor = lineToHexColor.get(train.line);
-
-    const lineStyles = (lineColor === undefined) ? {} : {color: lineColor};
-
     const eta = getEta(train);
 
     const etaString = (eta <= 1) ? "Due" : `${eta} min`;
 
     return (
         <TableRow key={key} sx={rowStyles}>
-            <TableCell sx={lineStyles}>
-                {
-                    train.line
-                }
-            </TableCell>
             <TableCell>
                 {
                     train.station
-                }
-            </TableCell>
-            <TableCell>
-                {
-                    train.run
                 }
             </TableCell>
             <TableCell>
@@ -93,25 +79,21 @@ function getTable(trains: Train[] | null) {
     }
 
     return (
-        <Box sx={{p: 2}}>
-            <TableContainer component={Paper}>
-                <Table size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={{fontWeight: "bold"}}>Line</TableCell>
-                            <TableCell sx={{fontWeight: "bold"}}>Station</TableCell>
-                            <TableCell sx={{fontWeight: "bold"}}>Run</TableCell>
-                            <TableCell sx={{fontWeight: "bold"}}>ETA</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {
-                            trains.map((train) => getRow(train))
-                        }
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Box>
+        <TableContainer component={Paper}>
+            <Table size="small">
+                <TableHead>
+                    <TableRow>
+                        <TableCell sx={{fontWeight: "bold"}}>Station</TableCell>
+                        <TableCell sx={{fontWeight: "bold"}}>ETA</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {
+                        trains.map((train) => getRow(train))
+                    }
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
 }
 
@@ -161,9 +143,12 @@ function HolidayTrain() {
 
             if (statusCode === 404) {
                 return (
-                    <Alert severity="warning">
-                        The Holiday Train does not appear to be running at this time. Please check back later.
-                    </Alert>
+                    <Box sx={{p: 2}}>
+                        <h2 style={{color: "#B3000C"}}>Holiday Train &#127877;</h2>
+                        <Alert severity="warning">
+                            The Holiday Train does not appear to be running at this time. Please check back later.
+                        </Alert>
+                    </Box>
                 );
             }
         }
@@ -171,23 +156,47 @@ function HolidayTrain() {
         rollbar.error(error);
 
         return (
-            <Alert severity="error">
-                An error occurred while retrieving the Holiday Train data. Please check back later.
-            </Alert>
+            <Box sx={{p: 2}}>
+                <h2 style={{color: "#B3000C"}}>Holiday Train &#127877;</h2>
+                <Alert severity="error">
+                    An error occurred while retrieving the Holiday Train data. Please check back later.
+                </Alert>
+            </Box>
         );
     }
 
     if (!data || (data.length === 0)) {
         return (
-            <Alert severity="warning">
-                The Holiday Train does not appear to be running at this time. Please check back later.
-            </Alert>
+            <Box sx={{p: 2}}>
+                <h2 style={{color: "#B3000C"}}>Holiday Train &#127877;</h2>
+                <Alert severity="warning">
+                    The Holiday Train does not appear to be running at this time. Please check back later.
+                </Alert>
+            </Box>
         );
     }
 
     const sortedData = [...data].sort(compareTrains);
 
-    return getTable(sortedData);
+    const destination = sortedData[0].destination;
+
+    const line = sortedData[0].line.toString()
+
+    const lowercaseLine = line.toLowerCase();
+
+    const titleCaseLine = lowercaseLine.charAt(0).toUpperCase() + lowercaseLine.slice(1);
+
+    const lineColor = lineToHexColor.get(line);
+
+    const table = getTable(sortedData);
+
+    return (
+        <Box sx={{p: 2}}>
+            <h2 style={{color: "#B3000C"}}>Holiday Train &#127877;</h2>
+            <h3>{destination}-bound <span style={{ color: lineColor }}>{titleCaseLine}</span> Line Run 1225</h3>
+            {table}
+        </Box>
+    );
 }
 
 export default HolidayTrain;
