@@ -1,10 +1,10 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
-import {Train, useGetArrivals} from '../api/generated';
+import {TrainArrival, useGetArrivals} from '../api/generated';
 import {AxiosError, isAxiosError} from 'axios';
 
 interface TrainsProps {
-    stationId: number | null;
+    stationId: string | null;
 }
 
 const lineToHexColor = new Map<string, string>([
@@ -18,24 +18,16 @@ const lineToHexColor = new Map<string, string>([
     ['YELLOW', '#F9E300'],
 ]);
 
-function getEta(train: Train) {
-    const arrivalTime = new Date(train.arrivalTime).getTime();
-
-    const predictionTime = new Date(train.predictionTime).getTime();
-
-    return Math.floor((arrivalTime - predictionTime) / 60000);
-}
-
-function getRow(train: Train) {
-    const key = JSON.stringify(train);
+function getRow(arrival: TrainArrival) {
+    const key = JSON.stringify(arrival);
 
     let backgroundColor: string | undefined;
 
-    if (train.due) {
+    if (arrival.approaching) {
         backgroundColor = '#13251f';
-    } else if (train.scheduled) {
+    } else if (arrival.scheduled) {
         backgroundColor = '#172038';
-    } else if (train.delayed) {
+    } else if (arrival.delayed) {
         backgroundColor = '#381717';
     }
 
@@ -43,25 +35,25 @@ function getRow(train: Train) {
         backgroundColor
     };
 
-    const lineColor = lineToHexColor.get(train.line ?? '') ?? undefined;
+    const lineColor = lineToHexColor.get(arrival.route ?? '') ?? undefined;
 
     const lineStyles = lineColor ? { color: lineColor } : {};
 
-    const eta = getEta(train);
+    const eta = arrival.etaMinutes;
 
     const etaString = (eta <= 1) ? 'Due' : `${eta} min`;
 
     return (
         <TableRow key={key} sx={rowStyles}>
-            <TableCell sx={lineStyles}>{train.line}</TableCell>
-            <TableCell>{train.destination}</TableCell>
-            <TableCell>{train.run}</TableCell>
+            <TableCell sx={lineStyles}>{arrival.route}</TableCell>
+            <TableCell>{arrival.destinationName}</TableCell>
+            <TableCell>{arrival.run}</TableCell>
             <TableCell>{etaString}</TableCell>
         </TableRow>
     );
 }
 
-function getTable(trains: Train[]) {
+function getTable(arrivals: TrainArrival[]) {
     return (
         <Box sx={{ p: 2 }}>
             <TableContainer component={Paper}>
@@ -74,29 +66,29 @@ function getTable(trains: Train[]) {
                             <TableCell sx={{ fontWeight: 'bold' }}>ETA</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>{trains.map((train) => getRow(train))}</TableBody>
+                    <TableBody>{arrivals.map((train) => getRow(train))}</TableBody>
                 </Table>
             </TableContainer>
         </Box>
     );
 }
 
-function compareTrains(train0: Train, train1: Train) {
-    const lineComparison = train0.line.localeCompare(train1.line);
+function compareTrains(arrival0: TrainArrival, arrival1: TrainArrival) {
+    const lineComparison = arrival0.route.localeCompare(arrival1.route);
 
     if (lineComparison !== 0) {
         return lineComparison;
     }
 
-    const destinationComparison = train0.destination.localeCompare(train1.destination);
+    const destinationComparison = arrival0.destinationName.localeCompare(arrival1.destinationName);
 
     if (destinationComparison !== 0) {
         return destinationComparison;
     }
 
-    const date0 = new Date(train0.arrivalTime).getTime();
+    const date0 = new Date(arrival0.arrivalTime).getTime();
 
-    const date1 = new Date(train1.arrivalTime).getTime();
+    const date1 = new Date(arrival1.arrivalTime).getTime();
 
     return date0 - date1;
 }
@@ -106,7 +98,7 @@ function Trains(props: TrainsProps) {
 
     const rollbar = useRollbar();
 
-    const normalizedStationId = stationId ?? -1;
+    const normalizedStationId = stationId ?? '';
 
     const { data, isLoading, error } = useGetArrivals(
         normalizedStationId,
@@ -148,7 +140,7 @@ function Trains(props: TrainsProps) {
         );
     }
 
-    if (!data || (data.length === 0)) {
+    if (!data || (data.data.length === 0)) {
         return (
             <Alert severity="warning">
                 There are no upcoming trains at this time. Please check back later.
@@ -156,7 +148,7 @@ function Trains(props: TrainsProps) {
         );
     }
 
-    const sortedData = [...data].sort(compareTrains);
+    const sortedData = [...data.data].sort(compareTrains);
 
     return getTable(sortedData);
 }
