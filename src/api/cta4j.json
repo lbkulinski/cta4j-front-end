@@ -75,7 +75,7 @@
         "tags": [
           "station-arrival-controller"
         ],
-        "operationId": "getArrivals",
+        "operationId": "getStationArrivals",
         "parameters": [
           {
             "name": "stationId",
@@ -137,7 +137,7 @@
         "tags": [
           "stop-arrival-controller"
         ],
-        "operationId": "getArrivals_1",
+        "operationId": "getStopArrivals",
         "parameters": [
           {
             "name": "routeId",
@@ -261,7 +261,7 @@
         "tags": [
           "detour-controller"
         ],
-        "operationId": "getArrivals_2",
+        "operationId": "getDetours",
         "parameters": [
           {
             "name": "routeId",
@@ -348,7 +348,11 @@
               "$ref": "#/components/schemas/UpcomingTrainArrival"
             }
           }
-        }
+        },
+        "required": [
+          "arrivals",
+          "coordinates"
+        ]
       },
       "TrainCoordinates": {
         "type": "object",
@@ -363,7 +367,12 @@
             "type": "integer",
             "format": "int32"
           }
-        }
+        },
+        "required": [
+          "heading",
+          "latitude",
+          "longitude"
+        ]
       },
       "UpcomingTrainArrival": {
         "type": "object",
@@ -430,14 +439,34 @@
           "flags": {
             "type": "string"
           },
+          "etaLabel": {
+            "type": "string"
+          },
           "etaMinutes": {
             "type": "integer",
             "format": "int64"
-          },
-          "etaLabel": {
-            "type": "string"
           }
-        }
+        },
+        "required": [
+          "approaching",
+          "arrivalTime",
+          "delayed",
+          "destinationName",
+          "destinationStopId",
+          "direction",
+          "etaLabel",
+          "etaMinutes",
+          "faulted",
+          "flags",
+          "predictionTime",
+          "route",
+          "run",
+          "scheduled",
+          "stationId",
+          "stationName",
+          "stopDescription",
+          "stopId"
+        ]
       },
       "Station": {
         "type": "object",
@@ -448,7 +477,11 @@
           "name": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
       },
       "StationArrival": {
         "type": "object",
@@ -525,14 +558,37 @@
             "type": "integer",
             "format": "int32"
           },
+          "etaLabel": {
+            "type": "string"
+          },
           "etaMinutes": {
             "type": "integer",
             "format": "int64"
-          },
-          "etaLabel": {
-            "type": "string"
           }
-        }
+        },
+        "required": [
+          "approaching",
+          "arrivalTime",
+          "delayed",
+          "destinationName",
+          "destinationStopId",
+          "direction",
+          "etaLabel",
+          "etaMinutes",
+          "faulted",
+          "flags",
+          "heading",
+          "latitude",
+          "longitude",
+          "predictionTime",
+          "route",
+          "run",
+          "scheduled",
+          "stationId",
+          "stationName",
+          "stopDescription",
+          "stopId"
+        ]
       },
       "Route": {
         "type": "object",
@@ -543,7 +599,11 @@
           "name": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
       },
       "StopArrival": {
         "type": "object",
@@ -586,14 +646,29 @@
           "delayed": {
             "type": "boolean"
           },
+          "etaLabel": {
+            "type": "string"
+          },
           "etaMinutes": {
             "type": "integer",
             "format": "int64"
-          },
-          "etaLabel": {
-            "type": "string"
           }
-        }
+        },
+        "required": [
+          "arrivalTime",
+          "delayed",
+          "destination",
+          "distanceToStop",
+          "etaLabel",
+          "etaMinutes",
+          "predictionType",
+          "route",
+          "routeDesignator",
+          "routeDirection",
+          "stopId",
+          "stopName",
+          "vehicleId"
+        ]
       },
       "Stop": {
         "type": "object",
@@ -604,7 +679,11 @@
           "name": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
       },
       "Detour": {
         "type": "object",
@@ -635,7 +714,16 @@
             "type": "string",
             "format": "date-time"
           }
-        }
+        },
+        "required": [
+          "active",
+          "description",
+          "endTime",
+          "id",
+          "routeDirections",
+          "startTime",
+          "version"
+        ]
       },
       "DetourRouteDirection": {
         "type": "object",
@@ -646,7 +734,11 @@
           "direction": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "direction",
+          "route"
+        ]
       },
       "Bus": {
         "type": "object",
@@ -672,7 +764,15 @@
               "$ref": "#/components/schemas/UpcomingBusArrival"
             }
           }
-        }
+        },
+        "required": [
+          "arrivals",
+          "coordinates",
+          "delayed",
+          "destination",
+          "id",
+          "route"
+        ]
       },
       "BusCoordinates": {
         "type": "object",
@@ -687,7 +787,12 @@
             "type": "integer",
             "format": "int32"
           }
-        }
+        },
+        "required": [
+          "heading",
+          "latitude",
+          "longitude"
+        ]
       },
       "UpcomingBusArrival": {
         "type": "object",
@@ -730,14 +835,29 @@
           "delayed": {
             "type": "boolean"
           },
+          "etaLabel": {
+            "type": "string"
+          },
           "etaMinutes": {
             "type": "integer",
             "format": "int64"
-          },
-          "etaLabel": {
-            "type": "string"
           }
-        }
+        },
+        "required": [
+          "arrivalTime",
+          "delayed",
+          "destination",
+          "distanceToStop",
+          "etaLabel",
+          "etaMinutes",
+          "predictionType",
+          "route",
+          "routeDesignator",
+          "routeDirection",
+          "stopId",
+          "stopName",
+          "vehicleId"
+        ]
       }
     }
   }

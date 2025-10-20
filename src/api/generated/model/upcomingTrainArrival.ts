@@ -7,22 +7,22 @@
 import type { UpcomingTrainArrivalRoute } from './upcomingTrainArrivalRoute';
 
 export interface UpcomingTrainArrival {
-  stationId?: string;
-  stopId?: string;
-  stationName?: string;
-  stopDescription?: string;
-  run?: string;
-  route?: UpcomingTrainArrivalRoute;
-  destinationStopId?: string;
-  destinationName?: string;
-  direction?: number;
-  predictionTime?: string;
-  arrivalTime?: string;
-  approaching?: boolean;
-  scheduled?: boolean;
-  delayed?: boolean;
-  faulted?: boolean;
-  flags?: string;
-  etaMinutes?: number;
-  etaLabel?: string;
+  stationId: string;
+  stopId: string;
+  stationName: string;
+  stopDescription: string;
+  run: string;
+  route: UpcomingTrainArrivalRoute;
+  destinationStopId: string;
+  destinationName: string;
+  direction: number;
+  predictionTime: string;
+  arrivalTime: string;
+  approaching: boolean;
+  scheduled: boolean;
+  delayed: boolean;
+  faulted: boolean;
+  flags: string;
+  etaLabel: string;
+  etaMinutes: number;
 }

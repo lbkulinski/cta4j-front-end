@@ -8,13 +8,15 @@ export default defineConfig({
         output: {
             target: './src/api/generated/cta4j.ts',
             schemas: './src/api/generated/model',
-            client: 'fetch',
+            client: 'react-query',
+            /*
             override: {
                 mutator: {
                     path: './src/api/fetcher.ts',
                     name: 'customFetcher',
                 },
             },
+             */
         },
     },
 });

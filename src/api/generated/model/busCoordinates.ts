@@ -6,7 +6,7 @@
  */
 
 export interface BusCoordinates {
-  latitude?: number;
-  longitude?: number;
-  heading?: number;
+  latitude: number;
+  longitude: number;
+  heading: number;
 }

@@ -8,10 +8,10 @@ import type { BusCoordinates } from './busCoordinates';
 import type { UpcomingBusArrival } from './upcomingBusArrival';
 
 export interface Bus {
-  id?: string;
-  route?: string;
-  destination?: string;
-  delayed?: boolean;
-  coordinates?: BusCoordinates;
-  arrivals?: UpcomingBusArrival[];
+  id: string;
+  route: string;
+  destination: string;
+  delayed: boolean;
+  coordinates: BusCoordinates;
+  arrivals: UpcomingBusArrival[];
 }

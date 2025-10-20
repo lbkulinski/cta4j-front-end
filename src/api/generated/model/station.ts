@@ -6,6 +6,6 @@
  */
 
 export interface Station {
-  id?: string;
-  name?: string;
+  id: string;
+  name: string;
 }

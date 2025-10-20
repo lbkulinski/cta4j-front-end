@@ -7,17 +7,17 @@
 import type { StopArrivalPredictionType } from './stopArrivalPredictionType';
 
 export interface StopArrival {
-  predictionType?: StopArrivalPredictionType;
-  stopName?: string;
-  stopId?: string;
-  vehicleId?: string;
-  distanceToStop?: number;
-  route?: string;
-  routeDesignator?: string;
-  routeDirection?: string;
-  destination?: string;
-  arrivalTime?: string;
-  delayed?: boolean;
-  etaMinutes?: number;
-  etaLabel?: string;
+  predictionType: StopArrivalPredictionType;
+  stopName: string;
+  stopId: string;
+  vehicleId: string;
+  distanceToStop: number;
+  route: string;
+  routeDesignator: string;
+  routeDirection: string;
+  destination: string;
+  arrivalTime: string;
+  delayed: boolean;
+  etaLabel: string;
+  etaMinutes: number;
 }

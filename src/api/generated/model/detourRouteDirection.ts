@@ -6,6 +6,6 @@
  */
 
 export interface DetourRouteDirection {
-  route?: string;
-  direction?: string;
+  route: string;
+  direction: string;
 }

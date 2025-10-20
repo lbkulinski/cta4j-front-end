@@ -1,8 +1,7 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
-import {StopArrival, getArrivals1} from '../api/generated';
+import {StopArrival, useGetStopArrivals} from '../api/generated';
 import {AxiosError, isAxiosError} from 'axios';
-import {useEffect, useState} from "react";
 
 interface BusesProps {
     routeId: string | null;
@@ -28,8 +27,8 @@ function getRow(arrival: StopArrival) {
 
     return (
         <TableRow key={key} sx={rowStyles}>
-            <TableCell>{arrival.id}</TableCell>
-            <TableCell>{arrival.type}</TableCell>
+            <TableCell>{arrival.vehicleId}</TableCell>
+            <TableCell>{arrival.predictionType}</TableCell>
             <TableCell>{arrival.destination}</TableCell>
             <TableCell>{etaString}</TableCell>
         </TableRow>
@@ -81,21 +80,15 @@ function Buses(props: BusesProps) {
 
     const rollbar = useRollbar();
 
+    if ((routeId == null) || (stopId == null)) {
+        return null;
+    }
+
     const normalizedRouteId = routeId ?? '';
 
     const normalizedStopId = stopId ?? '';
 
-    const [arrivals, setArrivals] = useState([]);
-
-    useEffect(() => {
-        getArrivals1(normalizedRouteId, normalizedStopId)
-            .then(setArrivals)
-            .catch(console.error);
-    }, [normalizedRouteId, normalizedStopId]);
-
-    if ((routeId == null) || (stopId == null)) {
-        return null;
-    }
+    const { data, error, isLoading } = useGetStopArrivals(normalizedRouteId, normalizedStopId);
 
     if (isLoading) {
         return null;
@@ -121,6 +114,14 @@ function Buses(props: BusesProps) {
                 An error occurred while retrieving the bus data. Please check back later.
             </Alert>
         );
+    }
+
+    let arrivals: StopArrival[];
+
+    if (data === undefined) {
+        arrivals = [];
+    } else {
+        arrivals = data.data;
     }
 
     if (!arrivals || (arrivals.length === 0)) {

@@ -6,7 +6,7 @@
  */
 
 export interface TrainCoordinates {
-  latitude?: number;
-  longitude?: number;
-  heading?: number;
+  latitude: number;
+  longitude: number;
+  heading: number;
 }

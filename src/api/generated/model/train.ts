@@ -8,6 +8,6 @@ import type { TrainCoordinates } from './trainCoordinates';
 import type { UpcomingTrainArrival } from './upcomingTrainArrival';
 
 export interface Train {
-  coordinates?: TrainCoordinates;
-  arrivals?: UpcomingTrainArrival[];
+  coordinates: TrainCoordinates;
+  arrivals: UpcomingTrainArrival[];
 }

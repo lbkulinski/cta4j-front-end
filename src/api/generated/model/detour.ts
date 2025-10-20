@@ -7,11 +7,11 @@
 import type { DetourRouteDirection } from './detourRouteDirection';
 
 export interface Detour {
-  id?: string;
-  version?: string;
-  active?: boolean;
-  description?: string;
-  routeDirections?: DetourRouteDirection[];
-  startTime?: string;
-  endTime?: string;
+  id: string;
+  version: string;
+  active: boolean;
+  description: string;
+  routeDirections: DetourRouteDirection[];
+  startTime: string;
+  endTime: string;
 }

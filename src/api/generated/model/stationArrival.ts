@@ -7,25 +7,25 @@
 import type { StationArrivalRoute } from './stationArrivalRoute';
 
 export interface StationArrival {
-  stationId?: string;
-  stopId?: string;
-  stationName?: string;
-  stopDescription?: string;
-  run?: string;
-  route?: StationArrivalRoute;
-  destinationStopId?: string;
-  destinationName?: string;
-  direction?: number;
-  predictionTime?: string;
-  arrivalTime?: string;
-  approaching?: boolean;
-  scheduled?: boolean;
-  delayed?: boolean;
-  faulted?: boolean;
-  flags?: string;
-  latitude?: number;
-  longitude?: number;
-  heading?: number;
-  etaMinutes?: number;
-  etaLabel?: string;
+  stationId: string;
+  stopId: string;
+  stationName: string;
+  stopDescription: string;
+  run: string;
+  route: StationArrivalRoute;
+  destinationStopId: string;
+  destinationName: string;
+  direction: number;
+  predictionTime: string;
+  arrivalTime: string;
+  approaching: boolean;
+  scheduled: boolean;
+  delayed: boolean;
+  faulted: boolean;
+  flags: string;
+  latitude: number;
+  longitude: number;
+  heading: number;
+  etaLabel: string;
+  etaMinutes: number;
 }
