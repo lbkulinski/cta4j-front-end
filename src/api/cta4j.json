@@ -1,0 +1,744 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://3ejaeyygas.us-east-2.awsapprunner.com",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/api/trains/{run}": {
+      "get": {
+        "tags": [
+          "train-controller"
+        ],
+        "operationId": "getTrain",
+        "parameters": [
+          {
+            "name": "run",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Train"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stations": {
+      "get": {
+        "tags": [
+          "station-controller"
+        ],
+        "operationId": "getStations",
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Station"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stations/{stationId}/arrivals": {
+      "get": {
+        "tags": [
+          "station-arrival-controller"
+        ],
+        "operationId": "getArrivals",
+        "parameters": [
+          {
+            "name": "stationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StationArrival"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/routes": {
+      "get": {
+        "tags": [
+          "directory-controller"
+        ],
+        "operationId": "getRoutes",
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Route"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/routes/{routeId}/stops/{stopId}/arrivals": {
+      "get": {
+        "tags": [
+          "stop-arrival-controller"
+        ],
+        "operationId": "getArrivals_1",
+        "parameters": [
+          {
+            "name": "routeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stopId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StopArrival"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/routes/{routeId}/directions": {
+      "get": {
+        "tags": [
+          "directory-controller"
+        ],
+        "operationId": "getDirections",
+        "parameters": [
+          {
+            "name": "routeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/routes/{routeId}/directions/{direction}/stops": {
+      "get": {
+        "tags": [
+          "directory-controller"
+        ],
+        "operationId": "getStops",
+        "parameters": [
+          {
+            "name": "routeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Stop"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/routes/{routeId}/directions/{direction}/detours": {
+      "get": {
+        "tags": [
+          "detour-controller"
+        ],
+        "operationId": "getArrivals_2",
+        "parameters": [
+          {
+            "name": "routeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "direction",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Detour"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/buses/{id}": {
+      "get": {
+        "tags": [
+          "bus-controller"
+        ],
+        "operationId": "getBus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bus"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Train": {
+        "type": "object",
+        "properties": {
+          "coordinates": {
+            "$ref": "#/components/schemas/TrainCoordinates"
+          },
+          "arrivals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpcomingTrainArrival"
+            }
+          }
+        }
+      },
+      "TrainCoordinates": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "heading": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "UpcomingTrainArrival": {
+        "type": "object",
+        "properties": {
+          "stationId": {
+            "type": "string"
+          },
+          "stopId": {
+            "type": "string"
+          },
+          "stationName": {
+            "type": "string"
+          },
+          "stopDescription": {
+            "type": "string"
+          },
+          "run": {
+            "type": "string"
+          },
+          "route": {
+            "type": "string",
+            "enum": [
+              "RED",
+              "BLUE",
+              "BROWN",
+              "GREEN",
+              "ORANGE",
+              "PURPLE",
+              "PINK",
+              "YELLOW",
+              "N_A"
+            ]
+          },
+          "destinationStopId": {
+            "type": "string"
+          },
+          "destinationName": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "predictionTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "arrivalTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "approaching": {
+            "type": "boolean"
+          },
+          "scheduled": {
+            "type": "boolean"
+          },
+          "delayed": {
+            "type": "boolean"
+          },
+          "faulted": {
+            "type": "boolean"
+          },
+          "flags": {
+            "type": "string"
+          },
+          "etaMinutes": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "etaLabel": {
+            "type": "string"
+          }
+        }
+      },
+      "Station": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "StationArrival": {
+        "type": "object",
+        "properties": {
+          "stationId": {
+            "type": "string"
+          },
+          "stopId": {
+            "type": "string"
+          },
+          "stationName": {
+            "type": "string"
+          },
+          "stopDescription": {
+            "type": "string"
+          },
+          "run": {
+            "type": "string"
+          },
+          "route": {
+            "type": "string",
+            "enum": [
+              "RED",
+              "BLUE",
+              "BROWN",
+              "GREEN",
+              "ORANGE",
+              "PURPLE",
+              "PINK",
+              "YELLOW",
+              "N_A"
+            ]
+          },
+          "destinationStopId": {
+            "type": "string"
+          },
+          "destinationName": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "predictionTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "arrivalTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "approaching": {
+            "type": "boolean"
+          },
+          "scheduled": {
+            "type": "boolean"
+          },
+          "delayed": {
+            "type": "boolean"
+          },
+          "faulted": {
+            "type": "boolean"
+          },
+          "flags": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "heading": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "etaMinutes": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "etaLabel": {
+            "type": "string"
+          }
+        }
+      },
+      "Route": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "StopArrival": {
+        "type": "object",
+        "properties": {
+          "predictionType": {
+            "type": "string",
+            "enum": [
+              "ARRIVAL",
+              "DEPARTURE"
+            ]
+          },
+          "stopName": {
+            "type": "string"
+          },
+          "stopId": {
+            "type": "string"
+          },
+          "vehicleId": {
+            "type": "string"
+          },
+          "distanceToStop": {
+            "type": "integer"
+          },
+          "route": {
+            "type": "string"
+          },
+          "routeDesignator": {
+            "type": "string"
+          },
+          "routeDirection": {
+            "type": "string"
+          },
+          "destination": {
+            "type": "string"
+          },
+          "arrivalTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "delayed": {
+            "type": "boolean"
+          },
+          "etaMinutes": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "etaLabel": {
+            "type": "string"
+          }
+        }
+      },
+      "Stop": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Detour": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "routeDirections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DetourRouteDirection"
+            }
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DetourRouteDirection": {
+        "type": "object",
+        "properties": {
+          "route": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          }
+        }
+      },
+      "Bus": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "route": {
+            "type": "string"
+          },
+          "destination": {
+            "type": "string"
+          },
+          "delayed": {
+            "type": "boolean"
+          },
+          "coordinates": {
+            "$ref": "#/components/schemas/BusCoordinates"
+          },
+          "arrivals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpcomingBusArrival"
+            }
+          }
+        }
+      },
+      "BusCoordinates": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "heading": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "UpcomingBusArrival": {
+        "type": "object",
+        "properties": {
+          "predictionType": {
+            "type": "string",
+            "enum": [
+              "ARRIVAL",
+              "DEPARTURE"
+            ]
+          },
+          "stopName": {
+            "type": "string"
+          },
+          "stopId": {
+            "type": "string"
+          },
+          "vehicleId": {
+            "type": "string"
+          },
+          "distanceToStop": {
+            "type": "integer"
+          },
+          "route": {
+            "type": "string"
+          },
+          "routeDesignator": {
+            "type": "string"
+          },
+          "routeDirection": {
+            "type": "string"
+          },
+          "destination": {
+            "type": "string"
+          },
+          "arrivalTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "delayed": {
+            "type": "boolean"
+          },
+          "etaMinutes": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "etaLabel": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
