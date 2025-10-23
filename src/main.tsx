@@ -10,8 +10,7 @@ import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {ErrorBoundary, Provider} from "@rollbar/react";
 import BusApp from "./bus/BusApp.tsx";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import {AxiosError} from "axios";
-import {isAxiosError} from "./api/axios-instance.ts";
+import {AxiosError, isAxiosError} from "axios";
 import HolidayApp from "./holiday-train/HolidayApp.tsx";
 
 const rollbarConfig = {

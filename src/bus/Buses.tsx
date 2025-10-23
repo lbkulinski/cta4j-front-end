@@ -1,6 +1,6 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
-import {StopArrival, useGetStopArrivals} from '../api/generated';
+import {StopArrival, useGetStopArrivals} from '../api';
 import {AxiosError, isAxiosError} from 'axios';
 
 interface BusesProps {
@@ -80,15 +80,20 @@ function Buses(props: BusesProps) {
 
     const rollbar = useRollbar();
 
-    if ((routeId == null) || (stopId == null)) {
-        return null;
-    }
-
     const normalizedRouteId = routeId ?? '';
 
     const normalizedStopId = stopId ?? '';
 
-    const { data, error, isLoading } = useGetStopArrivals(normalizedRouteId, normalizedStopId);
+    const { data, error, isLoading } = useGetStopArrivals(normalizedRouteId, normalizedStopId, {
+        query: {
+            enabled: (routeId != null) && (stopId != null),
+            refetchInterval: 60000,
+        },
+    });
+
+    if ((routeId == null) || (stopId == null)) {
+        return null;
+    }
 
     if (isLoading) {
         return null;
@@ -116,15 +121,13 @@ function Buses(props: BusesProps) {
         );
     }
 
-    let arrivals: StopArrival[];
-
     if (data === undefined) {
-        arrivals = [];
-    } else {
-        arrivals = data.data;
+        return null;
     }
 
-    if (!arrivals || (arrivals.length === 0)) {
+    let arrivals: StopArrival[] = data.data;
+
+    if (arrivals.length === 0) {
         return (
             <Alert severity="warning">
                 There are no upcoming buses at this time. Please check back later.

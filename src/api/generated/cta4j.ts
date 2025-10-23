@@ -19,13 +19,6 @@ import type {
   UseQueryResult
 } from '@tanstack/react-query';
 
-import * as axios from 'axios';
-import type {
-  AxiosError,
-  AxiosRequestConfig,
-  AxiosResponse
-} from 'axios';
-
 import type {
   Bus,
   Detour,
@@ -37,32 +30,35 @@ import type {
   Train
 } from './model';
 
+import { customInstance } from '../custom-instance';
 export const getTrain = (
-    run: string, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<Train>> => {
-    
-    
-    return axios.default.get(
-      `/api/trains/${run}`,options
-    );
-  }
-
+    run: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<Train>(
+      {url: `/api/trains/${run}`, method: 'GET', signal
+    },
+      );
+    }
+  
 
 export const getGetTrainQueryKey = (run?: string,) => {
     return [`/api/trains/${run}`] as const;
     }
 
     
-export const getGetTrainQueryOptions = <TData = Awaited<ReturnType<typeof getTrain>>, TError = AxiosError<null>>(run: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrain>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getGetTrainQueryOptions = <TData = Awaited<ReturnType<typeof getTrain>>, TError = null>(run: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrain>>, TError, TData>>, }
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetTrainQueryKey(run);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTrain>>> = ({ signal }) => getTrain(run, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTrain>>> = ({ signal }) => getTrain(run, signal);
 
       
 
@@ -72,36 +68,36 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type GetTrainQueryResult = NonNullable<Awaited<ReturnType<typeof getTrain>>>
-export type GetTrainQueryError = AxiosError<null>
+export type GetTrainQueryError = null
 
 
-export function useGetTrain<TData = Awaited<ReturnType<typeof getTrain>>, TError = AxiosError<null>>(
+export function useGetTrain<TData = Awaited<ReturnType<typeof getTrain>>, TError = null>(
  run: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrain>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getTrain>>,
           TError,
           Awaited<ReturnType<typeof getTrain>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetTrain<TData = Awaited<ReturnType<typeof getTrain>>, TError = AxiosError<null>>(
+export function useGetTrain<TData = Awaited<ReturnType<typeof getTrain>>, TError = null>(
  run: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrain>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getTrain>>,
           TError,
           Awaited<ReturnType<typeof getTrain>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetTrain<TData = Awaited<ReturnType<typeof getTrain>>, TError = AxiosError<null>>(
- run: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrain>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetTrain<TData = Awaited<ReturnType<typeof getTrain>>, TError = null>(
+ run: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrain>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 
-export function useGetTrain<TData = Awaited<ReturnType<typeof getTrain>>, TError = AxiosError<null>>(
- run: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrain>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetTrain<TData = Awaited<ReturnType<typeof getTrain>>, TError = null>(
+ run: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTrain>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
@@ -118,31 +114,33 @@ export function useGetTrain<TData = Awaited<ReturnType<typeof getTrain>>, TError
 
 
 export const getStations = (
-     options?: AxiosRequestConfig
- ): Promise<AxiosResponse<Station[]>> => {
     
-    
-    return axios.default.get(
-      `/api/stations`,options
-    );
-  }
-
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<Station[]>(
+      {url: `/api/stations`, method: 'GET', signal
+    },
+      );
+    }
+  
 
 export const getGetStationsQueryKey = () => {
     return [`/api/stations`] as const;
     }
 
     
-export const getGetStationsQueryOptions = <TData = Awaited<ReturnType<typeof getStations>>, TError = AxiosError<null>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStations>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getGetStationsQueryOptions = <TData = Awaited<ReturnType<typeof getStations>>, TError = null>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStations>>, TError, TData>>, }
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetStationsQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStations>>> = ({ signal }) => getStations({ signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStations>>> = ({ signal }) => getStations(signal);
 
       
 
@@ -152,36 +150,36 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type GetStationsQueryResult = NonNullable<Awaited<ReturnType<typeof getStations>>>
-export type GetStationsQueryError = AxiosError<null>
+export type GetStationsQueryError = null
 
 
-export function useGetStations<TData = Awaited<ReturnType<typeof getStations>>, TError = AxiosError<null>>(
+export function useGetStations<TData = Awaited<ReturnType<typeof getStations>>, TError = null>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStations>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getStations>>,
           TError,
           Awaited<ReturnType<typeof getStations>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetStations<TData = Awaited<ReturnType<typeof getStations>>, TError = AxiosError<null>>(
+export function useGetStations<TData = Awaited<ReturnType<typeof getStations>>, TError = null>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStations>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getStations>>,
           TError,
           Awaited<ReturnType<typeof getStations>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetStations<TData = Awaited<ReturnType<typeof getStations>>, TError = AxiosError<null>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStations>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetStations<TData = Awaited<ReturnType<typeof getStations>>, TError = null>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStations>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 
-export function useGetStations<TData = Awaited<ReturnType<typeof getStations>>, TError = AxiosError<null>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStations>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetStations<TData = Awaited<ReturnType<typeof getStations>>, TError = null>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStations>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
@@ -198,31 +196,33 @@ export function useGetStations<TData = Awaited<ReturnType<typeof getStations>>, 
 
 
 export const getStationArrivals = (
-    stationId: string, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<StationArrival[]>> => {
-    
-    
-    return axios.default.get(
-      `/api/stations/${stationId}/arrivals`,options
-    );
-  }
-
+    stationId: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<StationArrival[]>(
+      {url: `/api/stations/${stationId}/arrivals`, method: 'GET', signal
+    },
+      );
+    }
+  
 
 export const getGetStationArrivalsQueryKey = (stationId?: string,) => {
     return [`/api/stations/${stationId}/arrivals`] as const;
     }
 
     
-export const getGetStationArrivalsQueryOptions = <TData = Awaited<ReturnType<typeof getStationArrivals>>, TError = AxiosError<null>>(stationId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStationArrivals>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getGetStationArrivalsQueryOptions = <TData = Awaited<ReturnType<typeof getStationArrivals>>, TError = null>(stationId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStationArrivals>>, TError, TData>>, }
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetStationArrivalsQueryKey(stationId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStationArrivals>>> = ({ signal }) => getStationArrivals(stationId, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStationArrivals>>> = ({ signal }) => getStationArrivals(stationId, signal);
 
       
 
@@ -232,36 +232,36 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type GetStationArrivalsQueryResult = NonNullable<Awaited<ReturnType<typeof getStationArrivals>>>
-export type GetStationArrivalsQueryError = AxiosError<null>
+export type GetStationArrivalsQueryError = null
 
 
-export function useGetStationArrivals<TData = Awaited<ReturnType<typeof getStationArrivals>>, TError = AxiosError<null>>(
+export function useGetStationArrivals<TData = Awaited<ReturnType<typeof getStationArrivals>>, TError = null>(
  stationId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStationArrivals>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getStationArrivals>>,
           TError,
           Awaited<ReturnType<typeof getStationArrivals>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetStationArrivals<TData = Awaited<ReturnType<typeof getStationArrivals>>, TError = AxiosError<null>>(
+export function useGetStationArrivals<TData = Awaited<ReturnType<typeof getStationArrivals>>, TError = null>(
  stationId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStationArrivals>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getStationArrivals>>,
           TError,
           Awaited<ReturnType<typeof getStationArrivals>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetStationArrivals<TData = Awaited<ReturnType<typeof getStationArrivals>>, TError = AxiosError<null>>(
- stationId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStationArrivals>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetStationArrivals<TData = Awaited<ReturnType<typeof getStationArrivals>>, TError = null>(
+ stationId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStationArrivals>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 
-export function useGetStationArrivals<TData = Awaited<ReturnType<typeof getStationArrivals>>, TError = AxiosError<null>>(
- stationId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStationArrivals>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetStationArrivals<TData = Awaited<ReturnType<typeof getStationArrivals>>, TError = null>(
+ stationId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStationArrivals>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
@@ -278,31 +278,33 @@ export function useGetStationArrivals<TData = Awaited<ReturnType<typeof getStati
 
 
 export const getRoutes = (
-     options?: AxiosRequestConfig
- ): Promise<AxiosResponse<Route[]>> => {
     
-    
-    return axios.default.get(
-      `/api/routes`,options
-    );
-  }
-
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<Route[]>(
+      {url: `/api/routes`, method: 'GET', signal
+    },
+      );
+    }
+  
 
 export const getGetRoutesQueryKey = () => {
     return [`/api/routes`] as const;
     }
 
     
-export const getGetRoutesQueryOptions = <TData = Awaited<ReturnType<typeof getRoutes>>, TError = AxiosError<null>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoutes>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getGetRoutesQueryOptions = <TData = Awaited<ReturnType<typeof getRoutes>>, TError = null>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoutes>>, TError, TData>>, }
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetRoutesQueryKey();
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRoutes>>> = ({ signal }) => getRoutes({ signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getRoutes>>> = ({ signal }) => getRoutes(signal);
 
       
 
@@ -312,36 +314,36 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type GetRoutesQueryResult = NonNullable<Awaited<ReturnType<typeof getRoutes>>>
-export type GetRoutesQueryError = AxiosError<null>
+export type GetRoutesQueryError = null
 
 
-export function useGetRoutes<TData = Awaited<ReturnType<typeof getRoutes>>, TError = AxiosError<null>>(
+export function useGetRoutes<TData = Awaited<ReturnType<typeof getRoutes>>, TError = null>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoutes>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getRoutes>>,
           TError,
           Awaited<ReturnType<typeof getRoutes>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetRoutes<TData = Awaited<ReturnType<typeof getRoutes>>, TError = AxiosError<null>>(
+export function useGetRoutes<TData = Awaited<ReturnType<typeof getRoutes>>, TError = null>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoutes>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getRoutes>>,
           TError,
           Awaited<ReturnType<typeof getRoutes>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetRoutes<TData = Awaited<ReturnType<typeof getRoutes>>, TError = AxiosError<null>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoutes>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetRoutes<TData = Awaited<ReturnType<typeof getRoutes>>, TError = null>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoutes>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 
-export function useGetRoutes<TData = Awaited<ReturnType<typeof getRoutes>>, TError = AxiosError<null>>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoutes>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetRoutes<TData = Awaited<ReturnType<typeof getRoutes>>, TError = null>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getRoutes>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
@@ -359,15 +361,17 @@ export function useGetRoutes<TData = Awaited<ReturnType<typeof getRoutes>>, TErr
 
 export const getStopArrivals = (
     routeId: string,
-    stopId: string, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<StopArrival[]>> => {
-    
-    
-    return axios.default.get(
-      `/api/routes/${routeId}/stops/${stopId}/arrivals`,options
-    );
-  }
-
+    stopId: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<StopArrival[]>(
+      {url: `/api/routes/${routeId}/stops/${stopId}/arrivals`, method: 'GET', signal
+    },
+      );
+    }
+  
 
 export const getGetStopArrivalsQueryKey = (routeId?: string,
     stopId?: string,) => {
@@ -375,17 +379,17 @@ export const getGetStopArrivalsQueryKey = (routeId?: string,
     }
 
     
-export const getGetStopArrivalsQueryOptions = <TData = Awaited<ReturnType<typeof getStopArrivals>>, TError = AxiosError<null>>(routeId: string,
-    stopId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStopArrivals>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getGetStopArrivalsQueryOptions = <TData = Awaited<ReturnType<typeof getStopArrivals>>, TError = null>(routeId: string,
+    stopId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStopArrivals>>, TError, TData>>, }
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetStopArrivalsQueryKey(routeId,stopId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStopArrivals>>> = ({ signal }) => getStopArrivals(routeId,stopId, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStopArrivals>>> = ({ signal }) => getStopArrivals(routeId,stopId, signal);
 
       
 
@@ -395,10 +399,10 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type GetStopArrivalsQueryResult = NonNullable<Awaited<ReturnType<typeof getStopArrivals>>>
-export type GetStopArrivalsQueryError = AxiosError<null>
+export type GetStopArrivalsQueryError = null
 
 
-export function useGetStopArrivals<TData = Awaited<ReturnType<typeof getStopArrivals>>, TError = AxiosError<null>>(
+export function useGetStopArrivals<TData = Awaited<ReturnType<typeof getStopArrivals>>, TError = null>(
  routeId: string,
     stopId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStopArrivals>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
@@ -406,10 +410,10 @@ export function useGetStopArrivals<TData = Awaited<ReturnType<typeof getStopArri
           TError,
           Awaited<ReturnType<typeof getStopArrivals>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetStopArrivals<TData = Awaited<ReturnType<typeof getStopArrivals>>, TError = AxiosError<null>>(
+export function useGetStopArrivals<TData = Awaited<ReturnType<typeof getStopArrivals>>, TError = null>(
  routeId: string,
     stopId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStopArrivals>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
@@ -417,18 +421,18 @@ export function useGetStopArrivals<TData = Awaited<ReturnType<typeof getStopArri
           TError,
           Awaited<ReturnType<typeof getStopArrivals>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetStopArrivals<TData = Awaited<ReturnType<typeof getStopArrivals>>, TError = AxiosError<null>>(
+export function useGetStopArrivals<TData = Awaited<ReturnType<typeof getStopArrivals>>, TError = null>(
  routeId: string,
-    stopId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStopArrivals>>, TError, TData>>, axios?: AxiosRequestConfig}
+    stopId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStopArrivals>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 
-export function useGetStopArrivals<TData = Awaited<ReturnType<typeof getStopArrivals>>, TError = AxiosError<null>>(
+export function useGetStopArrivals<TData = Awaited<ReturnType<typeof getStopArrivals>>, TError = null>(
  routeId: string,
-    stopId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStopArrivals>>, TError, TData>>, axios?: AxiosRequestConfig}
+    stopId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStopArrivals>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
@@ -445,31 +449,33 @@ export function useGetStopArrivals<TData = Awaited<ReturnType<typeof getStopArri
 
 
 export const getDirections = (
-    routeId: string, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<string[]>> => {
-    
-    
-    return axios.default.get(
-      `/api/routes/${routeId}/directions`,options
-    );
-  }
-
+    routeId: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<string[]>(
+      {url: `/api/routes/${routeId}/directions`, method: 'GET', signal
+    },
+      );
+    }
+  
 
 export const getGetDirectionsQueryKey = (routeId?: string,) => {
     return [`/api/routes/${routeId}/directions`] as const;
     }
 
     
-export const getGetDirectionsQueryOptions = <TData = Awaited<ReturnType<typeof getDirections>>, TError = AxiosError<null>>(routeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDirections>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getGetDirectionsQueryOptions = <TData = Awaited<ReturnType<typeof getDirections>>, TError = null>(routeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDirections>>, TError, TData>>, }
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetDirectionsQueryKey(routeId);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDirections>>> = ({ signal }) => getDirections(routeId, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDirections>>> = ({ signal }) => getDirections(routeId, signal);
 
       
 
@@ -479,36 +485,36 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type GetDirectionsQueryResult = NonNullable<Awaited<ReturnType<typeof getDirections>>>
-export type GetDirectionsQueryError = AxiosError<null>
+export type GetDirectionsQueryError = null
 
 
-export function useGetDirections<TData = Awaited<ReturnType<typeof getDirections>>, TError = AxiosError<null>>(
+export function useGetDirections<TData = Awaited<ReturnType<typeof getDirections>>, TError = null>(
  routeId: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDirections>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getDirections>>,
           TError,
           Awaited<ReturnType<typeof getDirections>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetDirections<TData = Awaited<ReturnType<typeof getDirections>>, TError = AxiosError<null>>(
+export function useGetDirections<TData = Awaited<ReturnType<typeof getDirections>>, TError = null>(
  routeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDirections>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getDirections>>,
           TError,
           Awaited<ReturnType<typeof getDirections>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetDirections<TData = Awaited<ReturnType<typeof getDirections>>, TError = AxiosError<null>>(
- routeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDirections>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetDirections<TData = Awaited<ReturnType<typeof getDirections>>, TError = null>(
+ routeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDirections>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 
-export function useGetDirections<TData = Awaited<ReturnType<typeof getDirections>>, TError = AxiosError<null>>(
- routeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDirections>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetDirections<TData = Awaited<ReturnType<typeof getDirections>>, TError = null>(
+ routeId: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDirections>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
@@ -526,15 +532,17 @@ export function useGetDirections<TData = Awaited<ReturnType<typeof getDirections
 
 export const getStops = (
     routeId: string,
-    direction: string, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<Stop[]>> => {
-    
-    
-    return axios.default.get(
-      `/api/routes/${routeId}/directions/${direction}/stops`,options
-    );
-  }
-
+    direction: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<Stop[]>(
+      {url: `/api/routes/${routeId}/directions/${direction}/stops`, method: 'GET', signal
+    },
+      );
+    }
+  
 
 export const getGetStopsQueryKey = (routeId?: string,
     direction?: string,) => {
@@ -542,17 +550,17 @@ export const getGetStopsQueryKey = (routeId?: string,
     }
 
     
-export const getGetStopsQueryOptions = <TData = Awaited<ReturnType<typeof getStops>>, TError = AxiosError<null>>(routeId: string,
-    direction: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStops>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getGetStopsQueryOptions = <TData = Awaited<ReturnType<typeof getStops>>, TError = null>(routeId: string,
+    direction: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStops>>, TError, TData>>, }
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetStopsQueryKey(routeId,direction);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStops>>> = ({ signal }) => getStops(routeId,direction, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getStops>>> = ({ signal }) => getStops(routeId,direction, signal);
 
       
 
@@ -562,10 +570,10 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type GetStopsQueryResult = NonNullable<Awaited<ReturnType<typeof getStops>>>
-export type GetStopsQueryError = AxiosError<null>
+export type GetStopsQueryError = null
 
 
-export function useGetStops<TData = Awaited<ReturnType<typeof getStops>>, TError = AxiosError<null>>(
+export function useGetStops<TData = Awaited<ReturnType<typeof getStops>>, TError = null>(
  routeId: string,
     direction: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStops>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
@@ -573,10 +581,10 @@ export function useGetStops<TData = Awaited<ReturnType<typeof getStops>>, TError
           TError,
           Awaited<ReturnType<typeof getStops>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetStops<TData = Awaited<ReturnType<typeof getStops>>, TError = AxiosError<null>>(
+export function useGetStops<TData = Awaited<ReturnType<typeof getStops>>, TError = null>(
  routeId: string,
     direction: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStops>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
@@ -584,18 +592,18 @@ export function useGetStops<TData = Awaited<ReturnType<typeof getStops>>, TError
           TError,
           Awaited<ReturnType<typeof getStops>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetStops<TData = Awaited<ReturnType<typeof getStops>>, TError = AxiosError<null>>(
+export function useGetStops<TData = Awaited<ReturnType<typeof getStops>>, TError = null>(
  routeId: string,
-    direction: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStops>>, TError, TData>>, axios?: AxiosRequestConfig}
+    direction: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStops>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 
-export function useGetStops<TData = Awaited<ReturnType<typeof getStops>>, TError = AxiosError<null>>(
+export function useGetStops<TData = Awaited<ReturnType<typeof getStops>>, TError = null>(
  routeId: string,
-    direction: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStops>>, TError, TData>>, axios?: AxiosRequestConfig}
+    direction: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getStops>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
@@ -613,15 +621,17 @@ export function useGetStops<TData = Awaited<ReturnType<typeof getStops>>, TError
 
 export const getDetours = (
     routeId: string,
-    direction: string, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<Detour[]>> => {
-    
-    
-    return axios.default.get(
-      `/api/routes/${routeId}/directions/${direction}/detours`,options
-    );
-  }
-
+    direction: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<Detour[]>(
+      {url: `/api/routes/${routeId}/directions/${direction}/detours`, method: 'GET', signal
+    },
+      );
+    }
+  
 
 export const getGetDetoursQueryKey = (routeId?: string,
     direction?: string,) => {
@@ -629,17 +639,17 @@ export const getGetDetoursQueryKey = (routeId?: string,
     }
 
     
-export const getGetDetoursQueryOptions = <TData = Awaited<ReturnType<typeof getDetours>>, TError = AxiosError<null>>(routeId: string,
-    direction: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDetours>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getGetDetoursQueryOptions = <TData = Awaited<ReturnType<typeof getDetours>>, TError = null>(routeId: string,
+    direction: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDetours>>, TError, TData>>, }
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetDetoursQueryKey(routeId,direction);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDetours>>> = ({ signal }) => getDetours(routeId,direction, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getDetours>>> = ({ signal }) => getDetours(routeId,direction, signal);
 
       
 
@@ -649,10 +659,10 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type GetDetoursQueryResult = NonNullable<Awaited<ReturnType<typeof getDetours>>>
-export type GetDetoursQueryError = AxiosError<null>
+export type GetDetoursQueryError = null
 
 
-export function useGetDetours<TData = Awaited<ReturnType<typeof getDetours>>, TError = AxiosError<null>>(
+export function useGetDetours<TData = Awaited<ReturnType<typeof getDetours>>, TError = null>(
  routeId: string,
     direction: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDetours>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
@@ -660,10 +670,10 @@ export function useGetDetours<TData = Awaited<ReturnType<typeof getDetours>>, TE
           TError,
           Awaited<ReturnType<typeof getDetours>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetDetours<TData = Awaited<ReturnType<typeof getDetours>>, TError = AxiosError<null>>(
+export function useGetDetours<TData = Awaited<ReturnType<typeof getDetours>>, TError = null>(
  routeId: string,
     direction: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDetours>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
@@ -671,18 +681,18 @@ export function useGetDetours<TData = Awaited<ReturnType<typeof getDetours>>, TE
           TError,
           Awaited<ReturnType<typeof getDetours>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetDetours<TData = Awaited<ReturnType<typeof getDetours>>, TError = AxiosError<null>>(
+export function useGetDetours<TData = Awaited<ReturnType<typeof getDetours>>, TError = null>(
  routeId: string,
-    direction: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDetours>>, TError, TData>>, axios?: AxiosRequestConfig}
+    direction: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDetours>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 
-export function useGetDetours<TData = Awaited<ReturnType<typeof getDetours>>, TError = AxiosError<null>>(
+export function useGetDetours<TData = Awaited<ReturnType<typeof getDetours>>, TError = null>(
  routeId: string,
-    direction: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDetours>>, TError, TData>>, axios?: AxiosRequestConfig}
+    direction: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getDetours>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
@@ -699,31 +709,33 @@ export function useGetDetours<TData = Awaited<ReturnType<typeof getDetours>>, TE
 
 
 export const getBus = (
-    id: string, options?: AxiosRequestConfig
- ): Promise<AxiosResponse<Bus>> => {
-    
-    
-    return axios.default.get(
-      `/api/buses/${id}`,options
-    );
-  }
-
+    id: string,
+ signal?: AbortSignal
+) => {
+      
+      
+      return customInstance<Bus>(
+      {url: `/api/buses/${id}`, method: 'GET', signal
+    },
+      );
+    }
+  
 
 export const getGetBusQueryKey = (id?: string,) => {
     return [`/api/buses/${id}`] as const;
     }
 
     
-export const getGetBusQueryOptions = <TData = Awaited<ReturnType<typeof getBus>>, TError = AxiosError<null>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBus>>, TError, TData>>, axios?: AxiosRequestConfig}
+export const getGetBusQueryOptions = <TData = Awaited<ReturnType<typeof getBus>>, TError = null>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBus>>, TError, TData>>, }
 ) => {
 
-const {query: queryOptions, axios: axiosOptions} = options ?? {};
+const {query: queryOptions} = options ?? {};
 
   const queryKey =  queryOptions?.queryKey ?? getGetBusQueryKey(id);
 
   
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBus>>> = ({ signal }) => getBus(id, { signal, ...axiosOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getBus>>> = ({ signal }) => getBus(id, signal);
 
       
 
@@ -733,36 +745,36 @@ const {query: queryOptions, axios: axiosOptions} = options ?? {};
 }
 
 export type GetBusQueryResult = NonNullable<Awaited<ReturnType<typeof getBus>>>
-export type GetBusQueryError = AxiosError<null>
+export type GetBusQueryError = null
 
 
-export function useGetBus<TData = Awaited<ReturnType<typeof getBus>>, TError = AxiosError<null>>(
+export function useGetBus<TData = Awaited<ReturnType<typeof getBus>>, TError = null>(
  id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBus>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getBus>>,
           TError,
           Awaited<ReturnType<typeof getBus>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetBus<TData = Awaited<ReturnType<typeof getBus>>, TError = AxiosError<null>>(
+export function useGetBus<TData = Awaited<ReturnType<typeof getBus>>, TError = null>(
  id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBus>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getBus>>,
           TError,
           Awaited<ReturnType<typeof getBus>>
         > , 'initialData'
-      >, axios?: AxiosRequestConfig}
+      >, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
-export function useGetBus<TData = Awaited<ReturnType<typeof getBus>>, TError = AxiosError<null>>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBus>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetBus<TData = Awaited<ReturnType<typeof getBus>>, TError = null>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBus>>, TError, TData>>, }
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> }
 
-export function useGetBus<TData = Awaited<ReturnType<typeof getBus>>, TError = AxiosError<null>>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBus>>, TError, TData>>, axios?: AxiosRequestConfig}
+export function useGetBus<TData = Awaited<ReturnType<typeof getBus>>, TError = null>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getBus>>, TError, TData>>, }
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData> } {
 
