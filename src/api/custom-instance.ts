@@ -1,9 +1,11 @@
-import axiosInstance from './axios-instance';
-import { AxiosRequestConfig } from 'axios';
+import axios, {AxiosRequestConfig} from 'axios';
 
-export const customInstance = async <T>(
-    config: AxiosRequestConfig
-): Promise<T> => {
-    const response = await axiosInstance.request<T>(config);
-    return response.data;
+declare const __API_BASE_URL__: string;
+
+const instance = axios.create({
+    baseURL: __API_BASE_URL__,
+});
+
+export const customInstance = <T>(config: AxiosRequestConfig) => {
+    return instance.request<T>(config);
 };

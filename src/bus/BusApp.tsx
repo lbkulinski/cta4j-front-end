@@ -10,7 +10,7 @@ function BusApp() {
 
     const [direction, setDirection] = React.useState<string | null>(null);
 
-    const [stopId, setStopId] = React.useState<number | null>(null);
+    const [stopId, setStopId] = React.useState<string | null>(null);
 
     React.useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search);
@@ -39,14 +39,10 @@ function BusApp() {
 
         const localStorageStopId = localStorage.getItem('stopId');
 
-        const initialStopIdString = urlStopId ?? localStorageStopId;
+        const initialStopId = urlStopId ?? localStorageStopId;
 
-        if (initialStopIdString) {
-            const initialStopId = parseInt(initialStopIdString, 10);
-
-            if (!isNaN(initialStopId)) {
-                setStopId(initialStopId);
-            }
+        if (initialStopId) {
+            setStopId(initialStopId);
         }
     }, []);
 

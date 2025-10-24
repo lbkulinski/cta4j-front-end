@@ -1,13 +1,13 @@
 import { Alert, Autocomplete, TextField } from '@mui/material';
 import { useRollbar } from '@rollbar/react';
-import {useGetDirections} from '../api/generated';
+import {useGetDirections} from '../api';
 import {AxiosError, isAxiosError} from 'axios';
 
 interface DirectionsProps {
     routeId: string | null;
     direction: string | null;
     setDirection: (direction: string | null) => void;
-    setStopId: (stopId: number | null) => void;
+    setStopId: (stopId: string | null) => void;
 }
 
 interface Option {
@@ -58,7 +58,13 @@ function Directions(props: DirectionsProps) {
         );
     }
 
-    if (!data || (data.length === 0)) {
+    if (data === undefined) {
+        return null;
+    }
+
+    let directions: string[] = data.data;
+
+    if (directions.length === 0) {
         return (
             <Alert severity='warning'>
                 There are no directions to choose from. Please check back later.
@@ -66,7 +72,7 @@ function Directions(props: DirectionsProps) {
         );
     }
 
-    const options: Option[] = data.map((dir) => ({ id: dir, label: dir }));
+    const options: Option[] = directions.map((dir) => ({ id: dir, label: dir }));
 
     const selectedOption = options.find((option) => option.id === direction) || null;
 

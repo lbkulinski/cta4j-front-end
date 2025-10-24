@@ -1,17 +1,17 @@
 import {Alert, Autocomplete, TextField} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
-import {useGetStops} from '../api/generated';
+import {Stop, useGetStops} from '../api';
 import {AxiosError, isAxiosError} from 'axios';
 
 interface StopsProps {
     routeId: string | null;
     direction: string | null;
-    stopId: number | null;
-    setStopId: (stopId: number | null) => void;
+    stopId: string | null;
+    setStopId: (stopId: string | null) => void;
 }
 
 interface Option {
-    id: number;
+    id: string;
     label: string;
 }
 
@@ -60,7 +60,13 @@ function Stops(props: StopsProps) {
         );
     }
 
-    if (!data || (data.length === 0)) {
+    if (data === undefined) {
+        return null;
+    }
+
+    let stops: Stop[] = data.data;
+
+    if (stops.length === 0) {
         return (
             <Alert severity='warning'>
                 There are no stops to choose from. Please check back later.
@@ -68,7 +74,7 @@ function Stops(props: StopsProps) {
         );
     }
 
-    const options: Option[] = data.map((stop) => ({ id: stop.id, label: stop.name }));
+    const options: Option[] = stops.map((stop) => ({ id: stop.id, label: stop.name }));
 
     const selectedOption = options.find((option) => option.id === stopId) || null;
 

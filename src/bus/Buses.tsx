@@ -1,31 +1,23 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
-import {Bus, useGetArrivals1} from '../api/generated';
+import {StopArrival, useGetStopArrivals} from '../api';
 import {AxiosError, isAxiosError} from 'axios';
 
 interface BusesProps {
     routeId: string | null;
-    stopId: number | null;
+    stopId: string | null;
 }
 
-function getEta(bus: Bus) {
-    const arrivalTime = new Date(bus.arrivalTime).getTime();
-
-    const predictionTime = new Date(bus.predictionTime).getTime();
-
-    return Math.floor((arrivalTime - predictionTime) / 60000);
-}
-
-function getRow(bus: Bus) {
-    const key = JSON.stringify(bus);
+function getRow(arrival: StopArrival) {
+    const key = JSON.stringify(arrival);
 
     let backgroundColor: string | undefined;
 
-    const eta = getEta(bus);
+    const eta = arrival.etaMinutes;
 
     if (eta <= 1) {
         backgroundColor = '#13251f';
-    } else if (bus.delayed) {
+    } else if (arrival.delayed) {
         backgroundColor = '#381717';
     }
 
@@ -35,15 +27,15 @@ function getRow(bus: Bus) {
 
     return (
         <TableRow key={key} sx={rowStyles}>
-            <TableCell>{bus.id}</TableCell>
-            <TableCell>{bus.type}</TableCell>
-            <TableCell>{bus.destination}</TableCell>
+            <TableCell>{arrival.vehicleId}</TableCell>
+            <TableCell>{arrival.predictionType}</TableCell>
+            <TableCell>{arrival.destination}</TableCell>
             <TableCell>{etaString}</TableCell>
         </TableRow>
     );
 }
 
-function getTable(buses: Bus[]) {
+function getTable(arrivals: StopArrival[]) {
     return (
         <Box sx={{ p: 2 }}>
             <TableContainer component={Paper}>
@@ -56,29 +48,29 @@ function getTable(buses: Bus[]) {
                             <TableCell sx={{ fontWeight: 'bold' }}>ETA</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>{buses.map((bus) => getRow(bus))}</TableBody>
+                    <TableBody>{arrivals.map((arrival) => getRow(arrival))}</TableBody>
                 </Table>
             </TableContainer>
         </Box>
     );
 }
 
-function compareBuses(bus0: Bus, bus1: Bus) {
-    const routeComparison = bus0.route.localeCompare(bus1.route);
+function compareBuses(arrival0: StopArrival, arrival1: StopArrival) {
+    const routeComparison = arrival0.route.localeCompare(arrival1.route);
 
     if (routeComparison !== 0) {
         return routeComparison;
     }
 
-    const destinationComparison = bus0.destination.localeCompare(bus1.destination);
+    const destinationComparison = arrival0.destination.localeCompare(arrival1.destination);
 
     if (destinationComparison !== 0) {
         return destinationComparison;
     }
 
-    const date0 = new Date(bus0.arrivalTime).getTime();
+    const date0 = new Date(arrival0.arrivalTime).getTime();
 
-    const date1 = new Date(bus1.arrivalTime).getTime();
+    const date1 = new Date(arrival1.arrivalTime).getTime();
 
     return date0 - date1;
 }
@@ -90,9 +82,9 @@ function Buses(props: BusesProps) {
 
     const normalizedRouteId = routeId ?? '';
 
-    const normalizedStopId = stopId ?? -1;
+    const normalizedStopId = stopId ?? '';
 
-    const { data, isLoading, error } = useGetArrivals1(normalizedRouteId, normalizedStopId, {
+    const { data, error, isLoading } = useGetStopArrivals(normalizedRouteId, normalizedStopId, {
         query: {
             enabled: (routeId != null) && (stopId != null),
             refetchInterval: 60000,
@@ -129,7 +121,13 @@ function Buses(props: BusesProps) {
         );
     }
 
-    if (!data || (data.length === 0)) {
+    if (data === undefined) {
+        return null;
+    }
+
+    let arrivals: StopArrival[] = data.data;
+
+    if (arrivals.length === 0) {
         return (
             <Alert severity="warning">
                 There are no upcoming buses at this time. Please check back later.
@@ -137,7 +135,7 @@ function Buses(props: BusesProps) {
         );
     }
 
-    const sortedData = [...data].sort(compareBuses);
+    const sortedData = [...arrivals].sort(compareBuses);
 
     return getTable(sortedData);
 }

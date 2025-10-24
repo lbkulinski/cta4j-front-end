@@ -4,7 +4,7 @@ import Trains from "./Trains.tsx";
 import Stations from "./Stations.tsx";
 
 function TrainApp() {
-    const [stationId, setStationId] = React.useState<number | null>(null);
+    const [stationId, setStationId] = React.useState<string | null>(null);
 
     React.useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search);
@@ -13,14 +13,10 @@ function TrainApp() {
 
         const localStorageStationId = localStorage.getItem('stationId');
 
-        const initialStationIdString = urlStationId ?? localStorageStationId;
+        const initialStationId = urlStationId ?? localStorageStationId;
 
-        if (initialStationIdString) {
-            const initialStationId = parseInt(initialStationIdString, 10);
-
-            if (!isNaN(initialStationId)) {
-                setStationId(initialStationId);
-            }
+        if (initialStationId) {
+            setStationId(initialStationId);
         }
     }, []);
 

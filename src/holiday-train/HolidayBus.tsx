@@ -1,38 +1,20 @@
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
-import {Bus, useGetUpcomingStops} from "../api/generated.ts";
+import {Bus, UpcomingBusArrival, useGetBus} from "../api";
 import {AxiosError, isAxiosError} from "axios";
 
-function getEta(bus: Bus) {
-    const arrivalDate = new Date(bus.arrivalTime);
-
-    const arrivalMillis = arrivalDate.getTime();
-
-    const predictionDate = new Date(bus.predictionTime);
-
-    const predictionMillis = predictionDate.getTime();
-
-    let difference = arrivalMillis - predictionMillis;
-
-    const minuteMillis = 60000;
-
-    difference /= minuteMillis;
-
-    return Math.floor(difference);
-}
-
-function getRow(bus: Bus) {
+function getRow(arrival: UpcomingBusArrival) {
     const key = crypto.randomUUID();
 
     let rowStyles = {};
 
-    const eta = getEta(bus);
+    const eta = arrival.etaMinutes;
 
     if (eta <= 1) {
         rowStyles = {
             backgroundColor: "#13251f"
         };
-    } else if (bus.delayed) {
+    } else if (arrival.delayed) {
         rowStyles = {
             backgroundColor: "#381717"
         }
@@ -44,7 +26,7 @@ function getRow(bus: Bus) {
         <TableRow key={key} sx={rowStyles}>
             <TableCell>
                 {
-                    bus.stop
+                    arrival.stopName
                 }
             </TableCell>
             <TableCell>
@@ -56,11 +38,7 @@ function getRow(bus: Bus) {
     );
 }
 
-function getTable(buses: Bus[] | null) {
-    if (buses === null) {
-        return null;
-    }
-
+function getTable(arrivals: UpcomingBusArrival[]) {
     return (
         <TableContainer component={Paper}>
             <Table size="small">
@@ -72,7 +50,7 @@ function getTable(buses: Bus[] | null) {
                 </TableHead>
                 <TableBody>
                     {
-                        buses.map((bus) => getRow(bus))
+                        arrivals.map((bus) => getRow(bus))
                     }
                 </TableBody>
             </Table>
@@ -80,10 +58,10 @@ function getTable(buses: Bus[] | null) {
     );
 }
 
-function compareBuses(bus0: Bus, bus1: Bus) {
-    const date0 = new Date(bus0.arrivalTime);
+function compareArrivals(arrival0: UpcomingBusArrival, arrival1: UpcomingBusArrival) {
+    const date0 = new Date(arrival0.arrivalTime);
 
-    const date1 = new Date(bus1.arrivalTime);
+    const date1 = new Date(arrival1.arrivalTime);
 
     if (date0 < date1) {
         return -1;
@@ -95,11 +73,11 @@ function compareBuses(bus0: Bus, bus1: Bus) {
 }
 
 function HolidayBus() {
-    const id = 4374;
+    const id = "4374";
 
     const rollbar = useRollbar();
 
-    const { data, isLoading, error } = useGetUpcomingStops(
+    const { data, isLoading, error } = useGetBus(
         id,
         {
             query: {
@@ -140,7 +118,15 @@ function HolidayBus() {
         );
     }
 
-    if (!data || (data.length === 0)) {
+    let bus: Bus | null;
+
+    if (data === undefined) {
+        bus = null;
+    } else {
+        bus = data.data;
+    }
+
+    if (bus === null) {
         return (
             <Box sx={{p: 2}}>
                 <h2 style={{color: "#B3000C"}}>Holiday Bus &#127877;</h2>
@@ -151,7 +137,9 @@ function HolidayBus() {
         );
     }
 
-    const sortedData = [...data].sort(compareBuses);
+    let arrivals: UpcomingBusArrival[] = bus.arrivals;
+
+    const sortedData = [...arrivals].sort(compareArrivals);
 
     const destination = sortedData[0].destination;
 

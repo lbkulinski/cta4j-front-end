@@ -1,15 +1,15 @@
 import { Alert, Autocomplete, TextField } from '@mui/material';
 import { useRollbar } from '@rollbar/react';
-import { useGetStations } from '../api/generated';
+import { Station, useGetStations } from '../api';
 import { AxiosError, isAxiosError } from 'axios';
 
 interface StationsProps {
-    stationId: number | null;
-    setStationId: (stationId: number | null) => void;
+    stationId: string | null;
+    setStationId: (stationId: string | null) => void;
 }
 
 interface Option {
-    id: number;
+    id: string;
     label: string;
 }
 
@@ -46,7 +46,13 @@ function Stations(props: StationsProps) {
         );
     }
 
-    if (!data || (data.length === 0)) {
+    if (data === undefined) {
+        return null;
+    }
+
+    let stations: Station[] = data.data;
+
+    if (stations.length === 0) {
         return (
             <Alert severity='warning'>
                 There are no stations to choose from. Please check back later.
@@ -54,8 +60,8 @@ function Stations(props: StationsProps) {
         );
     }
 
-    const options: Option[] = data.map((station) => ({ id: station.id, label: station.name }))
-                                  .sort((a, b) => a.label.localeCompare(b.label));
+    const options: Option[] = stations.map((station) => ({ id: station.id, label: station.name }))
+                                      .sort((a, b) => a.label.localeCompare(b.label));
 
     const selectedOption = options.find((option) => option.id === stationId) || null;
 

@@ -1,13 +1,13 @@
 import { Alert, Autocomplete, TextField } from '@mui/material';
 import { useRollbar } from '@rollbar/react';
-import { useGetRoutes } from '../api/generated';
+import { Route, useGetRoutes } from '../api';
 import {AxiosError, isAxiosError} from 'axios';
 
 interface RoutesProps {
     routeId: string | null;
     setRouteId: (routeId: string | null) => void;
     setDirection: (direction: string | null) => void;
-    setStopId: (stopId: number | null) => void;
+    setStopId: (stopId: string | null) => void;
 }
 
 interface Option {
@@ -48,7 +48,13 @@ function Routes(props: RoutesProps) {
         );
     }
 
-    if (!data || (data.length === 0)) {
+    if (data === undefined) {
+        return null;
+    }
+
+    let routes: Route[] = data.data;
+
+    if (routes.length === 0) {
         return (
             <Alert severity='warning'>
                 There are no routes to choose from. Please check back later.
@@ -56,7 +62,7 @@ function Routes(props: RoutesProps) {
         );
     }
 
-    const options: Option[] = data
+    const options: Option[] = routes
         .map((route) => ({ id: route.id, label: `${route.name} (${route.id})` }))
         .sort((a, b) => a.label.localeCompare(b.label));
 
