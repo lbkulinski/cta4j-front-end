@@ -120,7 +120,7 @@ function HolidayTrain() {
             if (statusCode === 404) {
                 return (
                     <Box sx={{p: 2}}>
-                        <h2 style={{color: "#B3000C"}}>Holiday Train &#127877;</h2>
+                        <h2 style={{color: "#B3000C"}}>Holiday Train 🎅🏻</h2>
                         <Alert severity="warning">
                             The Holiday Train does not appear to be running at this time. Please check back later.
                         </Alert>
@@ -133,7 +133,7 @@ function HolidayTrain() {
 
         return (
             <Box sx={{p: 2}}>
-                <h2 style={{color: "#B3000C"}}>Holiday Train &#127877;</h2>
+                <h2 style={{color: "#B3000C"}}>Holiday Train 🎅🏻</h2>
                 <Alert severity="error">
                     An error occurred while retrieving the Holiday Train data. Please check back later.
                 </Alert>
@@ -152,7 +152,7 @@ function HolidayTrain() {
     if (train === null) {
         return (
             <Box sx={{p: 2}}>
-                <h2 style={{color: "#B3000C"}}>Holiday Train &#127877;</h2>
+                <h2 style={{color: "#B3000C"}}>Holiday Train 🎅🏻</h2>
                 <Alert severity="warning">
                     The Holiday Train does not appear to be running at this time. Please check back later.
                 </Alert>
@@ -178,7 +178,7 @@ function HolidayTrain() {
 
     return (
         <Box sx={{p: 2}}>
-            <h2 style={{color: "#B3000C"}}>Holiday Train &#127877;</h2>
+            <h2 style={{color: "#B3000C"}}>Holiday Train 🎅🏻</h2>
             <h3>{destination}-bound <span style={{ color: routeColor }}>{titleCaseRoute}</span> Line Run 1225</h3>
             {table}
         </Box>
