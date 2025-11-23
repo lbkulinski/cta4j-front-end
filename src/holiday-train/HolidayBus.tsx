@@ -97,7 +97,7 @@ function HolidayBus() {
             if (statusCode === 404) {
                 return (
                     <Box sx={{p: 2}}>
-                        <h2 style={{color: "#B3000C"}}>Holiday Bus &#127877;</h2>
+                        <h2 style={{color: "#B3000C"}}>Holiday Bus 🎅🏻</h2>
                         <Alert severity="warning">
                             The Holiday Bus does not appear to be running at this time. Please check back later.
                         </Alert>
@@ -110,7 +110,7 @@ function HolidayBus() {
 
         return (
             <Box sx={{p: 2}}>
-                <h2 style={{color: "#B3000C"}}>Holiday Bus &#127877;</h2>
+                <h2 style={{color: "#B3000C"}}>Holiday Bus 🎅🏻</h2>
                 <Alert severity="error">
                     An error occurred while retrieving the Holiday Bus data. Please check back later.
                 </Alert>
@@ -129,7 +129,7 @@ function HolidayBus() {
     if (bus === null) {
         return (
             <Box sx={{p: 2}}>
-                <h2 style={{color: "#B3000C"}}>Holiday Bus &#127877;</h2>
+                <h2 style={{color: "#B3000C"}}>Holiday Bus 🎅🏻</h2>
                 <Alert severity="warning">
                     The Holiday Bus does not appear to be running at this time. Please check back later.
                 </Alert>
@@ -149,7 +149,7 @@ function HolidayBus() {
 
     return (
         <Box sx={{p: 2}}>
-            <h2 style={{color: "#B3000C"}}>Holiday Bus &#127877;</h2>
+            <h2 style={{color: "#B3000C"}}>Holiday Bus 🎅🏻</h2>
             <h3>{destination}-bound Route {route} (VID {id})</h3>
             {table}
         </Box>
