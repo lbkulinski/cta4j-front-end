@@ -162,6 +162,17 @@ function HolidayTrain() {
 
     let arrivals: UpcomingTrainArrival[] = train.arrivals;
 
+    if (arrivals.length === 0) {
+        return (
+            <Box sx={{p: 2}}>
+                <h2 style={{color: "#B3000C"}}>Holiday Train 🎅🏻</h2>
+                <Alert severity="warning">
+                    The Holiday Train does not appear to be running at this time. Please check back later.
+                </Alert>
+            </Box>
+        );
+    }
+
     const sortedData = [...arrivals].sort(compareArrivals);
 
     const destination = sortedData[0].destinationName;
