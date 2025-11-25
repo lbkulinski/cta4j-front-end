@@ -50,6 +50,11 @@ const router = createBrowserRouter([
         path: "/holiday-train",
         element: <HolidayApp />,
         errorElement: <ErrorPage />,
+    },
+    {
+        path: "/holiday",
+        element: <HolidayApp />,
+        errorElement: <ErrorPage />,
     }
 ]);
 
