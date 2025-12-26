@@ -24,11 +24,11 @@ function MenuBar() {
                     <IconButton color="inherit" href="/buses">
                         <DirectionsBusIcon />
                     </IconButton>
-                    <IconButton color="inherit" href="/holiday-train">
+{/*                    <IconButton color="inherit" href="/holiday-train">
                         <Typography variant="h6" sx={{ flexGrow: 1 }}>
                             🎅🏻
                         </Typography>
-                    </IconButton>
+                    </IconButton>*/}
                     <IconButton color="inherit" href="https://buymeacoffee.com/cta4j" target="_blank">
                         <CoffeeIcon />
                     </IconButton>
