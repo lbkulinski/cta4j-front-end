@@ -1,4 +1,3 @@
-import './logrocketSetup';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import TrainApp from './train/TrainApp.tsx'
@@ -48,8 +47,7 @@ const router = createBrowserRouter([
     },
     {
         path: "*",
-        element: <TrainApp />,
-        errorElement: <ErrorPage />,
+        element: <ErrorPage />,
     },
 ]);
 
