@@ -25,8 +25,8 @@ const darkTheme = createTheme({
             main: '#c60c30',
         },
         background: {
-            default: '#0d0d0d',
-            paper: '#171717',
+            default: '#0a0a0a',
+            paper: '#111111',
         },
         text: {
             primary: '#e5e5e5',
