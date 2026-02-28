@@ -5,23 +5,32 @@
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-            name="description"
-            content="A simple tracker for CTA trains and buses"
-    />
+    <meta name="description" content="Track CTA trains and buses in real time. View upcoming arrivals for all L train stations and bus stops across Chicago." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://cta4j.app/" />
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.json" />
-    <title>cta4j</title>
-</head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-B3821QR5SM"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
 
-    gtag('config', 'G-B3821QR5SM');
-</script>
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://cta4j.app/" />
+    <meta property="og:title" content="cta4j — CTA Train & Bus Tracker" />
+    <meta property="og:description" content="Track CTA trains and buses in real time. View upcoming arrivals for all L train stations and bus stops across Chicago." />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="cta4j — CTA Train & Bus Tracker" />
+    <meta name="twitter:description" content="Track CTA trains and buses in real time. View upcoming arrivals for all L train stations and bus stops across Chicago." />
+
+    <title>cta4j</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-B3821QR5SM"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-B3821QR5SM');
+    </script>
+</head>
 <body>
 <div id="root"></div>
 <script type="module" src="/src/main.tsx"></script>

@@ -27,11 +27,6 @@ const darkTheme = createTheme({
 
 const router = createBrowserRouter([
     {
-        path: "*",
-        element: <TrainApp />,
-        errorElement: <ErrorPage />,
-    },
-    {
         path: "/",
         element: <TrainApp />,
         errorElement: <ErrorPage />,
@@ -52,10 +47,10 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
     },
     {
-        path: "/holiday",
-        element: <HolidayApp />,
+        path: "*",
+        element: <TrainApp />,
         errorElement: <ErrorPage />,
-    }
+    },
 ]);
 
 const queryClient = new QueryClient({

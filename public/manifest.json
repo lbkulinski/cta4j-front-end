@@ -1,6 +1,7 @@
 {
-  "short_name": "Train Tracker",
-  "name": "CTA Train Tracker",
+  "short_name": "cta4j",
+  "name": "cta4j — CTA Train & Bus Tracker",
+  "description": "Track CTA trains and buses in real time. View upcoming arrivals for all L train stations and bus stops across Chicago.",
   "icons": [
     {
       "src": "favicon.ico",
@@ -18,7 +19,7 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#000000",
   "background_color": "#ffffff"
