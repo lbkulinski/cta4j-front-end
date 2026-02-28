@@ -144,7 +144,7 @@ function Trains(props: TrainsProps) {
         return null;
     }
 
-    let arrivals: StationArrival[] = data.data;
+    const arrivals: StationArrival[] = data.data;
 
     if (arrivals.length === 0) {
         return (

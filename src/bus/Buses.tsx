@@ -125,7 +125,7 @@ function Buses(props: BusesProps) {
         return null;
     }
 
-    let arrivals: StopArrival[] = data.data;
+    const arrivals: StopArrival[] = data.data;
 
     if (arrivals.length === 0) {
         return (

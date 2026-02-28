@@ -52,7 +52,7 @@ function Routes(props: RoutesProps) {
         return null;
     }
 
-    let routes: Route[] = data.data;
+    const routes: Route[] = data.data;
 
     if (routes.length === 0) {
         return (
@@ -75,7 +75,6 @@ function Routes(props: RoutesProps) {
             renderInput={(params) => <TextField {...params} label='Route' />}
             options={options}
             value={selectedOption}
-            defaultValue={null}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             renderOption={(props, option) => (

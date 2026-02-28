@@ -62,7 +62,7 @@ function Directions(props: DirectionsProps) {
         return null;
     }
 
-    let directions: string[] = data.data;
+    const directions: string[] = data.data;
 
     if (directions.length === 0) {
         return (
@@ -83,7 +83,6 @@ function Directions(props: DirectionsProps) {
             renderInput={(params) => <TextField {...params} label='Direction' />}
             options={options}
             value={selectedOption}
-            defaultValue={null}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             renderOption={(props, option) => (
