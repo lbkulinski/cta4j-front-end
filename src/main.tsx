@@ -21,6 +21,18 @@ const rollbarConfig = {
 const darkTheme = createTheme({
     palette: {
         mode: "dark",
+        primary: {
+            main: '#c60c30',
+        },
+        background: {
+            default: '#0d0d0d',
+            paper: '#171717',
+        },
+        text: {
+            primary: '#e5e5e5',
+            secondary: '#aaaaaa',
+        },
+        divider: '#2a2a2a',
     },
 });
 

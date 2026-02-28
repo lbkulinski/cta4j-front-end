@@ -12,7 +12,7 @@ import SmokeFreeIcon from '@mui/icons-material/SmokeFree';
 function MenuBar() {
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
+            <AppBar position="static" sx={{ backgroundColor: '#111111', borderBottom: '1px solid #c60c30' }}>
                 <Toolbar variant="dense">
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         cta4j
