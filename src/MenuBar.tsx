@@ -7,6 +7,7 @@ import DirectionsSubwayIcon from '@mui/icons-material/DirectionsSubway';
 import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import CoffeeIcon from '@mui/icons-material/Coffee';
 import MailIcon from '@mui/icons-material/Mail';
+import SmokeFreeIcon from '@mui/icons-material/SmokeFree';
 
 function MenuBar() {
     const handleContactClick = () => window.location.href = "mailto:admin@cta4j.app";
@@ -29,6 +30,9 @@ function MenuBar() {
                             🎅🏻
                         </Typography>
                     </IconButton>*/}
+                    <IconButton color="inherit" href="https://ctasmokers.com" target="_blank">
+                        <SmokeFreeIcon />
+                    </IconButton>
                     <IconButton color="inherit" href="https://buymeacoffee.com/cta4j" target="_blank">
                         <CoffeeIcon />
                     </IconButton>
