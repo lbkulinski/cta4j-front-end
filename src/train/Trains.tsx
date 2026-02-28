@@ -1,4 +1,4 @@
-import {Alert, Box, Paper, Table, TableBody, TableCell, TableRow, Typography} from '@mui/material';
+import {Alert, Box, Paper, Typography} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
 import {StationArrival, useGetStationArrivals} from '../api';
 import {AxiosError, isAxiosError} from 'axios';
@@ -19,55 +19,67 @@ const routeToHexColor = new Map<string, string>([
 ]);
 
 function getTable(arrivals: StationArrival[]) {
-    const groups: { route: string; destination: string; arrivals: StationArrival[] }[] = [];
+    const lineGroups: { route: string; destinations: { destination: string; arrivals: StationArrival[] }[] }[] = [];
 
     for (const arrival of arrivals) {
-        const last = groups[groups.length - 1];
+        const lastLine = lineGroups[lineGroups.length - 1];
 
-        if (last && last.route === arrival.route && last.destination === arrival.destinationName) {
-            last.arrivals.push(arrival);
+        if (!lastLine || lastLine.route !== arrival.route) {
+            lineGroups.push({ route: arrival.route, destinations: [{ destination: arrival.destinationName, arrivals: [arrival] }] });
         } else {
-            groups.push({ route: arrival.route, destination: arrival.destinationName, arrivals: [arrival] });
+            const lastDest = lastLine.destinations[lastLine.destinations.length - 1];
+
+            if (!lastDest || lastDest.destination !== arrival.destinationName) {
+                lastLine.destinations.push({ destination: arrival.destinationName, arrivals: [arrival] });
+            } else {
+                lastDest.arrivals.push(arrival);
+            }
         }
     }
 
     return (
         <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {groups.map(({ route, destination, arrivals: groupArrivals }) => {
-                const lineColor = routeToHexColor.get(route);
+            {lineGroups.map(({ route, destinations }) => {
+                const lineColor = routeToHexColor.get(route) ?? '#888';
+                const headerTextColor = route === 'YELLOW' ? '#000' : '#fff';
 
                 return (
-                    <Paper key={`${route}-${destination}`} sx={{ overflow: 'hidden', borderTop: `3px solid ${lineColor}` }}>
-                        <Box sx={{ px: 2, py: 1, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: lineColor }}>
-                                {route} {'\u2192'} {destination}
+                    <Paper key={route} sx={{ backgroundColor: '#171717', border: '1px solid #2a2a2a', borderRadius: 2, overflow: 'hidden' }}>
+                        <Box sx={{ px: 2, py: 1.5, backgroundColor: lineColor }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: headerTextColor }}>
+                                {route}
                             </Typography>
                         </Box>
-                        <Table size="small">
-                            <TableBody>
-                                {groupArrivals.map((arrival) => {
-                                    let backgroundColor: string | undefined;
+                        {destinations.map(({ destination, arrivals: destArrivals }, i) => (
+                            <Box key={destination} sx={{ borderTop: i > 0 ? '1px solid #2a2a2a' : undefined, px: 2, py: 1.5 }}>
+                                <Typography variant="caption" sx={{ fontWeight: 600, color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                    {'\u2192'} {destination}
+                                </Typography>
+                                <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                    {destArrivals.map((arrival) => {
+                                        let backgroundColor = '#1f1f1f';
 
-                                    if (arrival.approaching) {
-                                        backgroundColor = '#13251f';
-                                    } else if (arrival.scheduled) {
-                                        backgroundColor = '#172038';
-                                    } else if (arrival.delayed) {
-                                        backgroundColor = '#381717';
-                                    }
+                                        if (arrival.approaching) {
+                                            backgroundColor = '#13251f';
+                                        } else if (arrival.scheduled) {
+                                            backgroundColor = '#172038';
+                                        } else if (arrival.delayed) {
+                                            backgroundColor = '#381717';
+                                        }
 
-                                    const eta = arrival.etaMinutes;
-                                    const etaString = eta <= 1 ? 'Due' : `${eta} min`;
+                                        const eta = arrival.etaMinutes;
+                                        const etaString = eta <= 1 ? 'Due' : `${eta} min`;
 
-                                    return (
-                                        <TableRow key={JSON.stringify(arrival)} sx={{ backgroundColor }}>
-                                            <TableCell sx={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>{arrival.run}</TableCell>
-                                            <TableCell sx={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>{etaString}</TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            </TableBody>
-                        </Table>
+                                        return (
+                                            <Box key={JSON.stringify(arrival)} sx={{ backgroundColor, border: '1px solid #2a2a2a', borderRadius: 1, px: 1.5, py: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <Typography variant="body2" sx={{ color: '#e5e5e5' }}>Run {arrival.run}</Typography>
+                                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#e5e5e5' }}>{etaString}</Typography>
+                                            </Box>
+                                        );
+                                    })}
+                                </Box>
+                            </Box>
+                        ))}
                     </Paper>
                 );
             })}
