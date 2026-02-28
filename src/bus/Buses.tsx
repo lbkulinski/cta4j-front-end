@@ -25,12 +25,14 @@ function getRow(arrival: StopArrival) {
 
     const etaString = eta <= 1 ? 'Due' : `${eta} min`;
 
+    const cellStyles = { borderColor: 'rgba(255, 255, 255, 0.15)' };
+
     return (
         <TableRow key={key} sx={rowStyles}>
-            <TableCell>{arrival.vehicleId}</TableCell>
-            <TableCell>{arrival.predictionType}</TableCell>
-            <TableCell>{arrival.destination}</TableCell>
-            <TableCell>{etaString}</TableCell>
+            <TableCell sx={cellStyles}>{arrival.vehicleId}</TableCell>
+            <TableCell sx={cellStyles}>{arrival.predictionType}</TableCell>
+            <TableCell sx={cellStyles}>{arrival.destination}</TableCell>
+            <TableCell sx={cellStyles}>{etaString}</TableCell>
         </TableRow>
     );
 }

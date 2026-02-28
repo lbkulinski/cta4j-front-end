@@ -1,3 +1,4 @@
+import {Fragment} from 'react';
 import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
 import {StationArrival, useGetStationArrivals} from '../api';
@@ -18,55 +19,63 @@ const routeToHexColor = new Map<string, string>([
     ['YELLOW', '#F9E300'],
 ]);
 
-function getRow(arrival: StationArrival) {
-    const key = JSON.stringify(arrival);
+function getTable(arrivals: StationArrival[]) {
+    const groups: { route: string; destination: string; arrivals: StationArrival[] }[] = [];
 
-    let backgroundColor: string | undefined;
+    for (const arrival of arrivals) {
+        const last = groups[groups.length - 1];
 
-    if (arrival.approaching) {
-        backgroundColor = '#13251f';
-    } else if (arrival.scheduled) {
-        backgroundColor = '#172038';
-    } else if (arrival.delayed) {
-        backgroundColor = '#381717';
+        if (last && last.route === arrival.route && last.destination === arrival.destinationName) {
+            last.arrivals.push(arrival);
+        } else {
+            groups.push({ route: arrival.route, destination: arrival.destinationName, arrivals: [arrival] });
+        }
     }
 
-    const rowStyles = {
-        backgroundColor
-    };
-
-    const routeColor = routeToHexColor.get(arrival.route ?? '') ?? undefined;
-
-    const routeStyles = routeColor ? { color: routeColor } : {};
-
-    const eta = arrival.etaMinutes;
-
-    const etaString = (eta <= 1) ? 'Due' : `${eta} min`;
-
-    return (
-        <TableRow key={key} sx={rowStyles}>
-            <TableCell sx={routeStyles}>{arrival.route}</TableCell>
-            <TableCell>{arrival.destinationName}</TableCell>
-            <TableCell>{arrival.run}</TableCell>
-            <TableCell>{etaString}</TableCell>
-        </TableRow>
-    );
-}
-
-function getTable(arrivals: StationArrival[]) {
     return (
         <Box sx={{ p: 2 }}>
             <TableContainer component={Paper}>
                 <Table size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Line</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Destination</TableCell>
                             <TableCell sx={{ fontWeight: 'bold' }}>Run</TableCell>
                             <TableCell sx={{ fontWeight: 'bold' }}>ETA</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody>{arrivals.map((train) => getRow(train))}</TableBody>
+                    <TableBody>
+                        {groups.map(({ route, destination, arrivals: groupArrivals }) => (
+                            <Fragment key={`${route}-${destination}`}>
+                                <TableRow sx={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
+                                    <TableCell colSpan={2} sx={{ fontWeight: 'bold', borderColor: 'rgba(255, 255, 255, 0.15)' }}>
+                                        <span style={{ color: routeToHexColor.get(route) }}>{route}</span>
+                                        {' \u2192 '}
+                                        {destination}
+                                    </TableCell>
+                                </TableRow>
+                                {groupArrivals.map((arrival) => {
+                                    let backgroundColor: string | undefined;
+
+                                    if (arrival.approaching) {
+                                        backgroundColor = '#13251f';
+                                    } else if (arrival.scheduled) {
+                                        backgroundColor = '#172038';
+                                    } else if (arrival.delayed) {
+                                        backgroundColor = '#381717';
+                                    }
+
+                                    const eta = arrival.etaMinutes;
+                                    const etaString = eta <= 1 ? 'Due' : `${eta} min`;
+
+                                    return (
+                                        <TableRow key={JSON.stringify(arrival)} sx={{ backgroundColor }}>
+                                            <TableCell sx={{ pl: 3, borderColor: 'rgba(255, 255, 255, 0.15)' }}>{arrival.run}</TableCell>
+                                            <TableCell sx={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>{etaString}</TableCell>
+                                        </TableRow>
+                                    );
+                                })}
+                            </Fragment>
+                        ))}
+                    </TableBody>
                 </Table>
             </TableContainer>
         </Box>
