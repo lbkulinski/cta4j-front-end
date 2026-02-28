@@ -1,4 +1,3 @@
-import '../App.css';
 import HolidayBus from "./HolidayBus.tsx";
 import HolidayTrain from './HolidayTrain.tsx';
 

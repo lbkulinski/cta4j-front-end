@@ -10,8 +10,6 @@ import MailIcon from '@mui/icons-material/Mail';
 import SmokeFreeIcon from '@mui/icons-material/SmokeFree';
 
 function MenuBar() {
-    const handleContactClick = () => window.location.href = "mailto:admin@cta4j.app";
-
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -25,18 +23,13 @@ function MenuBar() {
                     <IconButton color="inherit" href="/buses">
                         <DirectionsBusIcon />
                     </IconButton>
-{/*                    <IconButton color="inherit" href="/holiday-train">
-                        <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                            🎅🏻
-                        </Typography>
-                    </IconButton>*/}
-                    <IconButton color="inherit" href="https://ctasmokers.com" target="_blank">
+                    <IconButton color="inherit" href="https://ctasmokers.com" target="_blank" rel="noopener noreferrer">
                         <SmokeFreeIcon />
                     </IconButton>
-                    <IconButton color="inherit" href="https://buymeacoffee.com/cta4j" target="_blank">
+                    <IconButton color="inherit" href="https://buymeacoffee.com/cta4j" target="_blank" rel="noopener noreferrer">
                         <CoffeeIcon />
                     </IconButton>
-                    <IconButton color="inherit" onClick={handleContactClick}>
+                    <IconButton color="inherit" href="mailto:admin@cta4j.app">
                         <MailIcon />
                     </IconButton>
                 </Toolbar>

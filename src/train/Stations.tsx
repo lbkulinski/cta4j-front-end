@@ -50,7 +50,7 @@ function Stations(props: StationsProps) {
         return null;
     }
 
-    let stations: Station[] = data.data;
+    const stations: Station[] = data.data;
 
     if (stations.length === 0) {
         return (

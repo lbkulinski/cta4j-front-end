@@ -5,8 +5,6 @@ import Typography from '@mui/material/Typography';
 export default function ErrorPage() {
     const error = useRouteError();
 
-    console.error(error);
-
     let message = "An unexpected error occurred.";
 
     if (isRouteErrorResponse(error)) {

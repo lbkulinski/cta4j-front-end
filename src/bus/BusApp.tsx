@@ -1,5 +1,4 @@
 import React from 'react';
-import '../App.css';
 import Routes from "./Routes.tsx";
 import Directions from "./Directions.tsx";
 import Stops from "./Stops.tsx";

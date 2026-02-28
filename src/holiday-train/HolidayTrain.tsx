@@ -160,7 +160,7 @@ function HolidayTrain() {
         );
     }
 
-    let arrivals: UpcomingTrainArrival[] = train.arrivals;
+    const arrivals: UpcomingTrainArrival[] = train.arrivals;
 
     if (arrivals.length === 0) {
         return (

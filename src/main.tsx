@@ -1,4 +1,3 @@
-import './logrocketSetup';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import TrainApp from './train/TrainApp.tsx'
@@ -27,11 +26,6 @@ const darkTheme = createTheme({
 
 const router = createBrowserRouter([
     {
-        path: "*",
-        element: <TrainApp />,
-        errorElement: <ErrorPage />,
-    },
-    {
         path: "/",
         element: <TrainApp />,
         errorElement: <ErrorPage />,
@@ -52,10 +46,9 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
     },
     {
-        path: "/holiday",
-        element: <HolidayApp />,
-        errorElement: <ErrorPage />,
-    }
+        path: "*",
+        element: <ErrorPage />,
+    },
 ]);
 
 const queryClient = new QueryClient({

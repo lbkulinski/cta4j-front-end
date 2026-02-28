@@ -4,7 +4,7 @@ import {Bus, UpcomingBusArrival, useGetBus} from "../api";
 import {AxiosError, isAxiosError} from "axios";
 
 function getRow(arrival: UpcomingBusArrival) {
-    const key = crypto.randomUUID();
+    const key = JSON.stringify(arrival);
 
     let rowStyles = {};
 
@@ -137,7 +137,7 @@ function HolidayBus() {
         );
     }
 
-    let arrivals: UpcomingBusArrival[] = bus.arrivals;
+    const arrivals: UpcomingBusArrival[] = bus.arrivals;
 
     if (arrivals.length === 0) {
         return (

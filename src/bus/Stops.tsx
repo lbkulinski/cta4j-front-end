@@ -64,7 +64,7 @@ function Stops(props: StopsProps) {
         return null;
     }
 
-    let stops: Stop[] = data.data;
+    const stops: Stop[] = data.data;
 
     if (stops.length === 0) {
         return (
@@ -85,7 +85,6 @@ function Stops(props: StopsProps) {
             renderInput={(params) => <TextField {...params} label='Stop' />}
             options={options}
             value={selectedOption}
-            defaultValue={null}
             getOptionLabel={(option) => option.label}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             renderOption={(props, option) => (
