@@ -26,13 +26,22 @@ const darkTheme = createTheme({
         },
         background: {
             default: '#0a0a0a',
-            paper: '#111111',
+            paper: '#0d0d0d',
         },
         text: {
             primary: '#e5e5e5',
             secondary: '#aaaaaa',
         },
         divider: '#2a2a2a',
+    },
+    components: {
+        MuiPaper: {
+            styleOverrides: {
+                root: {
+                    backgroundImage: 'none',
+                },
+            },
+        },
     },
 });
 
