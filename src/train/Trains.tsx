@@ -1,5 +1,4 @@
-import {Fragment} from 'react';
-import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@mui/material';
+import {Alert, Box, Paper, Table, TableBody, TableCell, TableRow, Typography} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
 import {StationArrival, useGetStationArrivals} from '../api';
 import {AxiosError, isAxiosError} from 'axios';
@@ -33,25 +32,19 @@ function getTable(arrivals: StationArrival[]) {
     }
 
     return (
-        <Box sx={{ p: 2 }}>
-            <TableContainer component={Paper}>
-                <Table size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Run</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>ETA</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {groups.map(({ route, destination, arrivals: groupArrivals }) => (
-                            <Fragment key={`${route}-${destination}`}>
-                                <TableRow sx={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
-                                    <TableCell colSpan={2} sx={{ fontWeight: 'bold', borderColor: 'rgba(255, 255, 255, 0.15)' }}>
-                                        <span style={{ color: routeToHexColor.get(route) }}>{route}</span>
-                                        {' \u2192 '}
-                                        {destination}
-                                    </TableCell>
-                                </TableRow>
+        <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {groups.map(({ route, destination, arrivals: groupArrivals }) => {
+                const lineColor = routeToHexColor.get(route);
+
+                return (
+                    <Paper key={`${route}-${destination}`} sx={{ overflow: 'hidden', borderTop: `3px solid ${lineColor}` }}>
+                        <Box sx={{ px: 2, py: 1, borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: lineColor }}>
+                                {route} {'\u2192'} {destination}
+                            </Typography>
+                        </Box>
+                        <Table size="small">
+                            <TableBody>
                                 {groupArrivals.map((arrival) => {
                                     let backgroundColor: string | undefined;
 
@@ -68,16 +61,16 @@ function getTable(arrivals: StationArrival[]) {
 
                                     return (
                                         <TableRow key={JSON.stringify(arrival)} sx={{ backgroundColor }}>
-                                            <TableCell sx={{ pl: 3, borderColor: 'rgba(255, 255, 255, 0.15)' }}>{arrival.run}</TableCell>
+                                            <TableCell sx={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>{arrival.run}</TableCell>
                                             <TableCell sx={{ borderColor: 'rgba(255, 255, 255, 0.15)' }}>{etaString}</TableCell>
                                         </TableRow>
                                     );
                                 })}
-                            </Fragment>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                            </TableBody>
+                        </Table>
+                    </Paper>
+                );
+            })}
         </Box>
     );
 }
