@@ -1,4 +1,4 @@
-import {Alert, Box, Paper, Typography} from '@mui/material';
+import {Alert, Box, Chip, Paper, Typography} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
 import {StationArrival, useGetStationArrivals} from '../api';
 import {AxiosError, isAxiosError} from 'axios';
@@ -51,30 +51,27 @@ function getTable(arrivals: StationArrival[]) {
                             </Typography>
                         </Box>
                         {destinations.map(({ destination, arrivals: destArrivals }, i) => (
-                            <Box key={destination} sx={{ borderTop: i > 0 ? '1px solid #2a2a2a' : undefined, px: 2, py: 1.5 }}>
-                                <Typography variant="caption" sx={{ fontWeight: 600, color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                            <Box key={destination} sx={{ borderTop: i > 0 ? '1px solid #2a2a2a' : undefined, px: 2, py: 1.5, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                                <Typography variant="caption" sx={{ fontWeight: 600, color: '#888', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                     {'\u2192'} {destination}
                                 </Typography>
-                                <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, justifyContent: 'flex-end' }}>
                                     {destArrivals.map((arrival) => {
-                                        let backgroundColor = '#1f1f1f';
+                                        let chipBg = '#2a2a2a';
 
                                         if (arrival.approaching) {
-                                            backgroundColor = '#13251f';
-                                        } else if (arrival.scheduled) {
-                                            backgroundColor = '#172038';
+                                            chipBg = '#13251f';
                                         } else if (arrival.delayed) {
-                                            backgroundColor = '#381717';
+                                            chipBg = '#381717';
+                                        } else if (arrival.scheduled) {
+                                            chipBg = '#172038';
                                         }
 
                                         const eta = arrival.etaMinutes;
                                         const etaString = eta <= 1 ? 'Due' : `${eta} min`;
 
                                         return (
-                                            <Box key={JSON.stringify(arrival)} sx={{ backgroundColor, border: '1px solid #2a2a2a', borderRadius: 1, px: 1.5, py: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <Typography variant="body2" sx={{ color: '#e5e5e5' }}>Run {arrival.run}</Typography>
-                                                <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#e5e5e5' }}>{etaString}</Typography>
-                                            </Box>
+                                            <Chip key={JSON.stringify(arrival)} label={etaString} size="small" sx={{ backgroundColor: chipBg, color: '#e5e5e5', fontWeight: 'bold', border: '1px solid #3a3a3a' }} />
                                         );
                                     })}
                                 </Box>
