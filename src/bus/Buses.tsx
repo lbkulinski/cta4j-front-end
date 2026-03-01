@@ -1,4 +1,4 @@
-import {Alert, Box, Paper, Typography} from '@mui/material';
+import {Alert, Box, CircularProgress, Paper, Typography} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
 import {StopArrival, useGetStopArrivals} from '../api';
 import {AxiosError, isAxiosError} from 'axios';
@@ -29,7 +29,7 @@ function getTable(arrivals: StopArrival[]) {
     }
 
     return (
-        <Box sx={{ p: 1.5, display: 'flex', flexDirection: 'column', gap: 1.5, maxWidth: 600 }}>
+        <Box sx={{ p: 1.5, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
             {destGroups.map(({ destination, arrivals: destArrivals }) => {
                 const [first, ...rest] = destArrivals;
                 const firstEta = first.etaMinutes;
@@ -40,7 +40,7 @@ function getTable(arrivals: StopArrival[]) {
                 return (
                     <Paper key={destination} sx={{ backgroundColor: '#171717', border: '1px solid #2a2a2a', borderRadius: 2, overflow: 'hidden' }}>
                         <Box sx={{ px: 1.5, py: 0.5, backgroundColor: headerColor }}>
-                            <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#fff', letterSpacing: '0.05em' }}>
+                            <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#fff', letterSpacing: '0.08em' }}>
                                 {destination}
                             </Typography>
                         </Box>
@@ -101,10 +101,10 @@ function Buses(props: BusesProps) {
 
     const normalizedStopId = stopId ?? '';
 
-    const { data, error, isLoading } = useGetStopArrivals(normalizedRouteId, normalizedStopId, {
+    const { data, error, isLoading, isFetching, dataUpdatedAt } = useGetStopArrivals(normalizedRouteId, normalizedStopId, {
         query: {
             enabled: (routeId != null) && (stopId != null),
-            refetchInterval: 60000,
+            refetchInterval: 30000,
         },
     });
 
@@ -154,7 +154,21 @@ function Buses(props: BusesProps) {
 
     const sortedData = [...arrivals].sort(compareBuses);
 
-    return getTable(sortedData);
+    const updatedAt = dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) : null;
+
+    return (
+        <Box>
+            <Box sx={{ px: 1.5, py: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
+                {isFetching && <CircularProgress size={12} thickness={5} sx={{ color: '#555' }} />}
+                {updatedAt && (
+                    <Typography variant="caption" sx={{ color: '#555' }}>
+                        Updated {updatedAt}
+                    </Typography>
+                )}
+            </Box>
+            {getTable(sortedData)}
+        </Box>
+    );
 }
 
 export default Buses;

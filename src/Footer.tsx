@@ -12,6 +12,9 @@ function Footer() {
         >
             <Box
                 sx={{
+                    maxWidth: '56rem',
+                    width: '100%',
+                    mx: 'auto',
                     px: 2,
                     py: 1.5,
                     display: 'flex',
