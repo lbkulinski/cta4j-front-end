@@ -51,10 +51,12 @@ function getTable(arrivals: StationArrival[]) {
                             </Typography>
                         </Box>
                         {destinations.map(({ destination, arrivals: destArrivals }, i) => {
-                            const [first, ...rest] = destArrivals;
+                            const [first, ...allRest] = destArrivals;
+                            const rest = allRest.slice(0, 2);
                             const firstEta = first.etaMinutes;
                             const firstLabel = firstEta <= 1 ? 'Due' : `${first.scheduled ? '~' : ''}${firstEta} min`;
                             const firstColor = first.approaching ? '#4caf50' : first.delayed ? '#f44336' : first.scheduled ? '#90caf9' : '#e5e5e5';
+                            const statusSuffix = first.approaching ? ', Approaching' : first.delayed ? ', Delayed' : first.scheduled ? ', Scheduled' : '';
 
                             return (
                                 <Box key={destination} sx={{ borderTop: i > 0 ? '1px solid #2a2a2a' : undefined, px: 1.5, py: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -62,7 +64,7 @@ function getTable(arrivals: StationArrival[]) {
                                         {'\u2192'} {destination}
                                     </Typography>
                                     <Box sx={{ textAlign: 'right' }}>
-                                        <Typography variant="body2" sx={{ fontWeight: 700, color: firstColor, lineHeight: 1.2 }}>
+                                        <Typography variant="body2" aria-label={`${firstLabel}${statusSuffix}`} sx={{ fontWeight: 700, color: firstColor, lineHeight: 1.2 }}>
                                             {firstLabel}
                                         </Typography>
                                         {rest.length > 0 && (
