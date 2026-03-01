@@ -90,6 +90,22 @@ function getTable(arrivals: StationArrival[]) {
     );
 }
 
+const destinationOrder = new Map<string, number>([
+    ['Linden', 0],
+    ['Howard', 1],
+    ['Dempster-Skokie', 2],
+    ["O'Hare", 3],
+    ['Kimball', 4],
+    ['Harlem/Lake', 5],
+    ['Forest Park', 6],
+    ['54th/Cermak', 7],
+    ['Midway', 8],
+    ['Cottage Grove', 9],
+    ['63rd', 10],
+    ['95th/Dan Ryan', 11],
+    ['Loop', 12],
+]);
+
 function compareArrivals(arrival0: StationArrival, arrival1: StationArrival) {
     const routeComparison = arrival0.route.localeCompare(arrival1.route);
 
@@ -97,7 +113,9 @@ function compareArrivals(arrival0: StationArrival, arrival1: StationArrival) {
         return routeComparison;
     }
 
-    const destinationComparison = arrival0.destinationName.localeCompare(arrival1.destinationName);
+    const order0 = destinationOrder.get(arrival0.destinationName) ?? 99;
+    const order1 = destinationOrder.get(arrival1.destinationName) ?? 99;
+    const destinationComparison = order0 - order1;
 
     if (destinationComparison !== 0) {
         return destinationComparison;
