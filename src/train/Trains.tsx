@@ -1,4 +1,4 @@
-import {Alert, Box, Chip, Paper, Typography} from '@mui/material';
+import {Alert, Box, Paper, Typography} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
 import {StationArrival, useGetStationArrivals} from '../api';
 import {AxiosError, isAxiosError} from 'axios';
@@ -38,45 +38,51 @@ function getTable(arrivals: StationArrival[]) {
     }
 
     return (
-        <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ p: 1.5, display: 'flex', flexDirection: 'column', gap: 1.5, maxWidth: 600 }}>
             {lineGroups.map(({ route, destinations }) => {
                 const lineColor = routeToHexColor.get(route) ?? '#888';
                 const headerTextColor = route === 'YELLOW' ? '#000' : '#fff';
 
                 return (
                     <Paper key={route} sx={{ backgroundColor: '#171717', border: '1px solid #2a2a2a', borderRadius: 2, overflow: 'hidden' }}>
-                        <Box sx={{ px: 2, py: 1.5, backgroundColor: lineColor }}>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: headerTextColor }}>
+                        <Box sx={{ px: 1.5, py: 0.5, backgroundColor: lineColor }}>
+                            <Typography variant="caption" sx={{ fontWeight: 'bold', color: headerTextColor, letterSpacing: '0.08em' }}>
                                 {route}
                             </Typography>
                         </Box>
-                        {destinations.map(({ destination, arrivals: destArrivals }, i) => (
-                            <Box key={destination} sx={{ borderTop: i > 0 ? '1px solid #2a2a2a' : undefined, px: 2, py: 1.5, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                <Typography variant="caption" sx={{ fontWeight: 600, color: '#888', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                    {'\u2192'} {destination}
-                                </Typography>
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, justifyContent: 'flex-end' }}>
-                                    {destArrivals.map((arrival) => {
-                                        let chipBg = '#2a2a2a';
+                        {destinations.map(({ destination, arrivals: destArrivals }, i) => {
+                            const [first, ...rest] = destArrivals;
+                            const firstEta = first.etaMinutes;
+                            const firstLabel = firstEta <= 1 ? 'Due' : `${first.scheduled ? '~' : ''}${firstEta} min`;
+                            const firstColor = first.approaching ? '#4caf50' : first.delayed ? '#f44336' : first.scheduled ? '#90caf9' : '#e5e5e5';
 
-                                        if (arrival.approaching) {
-                                            chipBg = '#13251f';
-                                        } else if (arrival.delayed) {
-                                            chipBg = '#381717';
-                                        } else if (arrival.scheduled) {
-                                            chipBg = '#172038';
-                                        }
-
-                                        const eta = arrival.etaMinutes;
-                                        const etaString = eta <= 1 ? 'Due' : `${eta} min`;
-
-                                        return (
-                                            <Chip key={JSON.stringify(arrival)} label={etaString} size="small" sx={{ backgroundColor: chipBg, color: '#e5e5e5', fontWeight: 'bold', border: '1px solid #3a3a3a' }} />
-                                        );
-                                    })}
+                            return (
+                                <Box key={destination} sx={{ borderTop: i > 0 ? '1px solid #2a2a2a' : undefined, px: 1.5, py: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <Typography variant="caption" sx={{ fontWeight: 600, color: '#888', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {'\u2192'} {destination}
+                                    </Typography>
+                                    <Box sx={{ textAlign: 'right' }}>
+                                        <Typography variant="body2" sx={{ fontWeight: 700, color: firstColor, lineHeight: 1.2 }}>
+                                            {firstLabel}
+                                        </Typography>
+                                        {rest.length > 0 && (
+                                            <Typography variant="caption" sx={{ color: '#555', lineHeight: 1.2 }}>
+                                                {rest.map((arrival, idx) => {
+                                                    const eta = arrival.etaMinutes;
+                                                    const label = eta <= 1 ? 'Due' : `${eta} min`;
+                                                    return (
+                                                        <Box key={JSON.stringify(arrival)} component="span">
+                                                            {idx > 0 && <Box component="span" sx={{ mx: 0.4 }}>·</Box>}
+                                                            {label}
+                                                        </Box>
+                                                    );
+                                                })}
+                                            </Typography>
+                                        )}
+                                    </Box>
                                 </Box>
-                            </Box>
-                        ))}
+                            );
+                        })}
                     </Paper>
                 );
             })}

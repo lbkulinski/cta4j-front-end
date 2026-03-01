@@ -5,13 +5,11 @@ import Typography from '@mui/material/Typography';
 import {IconButton} from "@mui/material";
 import DirectionsSubwayIcon from '@mui/icons-material/DirectionsSubway';
 import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
-import CoffeeIcon from '@mui/icons-material/Coffee';
 import MailIcon from '@mui/icons-material/Mail';
-import SmokeFreeIcon from '@mui/icons-material/SmokeFree';
 
 function MenuBar() {
     return (
-        <Box sx={{ flexGrow: 1 }}>
+        <Box>
             <AppBar position="static" sx={{ backgroundColor: '#0d0d0d', borderBottom: '1px solid #c60c30' }}>
                 <Toolbar variant="dense">
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -22,12 +20,6 @@ function MenuBar() {
                     </IconButton>
                     <IconButton color="inherit" href="/buses">
                         <DirectionsBusIcon />
-                    </IconButton>
-                    <IconButton color="inherit" href="https://ctasmokers.com" target="_blank" rel="noopener noreferrer">
-                        <SmokeFreeIcon />
-                    </IconButton>
-                    <IconButton color="inherit" href="https://buymeacoffee.com/cta4j" target="_blank" rel="noopener noreferrer">
-                        <CoffeeIcon />
                     </IconButton>
                     <IconButton color="inherit" href="mailto:admin@cta4j.app">
                         <MailIcon />

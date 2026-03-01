@@ -78,7 +78,7 @@ function Directions(props: DirectionsProps) {
 
     return (
         <Autocomplete
-            sx={{ p: 2, maxWidth: 500 }}
+            sx={{ p: 1.5, maxWidth: 600 }}
             size='small'
             renderInput={(params) => <TextField {...params} label='Direction' />}
             options={options}
