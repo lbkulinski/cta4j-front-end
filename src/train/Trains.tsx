@@ -140,7 +140,7 @@ function Trains(props: TrainsProps) {
         {
             query: {
                 enabled: stationId != null,
-                refetchInterval: 60000
+                refetchInterval: 30000
             },
         }
     );

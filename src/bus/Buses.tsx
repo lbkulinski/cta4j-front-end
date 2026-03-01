@@ -104,7 +104,7 @@ function Buses(props: BusesProps) {
     const { data, error, isLoading } = useGetStopArrivals(normalizedRouteId, normalizedStopId, {
         query: {
             enabled: (routeId != null) && (stopId != null),
-            refetchInterval: 60000,
+            refetchInterval: 30000,
         },
     });
 
