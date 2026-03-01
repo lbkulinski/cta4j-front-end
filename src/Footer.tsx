@@ -8,6 +8,7 @@ function Footer() {
             sx={{
                 backgroundColor: '#111111',
                 borderTop: '1px solid #222222',
+                paddingBottom: 'env(safe-area-inset-bottom)',
             }}
         >
             <Box
@@ -26,7 +27,7 @@ function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     underline="hover"
-                    sx={{ color: '#666666', fontSize: '0.75rem', fontWeight: 500, '&:hover': { color: '#aaaaaa' } }}
+                    sx={{ color: '#999999', fontSize: '0.75rem', fontWeight: 500, '&:hover': { color: '#aaaaaa' } }}
                 >
                     ctasmokers.com
                 </Link>
@@ -35,7 +36,7 @@ function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     underline="hover"
-                    sx={{ color: '#666666', fontSize: '0.75rem', fontWeight: 500, '&:hover': { color: '#aaaaaa' } }}
+                    sx={{ color: '#999999', fontSize: '0.75rem', fontWeight: 500, '&:hover': { color: '#aaaaaa' } }}
                 >
                     Buy Me a Coffee
                 </Link>

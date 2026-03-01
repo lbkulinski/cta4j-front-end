@@ -31,10 +31,12 @@ function getTable(arrivals: StopArrival[]) {
     return (
         <Box sx={{ p: 1.5, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
             {destGroups.map(({ destination, arrivals: destArrivals }) => {
-                const [first, ...rest] = destArrivals;
+                const [first, ...allRest] = destArrivals;
+                const rest = allRest.slice(0, 2);
                 const firstEta = first.etaMinutes;
                 const firstLabel = firstEta <= 1 ? 'Due' : `${firstEta} min`;
-                const firstColor = first.delayed ? '#f44336' : '#e5e5e5';
+                const firstColor = firstEta <= 1 ? '#4caf50' : first.delayed ? '#f44336' : '#e5e5e5';
+                const statusSuffix = first.delayed ? ', Delayed' : '';
                 const headerColor = getRouteColor(first.routeDesignator);
 
                 return (
@@ -46,7 +48,7 @@ function getTable(arrivals: StopArrival[]) {
                         </Box>
                         <Box sx={{ px: 1.5, py: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
                             <Box sx={{ textAlign: 'right', ml: 'auto' }}>
-                                <Typography variant="body2" sx={{ fontWeight: 700, color: firstColor, lineHeight: 1.2 }}>
+                                <Typography variant="body2" aria-label={`${firstLabel}${statusSuffix}`} sx={{ fontWeight: 700, color: firstColor, lineHeight: 1.2 }}>
                                     {firstLabel}
                                 </Typography>
                                 {rest.length > 0 && (
