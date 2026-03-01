@@ -102,7 +102,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
             <ErrorBoundary>
                 <ThemeProvider theme={darkTheme}>
                     <CssBaseline />
-                    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh' }}>
                         <MenuBar />
                         <Box sx={{ flex: 1, maxWidth: '56rem', width: '100%', mx: 'auto', px: { xs: 1.5, sm: 2 }, py: { xs: 2, sm: 3 } }}>
                             <QueryClientProvider client={queryClient}>
