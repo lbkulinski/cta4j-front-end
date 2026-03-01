@@ -21,6 +21,9 @@ const rollbarConfig = {
 };
 
 const darkTheme = createTheme({
+    typography: {
+        fontFamily: 'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+    },
     palette: {
         mode: "dark",
         primary: {
@@ -101,7 +104,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
                     <CssBaseline />
                     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
                         <MenuBar />
-                        <Box sx={{ flex: 1 }}>
+                        <Box sx={{ flex: 1, maxWidth: '56rem', width: '100%', mx: 'auto', px: { xs: 1.5, sm: 2 }, py: { xs: 2, sm: 3 } }}>
                             <QueryClientProvider client={queryClient}>
                                 <RouterProvider router={router} />
                             </QueryClientProvider>

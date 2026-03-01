@@ -80,7 +80,7 @@ function Stops(props: StopsProps) {
 
     return (
         <Autocomplete
-            sx={{ p: 1.5, maxWidth: 600 }}
+            sx={{ p: 1.5 }}
             size='small'
             renderInput={(params) => <TextField {...params} label='Stop' />}
             options={options}

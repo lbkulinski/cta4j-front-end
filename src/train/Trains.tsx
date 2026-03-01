@@ -1,4 +1,4 @@
-import {Alert, Box, Paper, Typography} from '@mui/material';
+import {Alert, Box, CircularProgress, Paper, Typography} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
 import {StationArrival, useGetStationArrivals} from '../api';
 import {AxiosError, isAxiosError} from 'axios';
@@ -38,7 +38,7 @@ function getTable(arrivals: StationArrival[]) {
     }
 
     return (
-        <Box sx={{ p: 1.5, display: 'flex', flexDirection: 'column', gap: 1.5, maxWidth: 600 }}>
+        <Box sx={{ p: 1.5, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
             {lineGroups.map(({ route, destinations }) => {
                 const lineColor = routeToHexColor.get(route) ?? '#888';
                 const headerTextColor = route === 'YELLOW' ? '#000' : '#fff';
@@ -135,7 +135,7 @@ function Trains(props: TrainsProps) {
 
     const normalizedStationId = stationId ?? "";
 
-    const { data, isLoading, error } = useGetStationArrivals(
+    const { data, isLoading, isFetching, dataUpdatedAt, error } = useGetStationArrivals(
         normalizedStationId,
         {
             query: {
@@ -191,7 +191,21 @@ function Trains(props: TrainsProps) {
 
     const sortedData = [...arrivals].sort(compareArrivals);
 
-    return getTable(sortedData);
+    const updatedAt = dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) : null;
+
+    return (
+        <Box>
+            <Box sx={{ px: 1.5, py: 1, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
+                {isFetching && <CircularProgress size={12} thickness={5} sx={{ color: '#555' }} />}
+                {updatedAt && (
+                    <Typography variant="caption" sx={{ color: '#555' }}>
+                        Updated {updatedAt}
+                    </Typography>
+                )}
+            </Box>
+            {getTable(sortedData)}
+        </Box>
+    );
 }
 
 export default Trains;
