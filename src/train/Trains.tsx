@@ -1,4 +1,4 @@
-import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@mui/material';
+import {Alert, Box, Paper, Typography} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
 import {StationArrival, useGetStationArrivals} from '../api';
 import {AxiosError, isAxiosError} from 'axios';
@@ -18,60 +18,93 @@ const routeToHexColor = new Map<string, string>([
     ['YELLOW', '#F9E300'],
 ]);
 
-function getRow(arrival: StationArrival) {
-    const key = JSON.stringify(arrival);
+function getTable(arrivals: StationArrival[]) {
+    const lineGroups: { route: string; destinations: { destination: string; arrivals: StationArrival[] }[] }[] = [];
 
-    let backgroundColor: string | undefined;
+    for (const arrival of arrivals) {
+        const lastLine = lineGroups[lineGroups.length - 1];
 
-    if (arrival.approaching) {
-        backgroundColor = '#13251f';
-    } else if (arrival.scheduled) {
-        backgroundColor = '#172038';
-    } else if (arrival.delayed) {
-        backgroundColor = '#381717';
+        if (!lastLine || lastLine.route !== arrival.route) {
+            lineGroups.push({ route: arrival.route, destinations: [{ destination: arrival.destinationName, arrivals: [arrival] }] });
+        } else {
+            const lastDest = lastLine.destinations[lastLine.destinations.length - 1];
+
+            if (!lastDest || lastDest.destination !== arrival.destinationName) {
+                lastLine.destinations.push({ destination: arrival.destinationName, arrivals: [arrival] });
+            } else {
+                lastDest.arrivals.push(arrival);
+            }
+        }
     }
 
-    const rowStyles = {
-        backgroundColor
-    };
-
-    const routeColor = routeToHexColor.get(arrival.route ?? '') ?? undefined;
-
-    const routeStyles = routeColor ? { color: routeColor } : {};
-
-    const eta = arrival.etaMinutes;
-
-    const etaString = (eta <= 1) ? 'Due' : `${eta} min`;
-
     return (
-        <TableRow key={key} sx={rowStyles}>
-            <TableCell sx={routeStyles}>{arrival.route}</TableCell>
-            <TableCell>{arrival.destinationName}</TableCell>
-            <TableCell>{arrival.run}</TableCell>
-            <TableCell>{etaString}</TableCell>
-        </TableRow>
-    );
-}
+        <Box sx={{ p: 1.5, display: 'flex', flexDirection: 'column', gap: 1.5, maxWidth: 600 }}>
+            {lineGroups.map(({ route, destinations }) => {
+                const lineColor = routeToHexColor.get(route) ?? '#888';
+                const headerTextColor = route === 'YELLOW' ? '#000' : '#fff';
 
-function getTable(arrivals: StationArrival[]) {
-    return (
-        <Box sx={{ p: 2 }}>
-            <TableContainer component={Paper}>
-                <Table size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Line</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Destination</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Run</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>ETA</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>{arrivals.map((train) => getRow(train))}</TableBody>
-                </Table>
-            </TableContainer>
+                return (
+                    <Paper key={route} sx={{ backgroundColor: '#171717', border: '1px solid #2a2a2a', borderRadius: 2, overflow: 'hidden' }}>
+                        <Box sx={{ px: 1.5, py: 0.5, backgroundColor: lineColor }}>
+                            <Typography variant="caption" sx={{ fontWeight: 'bold', color: headerTextColor, letterSpacing: '0.08em' }}>
+                                {route}
+                            </Typography>
+                        </Box>
+                        {destinations.map(({ destination, arrivals: destArrivals }, i) => {
+                            const [first, ...rest] = destArrivals;
+                            const firstEta = first.etaMinutes;
+                            const firstLabel = firstEta <= 1 ? 'Due' : `${first.scheduled ? '~' : ''}${firstEta} min`;
+                            const firstColor = first.approaching ? '#4caf50' : first.delayed ? '#f44336' : first.scheduled ? '#90caf9' : '#e5e5e5';
+
+                            return (
+                                <Box key={destination} sx={{ borderTop: i > 0 ? '1px solid #2a2a2a' : undefined, px: 1.5, py: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <Typography variant="caption" sx={{ fontWeight: 600, color: '#888', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {'\u2192'} {destination}
+                                    </Typography>
+                                    <Box sx={{ textAlign: 'right' }}>
+                                        <Typography variant="body2" sx={{ fontWeight: 700, color: firstColor, lineHeight: 1.2 }}>
+                                            {firstLabel}
+                                        </Typography>
+                                        {rest.length > 0 && (
+                                            <Typography variant="caption" sx={{ color: '#555', lineHeight: 1.2 }}>
+                                                {rest.map((arrival, idx) => {
+                                                    const eta = arrival.etaMinutes;
+                                                    const label = eta <= 1 ? 'Due' : `${eta} min`;
+                                                    return (
+                                                        <Box key={JSON.stringify(arrival)} component="span">
+                                                            {idx > 0 && <Box component="span" sx={{ mx: 0.4 }}>·</Box>}
+                                                            {label}
+                                                        </Box>
+                                                    );
+                                                })}
+                                            </Typography>
+                                        )}
+                                    </Box>
+                                </Box>
+                            );
+                        })}
+                    </Paper>
+                );
+            })}
         </Box>
     );
 }
+
+const destinationOrder = new Map<string, number>([
+    ['Linden', 0],
+    ['Howard', 1],
+    ['Dempster-Skokie', 2],
+    ["O'Hare", 3],
+    ['Kimball', 4],
+    ['Harlem/Lake', 5],
+    ['Forest Park', 6],
+    ['54th/Cermak', 7],
+    ['Midway', 8],
+    ['Cottage Grove', 9],
+    ['63rd', 10],
+    ['95th/Dan Ryan', 11],
+    ['Loop', 12],
+]);
 
 function compareArrivals(arrival0: StationArrival, arrival1: StationArrival) {
     const routeComparison = arrival0.route.localeCompare(arrival1.route);
@@ -80,7 +113,9 @@ function compareArrivals(arrival0: StationArrival, arrival1: StationArrival) {
         return routeComparison;
     }
 
-    const destinationComparison = arrival0.destinationName.localeCompare(arrival1.destinationName);
+    const order0 = destinationOrder.get(arrival0.destinationName) ?? 99;
+    const order1 = destinationOrder.get(arrival1.destinationName) ?? 99;
+    const destinationComparison = order0 - order1;
 
     if (destinationComparison !== 0) {
         return destinationComparison;

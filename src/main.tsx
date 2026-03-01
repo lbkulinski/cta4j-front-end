@@ -4,7 +4,9 @@ import TrainApp from './train/TrainApp.tsx'
 import './index.css'
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import MenuBar from "./MenuBar.tsx";
+import Footer from "./Footer.tsx";
 import CssBaseline from "@mui/material/CssBaseline";
+import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {ErrorBoundary, Provider} from "@rollbar/react";
 import BusApp from "./bus/BusApp.tsx";
@@ -97,10 +99,15 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
             <ErrorBoundary>
                 <ThemeProvider theme={darkTheme}>
                     <CssBaseline />
-                    <MenuBar />
-                    <QueryClientProvider client={queryClient}>
-                        <RouterProvider router={router} />
-                    </QueryClientProvider>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                        <MenuBar />
+                        <Box sx={{ flex: 1 }}>
+                            <QueryClientProvider client={queryClient}>
+                                <RouterProvider router={router} />
+                            </QueryClientProvider>
+                        </Box>
+                        <Footer />
+                    </Box>
                 </ThemeProvider>
             </ErrorBoundary>
         </Provider>

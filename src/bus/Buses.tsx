@@ -1,4 +1,4 @@
-import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,} from '@mui/material';
+import {Alert, Box, Paper, Typography} from '@mui/material';
 import {useRollbar} from '@rollbar/react';
 import {StopArrival, useGetStopArrivals} from '../api';
 import {AxiosError, isAxiosError} from 'axios';
@@ -8,49 +8,66 @@ interface BusesProps {
     stopId: string | null;
 }
 
-function getRow(arrival: StopArrival) {
-    const key = JSON.stringify(arrival);
-
-    let backgroundColor: string | undefined;
-
-    const eta = arrival.etaMinutes;
-
-    if (eta <= 1) {
-        backgroundColor = '#13251f';
-    } else if (arrival.delayed) {
-        backgroundColor = '#381717';
-    }
-
-    const rowStyles = { backgroundColor };
-
-    const etaString = eta <= 1 ? 'Due' : `${eta} min`;
-
-    return (
-        <TableRow key={key} sx={rowStyles}>
-            <TableCell>{arrival.vehicleId}</TableCell>
-            <TableCell>{arrival.predictionType}</TableCell>
-            <TableCell>{arrival.destination}</TableCell>
-            <TableCell>{etaString}</TableCell>
-        </TableRow>
-    );
+function getRouteColor(routeDesignator: string): string {
+    if (/^N/i.test(routeDesignator)) return '#003087'; // Owl
+    if (/^X/i.test(routeDesignator)) return '#00685e'; // X route
+    if (/^J/i.test(routeDesignator)) return '#0066b3'; // Jump
+    return '#58595b'; // Local (default)
 }
 
 function getTable(arrivals: StopArrival[]) {
+    const destGroups: { destination: string; arrivals: StopArrival[] }[] = [];
+
+    for (const arrival of arrivals) {
+        const last = destGroups[destGroups.length - 1];
+
+        if (!last || last.destination !== arrival.destination) {
+            destGroups.push({ destination: arrival.destination, arrivals: [arrival] });
+        } else {
+            last.arrivals.push(arrival);
+        }
+    }
+
     return (
-        <Box sx={{ p: 2 }}>
-            <TableContainer component={Paper}>
-                <Table size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={{ fontWeight: 'bold' }}>ID</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Type</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Destination</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold' }}>ETA</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>{arrivals.map((arrival) => getRow(arrival))}</TableBody>
-                </Table>
-            </TableContainer>
+        <Box sx={{ p: 1.5, display: 'flex', flexDirection: 'column', gap: 1.5, maxWidth: 600 }}>
+            {destGroups.map(({ destination, arrivals: destArrivals }) => {
+                const [first, ...rest] = destArrivals;
+                const firstEta = first.etaMinutes;
+                const firstLabel = firstEta <= 1 ? 'Due' : `${firstEta} min`;
+                const firstColor = first.delayed ? '#f44336' : '#e5e5e5';
+                const headerColor = getRouteColor(first.routeDesignator);
+
+                return (
+                    <Paper key={destination} sx={{ backgroundColor: '#171717', border: '1px solid #2a2a2a', borderRadius: 2, overflow: 'hidden' }}>
+                        <Box sx={{ px: 1.5, py: 0.5, backgroundColor: headerColor }}>
+                            <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#fff', letterSpacing: '0.05em' }}>
+                                {destination}
+                            </Typography>
+                        </Box>
+                        <Box sx={{ px: 1.5, py: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Box sx={{ textAlign: 'right', ml: 'auto' }}>
+                                <Typography variant="body2" sx={{ fontWeight: 700, color: firstColor, lineHeight: 1.2 }}>
+                                    {firstLabel}
+                                </Typography>
+                                {rest.length > 0 && (
+                                    <Typography variant="caption" sx={{ color: '#555', lineHeight: 1.2 }}>
+                                        {rest.map((arrival, idx) => {
+                                            const eta = arrival.etaMinutes;
+                                            const label = eta <= 1 ? 'Due' : `${eta} min`;
+                                            return (
+                                                <Box key={JSON.stringify(arrival)} component="span">
+                                                    {idx > 0 && <Box component="span" sx={{ mx: 0.4 }}>·</Box>}
+                                                    {label}
+                                                </Box>
+                                            );
+                                        })}
+                                    </Typography>
+                                )}
+                            </Box>
+                        </Box>
+                    </Paper>
+                );
+            })}
         </Box>
     );
 }
