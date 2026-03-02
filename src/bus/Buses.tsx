@@ -51,18 +51,18 @@ function getTable(arrivals: StopArrival[]) {
                                 {firstLabel}
                             </Typography>
                             {rest.length > 0 && (
-                                <Typography variant="body2" sx={{ color: '#888', mt: 0.5 }}>
-                                    {rest.map((arrival, idx) => {
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 0.5 }}>
+                                    {rest.map((arrival) => {
                                         const eta = arrival.etaMinutes;
                                         const label = eta <= 1 ? 'Due' : `${eta} min`;
+                                        const color = arrival.delayed ? '#f44336' : '#888';
                                         return (
-                                            <Box key={JSON.stringify(arrival)} component="span">
-                                                {idx > 0 && <Box component="span" sx={{ mx: 0.4 }}>·</Box>}
+                                            <Typography key={JSON.stringify(arrival)} variant="body2" component="span" sx={{ color, whiteSpace: 'nowrap' }}>
                                                 {label}
-                                            </Box>
+                                            </Typography>
                                         );
                                     })}
-                                </Typography>
+                                </Box>
                             )}
                         </Box>
                     </Paper>
