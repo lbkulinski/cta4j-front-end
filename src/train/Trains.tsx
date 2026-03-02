@@ -58,28 +58,29 @@ function getTable(arrivals: StationArrival[]) {
                                 const firstLabel = firstEta <= 1 ? 'Due' : `${first.scheduled ? '~' : ''}${firstEta} min`;
                                 const firstColor = first.approaching ? '#4caf50' : first.delayed ? '#f44336' : first.scheduled ? '#90caf9' : '#e5e5e5';
                                 const statusSuffix = first.approaching ? ', Approaching' : first.delayed ? ', Delayed' : first.scheduled ? ', Scheduled' : '';
+                                const compact = destinations.length >= 3;
 
                                 return (
-                                    <Box key={destination} sx={{ flex: 1, px: 1.5, py: 1.5, borderLeft: i > 0 ? '1px solid #2a2a2a' : undefined }}>
-                                        <Typography variant="body2" sx={{ color: '#fff', mb: 0.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                            {'\u2192'} {destination}
+                                    <Box key={destination} sx={{ flex: 1, px: compact ? { xs: 0.75, sm: 1.5 } : 1.5, py: compact ? { xs: 1, sm: 1.5 } : 1.5, borderLeft: i > 0 ? '1px solid #2a2a2a' : undefined }}>
+                                        <Typography variant="body2" sx={{ color: '#fff', mb: 0.5, fontSize: compact ? { xs: '0.7rem', sm: '0.875rem' } : undefined }}>
+                                            {destination}
                                         </Typography>
-                                        <Typography variant="h5" aria-label={`${firstLabel}${statusSuffix}`} sx={{ fontWeight: 700, color: firstColor, lineHeight: 1 }}>
+                                        <Typography variant="h5" aria-label={`${firstLabel}${statusSuffix}`} sx={{ fontWeight: 700, color: firstColor, lineHeight: 1, fontSize: compact ? { xs: '1.2rem', sm: '1.5rem' } : undefined }}>
                                             {firstLabel}
                                         </Typography>
                                         {rest.length > 0 && (
-                                            <Typography variant="body2" sx={{ color: '#888', mt: 0.5 }}>
-                                                {rest.map((arrival, idx) => {
+                                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mt: 0.5 }}>
+                                                {rest.map((arrival) => {
                                                     const eta = arrival.etaMinutes;
                                                     const label = eta <= 1 ? 'Due' : `${arrival.scheduled ? '~' : ''}${eta} min`;
+                                                    const color = arrival.delayed ? '#f44336' : arrival.scheduled ? '#90caf9' : '#888';
                                                     return (
-                                                        <Box key={JSON.stringify(arrival)} component="span">
-                                                            {idx > 0 && <Box component="span" sx={{ mx: 0.4 }}>·</Box>}
+                                                        <Typography key={JSON.stringify(arrival)} variant="body2" component="span" sx={{ color, whiteSpace: 'nowrap', fontSize: compact ? { xs: '0.7rem', sm: '0.875rem' } : undefined }}>
                                                             {label}
-                                                        </Box>
+                                                        </Typography>
                                                     );
                                                 })}
-                                            </Typography>
+                                            </Box>
                                         )}
                                     </Box>
                                 );
