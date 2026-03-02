@@ -41,31 +41,29 @@ function getTable(arrivals: StopArrival[]) {
 
                 return (
                     <Paper key={destination} sx={{ backgroundColor: '#171717', border: '1px solid #2a2a2a', borderRadius: 2, overflow: 'hidden' }}>
-                        <Box sx={{ px: 1.5, py: 0.5, backgroundColor: headerColor }}>
-                            <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#fff', letterSpacing: '0.08em' }}>
+                        <Box sx={{ px: 1.5, py: 0.25, backgroundColor: headerColor }}>
+                            <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#fff', letterSpacing: '0.08em' }}>
                                 {destination}
                             </Typography>
                         </Box>
-                        <Box sx={{ px: 1.5, py: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Box sx={{ textAlign: 'right', ml: 'auto' }}>
-                                <Typography variant="body2" aria-label={`${firstLabel}${statusSuffix}`} sx={{ fontWeight: 700, color: firstColor, lineHeight: 1.2 }}>
-                                    {firstLabel}
+                        <Box sx={{ px: 1.5, py: 1.5 }}>
+                            <Typography variant="h5" aria-label={`${firstLabel}${statusSuffix}`} sx={{ fontWeight: 700, color: firstColor, lineHeight: 1 }}>
+                                {firstLabel}
+                            </Typography>
+                            {rest.length > 0 && (
+                                <Typography variant="body2" sx={{ color: '#888', mt: 0.5 }}>
+                                    {rest.map((arrival, idx) => {
+                                        const eta = arrival.etaMinutes;
+                                        const label = eta <= 1 ? 'Due' : `${eta} min`;
+                                        return (
+                                            <Box key={JSON.stringify(arrival)} component="span">
+                                                {idx > 0 && <Box component="span" sx={{ mx: 0.4 }}>·</Box>}
+                                                {label}
+                                            </Box>
+                                        );
+                                    })}
                                 </Typography>
-                                {rest.length > 0 && (
-                                    <Typography variant="caption" sx={{ color: '#555', lineHeight: 1.2 }}>
-                                        {rest.map((arrival, idx) => {
-                                            const eta = arrival.etaMinutes;
-                                            const label = eta <= 1 ? 'Due' : `${eta} min`;
-                                            return (
-                                                <Box key={JSON.stringify(arrival)} component="span">
-                                                    {idx > 0 && <Box component="span" sx={{ mx: 0.4 }}>·</Box>}
-                                                    {label}
-                                                </Box>
-                                            );
-                                        })}
-                                    </Typography>
-                                )}
-                            </Box>
+                            )}
                         </Box>
                     </Paper>
                 );

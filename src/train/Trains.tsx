@@ -45,33 +45,33 @@ function getTable(arrivals: StationArrival[]) {
 
                 return (
                     <Paper key={route} sx={{ backgroundColor: '#171717', border: '1px solid #2a2a2a', borderRadius: 2, overflow: 'hidden' }}>
-                        <Box sx={{ px: 1.5, py: 0.5, backgroundColor: lineColor }}>
-                            <Typography variant="caption" sx={{ fontWeight: 'bold', color: headerTextColor, letterSpacing: '0.08em' }}>
+                        <Box sx={{ px: 1.5, py: 0.25, backgroundColor: lineColor }}>
+                            <Typography variant="body1" sx={{ fontWeight: 'bold', color: headerTextColor, letterSpacing: '0.08em' }}>
                                 {route}
                             </Typography>
                         </Box>
-                        {destinations.map(({ destination, arrivals: destArrivals }, i) => {
-                            const [first, ...allRest] = destArrivals;
-                            const rest = allRest.slice(0, 2);
-                            const firstEta = first.etaMinutes;
-                            const firstLabel = firstEta <= 1 ? 'Due' : `${first.scheduled ? '~' : ''}${firstEta} min`;
-                            const firstColor = first.approaching ? '#4caf50' : first.delayed ? '#f44336' : first.scheduled ? '#90caf9' : '#e5e5e5';
-                            const statusSuffix = first.approaching ? ', Approaching' : first.delayed ? ', Delayed' : first.scheduled ? ', Scheduled' : '';
+                        <Box sx={{ display: 'flex' }}>
+                            {destinations.map(({ destination, arrivals: destArrivals }, i) => {
+                                const [first, ...allRest] = destArrivals;
+                                const rest = allRest.slice(0, 2);
+                                const firstEta = first.etaMinutes;
+                                const firstLabel = firstEta <= 1 ? 'Due' : `${first.scheduled ? '~' : ''}${firstEta} min`;
+                                const firstColor = first.approaching ? '#4caf50' : first.delayed ? '#f44336' : first.scheduled ? '#90caf9' : '#e5e5e5';
+                                const statusSuffix = first.approaching ? ', Approaching' : first.delayed ? ', Delayed' : first.scheduled ? ', Scheduled' : '';
 
-                            return (
-                                <Box key={destination} sx={{ borderTop: i > 0 ? '1px solid #2a2a2a' : undefined, px: 1.5, py: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <Typography variant="caption" sx={{ fontWeight: 600, color: '#fff', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                        {'\u2192'} {destination}
-                                    </Typography>
-                                    <Box sx={{ textAlign: 'right' }}>
-                                        <Typography variant="body2" aria-label={`${firstLabel}${statusSuffix}`} sx={{ fontWeight: 700, color: firstColor, lineHeight: 1.2 }}>
+                                return (
+                                    <Box key={destination} sx={{ flex: 1, px: 1.5, py: 1.5, borderLeft: i > 0 ? '1px solid #2a2a2a' : undefined }}>
+                                        <Typography variant="body2" sx={{ color: '#fff', mb: 0.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                            {'\u2192'} {destination}
+                                        </Typography>
+                                        <Typography variant="h5" aria-label={`${firstLabel}${statusSuffix}`} sx={{ fontWeight: 700, color: firstColor, lineHeight: 1 }}>
                                             {firstLabel}
                                         </Typography>
                                         {rest.length > 0 && (
-                                            <Typography variant="caption" sx={{ color: '#555', lineHeight: 1.2 }}>
+                                            <Typography variant="body2" sx={{ color: '#888', mt: 0.5 }}>
                                                 {rest.map((arrival, idx) => {
                                                     const eta = arrival.etaMinutes;
-                                                    const label = eta <= 1 ? 'Due' : `${eta} min`;
+                                                    const label = eta <= 1 ? 'Due' : `${arrival.scheduled ? '~' : ''}${eta} min`;
                                                     return (
                                                         <Box key={JSON.stringify(arrival)} component="span">
                                                             {idx > 0 && <Box component="span" sx={{ mx: 0.4 }}>·</Box>}
@@ -82,9 +82,9 @@ function getTable(arrivals: StationArrival[]) {
                                             </Typography>
                                         )}
                                     </Box>
-                                </Box>
-                            );
-                        })}
+                                );
+                            })}
+                        </Box>
                     </Paper>
                 );
             })}
