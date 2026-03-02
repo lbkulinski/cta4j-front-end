@@ -60,7 +60,7 @@ function getTable(arrivals: StationArrival[]) {
 
                             return (
                                 <Box key={destination} sx={{ borderTop: i > 0 ? '1px solid #2a2a2a' : undefined, px: 1.5, py: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <Typography variant="caption" sx={{ fontWeight: 600, color: '#888', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    <Typography variant="caption" sx={{ fontWeight: 600, color: '#fff', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                         {'\u2192'} {destination}
                                     </Typography>
                                     <Box sx={{ textAlign: 'right' }}>
