@@ -1,15 +1,18 @@
-import { useRouteError, isRouteErrorResponse } from 'react-router-dom';
+import { useRouteError, isRouteErrorResponse, Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 export default function ErrorPage() {
     const error = useRouteError();
 
-    let message = "An unexpected error occurred.";
+    const is404 = !error || (isRouteErrorResponse(error) && error.status === 404);
 
-    if (isRouteErrorResponse(error)) {
-        message = `${error.status} ${error.statusText}`;
-    }
+    const title = is404 ? "404" : "Oops!";
+    const message = is404
+        ? "Page not found."
+        : isRouteErrorResponse(error)
+            ? `${error.status} ${error.statusText}`
+            : "An unexpected error occurred.";
 
     return (
         <Box
@@ -22,10 +25,13 @@ export default function ErrorPage() {
             gap={2}
         >
             <Typography variant="h4" component="h1">
-                Oops!
+                {title}
             </Typography>
             <Typography variant="body1">
                 {message}
+            </Typography>
+            <Typography variant="body2">
+                <Link to="/" style={{ color: '#c60c30' }}>Go home</Link>
             </Typography>
         </Box>
     );

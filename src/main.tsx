@@ -10,10 +10,13 @@ import Box from "@mui/material/Box";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {ErrorBoundary, Provider} from "@rollbar/react";
 import BusApp from "./bus/BusApp.tsx";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import {AxiosError, isAxiosError} from "axios";
 import HolidayApp from "./holiday-train/HolidayApp.tsx";
 import ErrorPage from "./ErrorPage.tsx";
+import { createElement } from 'react';
 
 const rollbarConfig = {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
@@ -96,18 +99,32 @@ const queryClient = new QueryClient({
     },
 });
 
+const persister = createSyncStoragePersister({
+    storage: window.localStorage,
+    key: 'cta4j-query-cache',
+});
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <Provider config={rollbarConfig}>
-            <ErrorBoundary>
+            <ErrorBoundary fallbackUI={() => createElement(ErrorPage)}>
                 <ThemeProvider theme={darkTheme}>
                     <CssBaseline />
                     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh' }}>
                         <MenuBar />
                         <Box sx={{ flex: 1, maxWidth: '36rem', width: '100%', mx: 'auto', px: { xs: 1.5, sm: 2 }, py: { xs: 2, sm: 3 } }}>
-                            <QueryClientProvider client={queryClient}>
+                            <PersistQueryClientProvider
+                                client={queryClient}
+                                persistOptions={{
+                                    persister,
+                                    dehydrateOptions: {
+                                        shouldDehydrateQuery: (query) =>
+                                            query.options.staleTime != null && query.options.staleTime > 0,
+                                    },
+                                }}
+                            >
                                 <RouterProvider router={router} />
-                            </QueryClientProvider>
+                            </PersistQueryClientProvider>
                         </Box>
                         <Footer />
                     </Box>
