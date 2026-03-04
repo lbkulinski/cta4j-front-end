@@ -99,7 +99,7 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <Provider config={rollbarConfig}>
-            <ErrorBoundary>
+            <ErrorBoundary fallbackUI={() => <ErrorPage />}>
                 <ThemeProvider theme={darkTheme}>
                     <CssBaseline />
                     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh' }}>
