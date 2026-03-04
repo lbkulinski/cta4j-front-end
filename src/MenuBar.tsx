@@ -18,7 +18,7 @@ function MenuBar() {
                     <Link href="/buses" underline="hover" sx={{ fontSize: '0.875rem', fontWeight: 500, color: '#aaaaaa', '&:hover': { color: '#ffffff' } }}>
                         Buses
                     </Link>
-                    <Link href="mailto:admin@cta4j.app" underline="hover" sx={{ fontSize: '0.875rem', fontWeight: 500, color: '#aaaaaa', '&:hover': { color: '#ffffff' } }}>
+                    <Link href="mailto:admin@cta4j.com" underline="hover" sx={{ fontSize: '0.875rem', fontWeight: 500, color: '#aaaaaa', '&:hover': { color: '#ffffff' } }}>
                         Contact
                     </Link>
                 </Box>
