@@ -104,7 +104,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
                     <CssBaseline />
                     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh' }}>
                         <MenuBar />
-                        <Box sx={{ flex: 1, maxWidth: '36rem', width: '100%', mx: 'auto', px: { xs: 1.5, sm: 2 }, py: { xs: 2, sm: 3 } }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, maxWidth: '36rem', width: '100%', mx: 'auto', px: { xs: 1.5, sm: 2 }, py: { xs: 2, sm: 3 } }}>
                             <QueryClientProvider client={queryClient}>
                                 <RouterProvider router={router} />
                             </QueryClientProvider>
