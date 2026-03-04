@@ -14,7 +14,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {AxiosError, isAxiosError} from "axios";
 import HolidayApp from "./holiday-train/HolidayApp.tsx";
 import ErrorPage from "./ErrorPage.tsx";
-import { createElement } from 'react';
 
 const rollbarConfig = {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
@@ -100,7 +99,7 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <Provider config={rollbarConfig}>
-            <ErrorBoundary fallbackUI={() => createElement(ErrorPage)}>
+            <ErrorBoundary fallbackUI={() => <ErrorPage />}>
                 <ThemeProvider theme={darkTheme}>
                     <CssBaseline />
                     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh' }}>
