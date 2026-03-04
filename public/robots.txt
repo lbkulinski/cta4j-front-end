@@ -2,4 +2,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://cta4j.app/sitemap.xml
+Sitemap: https://cta4j.com/sitemap.xml
