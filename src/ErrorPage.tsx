@@ -20,7 +20,7 @@ export default function ErrorPage() {
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
-            height="100vh"
+            flex={1}
             textAlign="center"
             gap={2}
         >
