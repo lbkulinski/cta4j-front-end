@@ -6,16 +6,27 @@ import Typography from '@mui/material/Typography';
 export default function ErrorPage() {
     const error = useRouteError();
 
-    React.useEffect(() => {
-        const meta = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
-        const prev = meta?.getAttribute('content') ?? '';
-        meta?.setAttribute('content', 'noindex, follow');
-        return () => { meta?.setAttribute('content', prev); };
-    }, []);
-
     const is404 = !error || (isRouteErrorResponse(error) && error.status === 404);
 
     const title = is404 ? "404" : "Oops!";
+
+    React.useEffect(() => {
+        const meta = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
+        const prevRobots = meta?.getAttribute('content') ?? '';
+        meta?.setAttribute('content', 'noindex, follow');
+
+        const prevTitle = document.title;
+        document.title = is404
+            ? 'cta4j — 404 Not Found'
+            : isRouteErrorResponse(error)
+                ? `cta4j — ${error.status} ${error.statusText}`
+                : 'cta4j — Error';
+
+        return () => {
+            meta?.setAttribute('content', prevRobots);
+            document.title = prevTitle;
+        };
+    }, [error, is404]);
     const message = is404
         ? "Page not found."
         : isRouteErrorResponse(error)
