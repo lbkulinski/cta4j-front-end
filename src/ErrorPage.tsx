@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRouteError, isRouteErrorResponse } from 'react-router-dom';
+import { useRouteError, isRouteErrorResponse, useInRouterContext, Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
@@ -9,6 +9,8 @@ export function RouterErrorPage() {
 }
 
 export default function ErrorPage({ error }: { error?: unknown } = {}) {
+    const inRouter = useInRouterContext();
+
     const is404 = !error || (isRouteErrorResponse(error) && error.status === 404);
 
     const title = is404 ? "404" : "Oops!";
@@ -58,7 +60,10 @@ export default function ErrorPage({ error }: { error?: unknown } = {}) {
                 {message}
             </Typography>
             <Typography variant="body2">
-                <a href="/" style={{ color: '#c60c30' }}>Go home</a>
+                {inRouter
+                    ? <Link to="/" style={{ color: '#c60c30' }}>Go home</Link>
+                    : <a href="/" style={{ color: '#c60c30' }}>Go home</a>
+                }
             </Typography>
         </Box>
     );
