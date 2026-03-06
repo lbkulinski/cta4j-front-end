@@ -1,21 +1,12 @@
 import React from 'react';
 import Trains from "./Trains.tsx";
 import Stations from "./Stations.tsx";
+import useDocumentMetadata from "../useDocumentMetadata.ts";
 
 function TrainApp() {
-    const [stationId, setStationId] = React.useState<string | null>(null);
+    useDocumentMetadata('cta4j — CTA Train Tracker', 'https://cta4j.com/');
 
-    React.useEffect(() => {
-        const prevTitle = document.title;
-        document.title = 'cta4j — CTA Train Tracker';
-        const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-        const prevCanonical = canonical?.getAttribute('href') ?? '';
-        canonical?.setAttribute('href', 'https://cta4j.com/');
-        return () => {
-            document.title = prevTitle;
-            canonical?.setAttribute('href', prevCanonical);
-        };
-    }, []);
+    const [stationId, setStationId] = React.useState<string | null>(null);
 
     React.useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search);

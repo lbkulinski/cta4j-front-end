@@ -3,25 +3,16 @@ import Routes from "./Routes.tsx";
 import Directions from "./Directions.tsx";
 import Stops from "./Stops.tsx";
 import Buses from "./Buses.tsx";
+import useDocumentMetadata from "../useDocumentMetadata.ts";
 
 function BusApp() {
+    useDocumentMetadata('cta4j — CTA Bus Tracker', 'https://cta4j.com/buses');
+
     const [routeId, setRouteId] = React.useState<string | null>(null);
 
     const [direction, setDirection] = React.useState<string | null>(null);
 
     const [stopId, setStopId] = React.useState<string | null>(null);
-
-    React.useEffect(() => {
-        const prevTitle = document.title;
-        document.title = 'cta4j — CTA Bus Tracker';
-        const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-        const prevCanonical = canonical?.getAttribute('href') ?? '';
-        canonical?.setAttribute('href', 'https://cta4j.com/buses');
-        return () => {
-            document.title = prevTitle;
-            canonical?.setAttribute('href', prevCanonical);
-        };
-    }, []);
 
     React.useEffect(() => {
         const searchParams = new URLSearchParams(window.location.search);
