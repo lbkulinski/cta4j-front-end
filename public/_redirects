@@ -3,5 +3,7 @@
 /trains/* /  301
 / /index.html  200
 /buses /index.html  200
+/buses/ /buses  301
 /holiday-train /index.html  200
+/holiday-train/ /holiday-train  301
 /*  /index.html  404

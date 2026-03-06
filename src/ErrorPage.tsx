@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRouteError, isRouteErrorResponse, Link } from 'react-router-dom';
+import { useRouteError, isRouteErrorResponse } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
@@ -25,9 +25,14 @@ export default function ErrorPage({ error }: { error?: unknown } = {}) {
                 ? `cta4j — ${error.status} ${error.statusText}`
                 : 'cta4j — Error';
 
+        const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+        const prevCanonical = canonical?.getAttribute('href') ?? '';
+        canonical?.removeAttribute('href');
+
         return () => {
             meta?.setAttribute('content', prevRobots);
             document.title = prevTitle;
+            if (prevCanonical) canonical?.setAttribute('href', prevCanonical);
         };
     }, [error, is404]);
     const message = is404
@@ -53,7 +58,7 @@ export default function ErrorPage({ error }: { error?: unknown } = {}) {
                 {message}
             </Typography>
             <Typography variant="body2">
-                <Link to="/" style={{ color: '#c60c30' }}>Go home</Link>
+                <a href="/" style={{ color: '#c60c30' }}>Go home</a>
             </Typography>
         </Box>
     );

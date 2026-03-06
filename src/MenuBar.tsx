@@ -12,7 +12,7 @@ function MenuBar() {
                     cta4j
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 3 }}>
-                    <Link href="/trains" underline="hover" sx={{ fontSize: '0.875rem', fontWeight: 500, color: '#aaaaaa', '&:hover': { color: '#ffffff' } }}>
+                    <Link href="/" underline="hover" sx={{ fontSize: '0.875rem', fontWeight: 500, color: '#aaaaaa', '&:hover': { color: '#ffffff' } }}>
                         Trains
                     </Link>
                     <Link href="/buses" underline="hover" sx={{ fontSize: '0.875rem', fontWeight: 500, color: '#aaaaaa', '&:hover': { color: '#ffffff' } }}>
