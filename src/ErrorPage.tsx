@@ -1,9 +1,17 @@
+import React from 'react';
 import { useRouteError, isRouteErrorResponse, Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
 export default function ErrorPage() {
     const error = useRouteError();
+
+    React.useEffect(() => {
+        const meta = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
+        const prev = meta?.getAttribute('content') ?? '';
+        meta?.setAttribute('content', 'noindex, follow');
+        return () => { meta?.setAttribute('content', prev); };
+    }, []);
 
     const is404 = !error || (isRouteErrorResponse(error) && error.status === 404);
 
