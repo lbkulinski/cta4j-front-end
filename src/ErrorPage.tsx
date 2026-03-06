@@ -3,9 +3,12 @@ import { useRouteError, isRouteErrorResponse, Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-export default function ErrorPage() {
+export function RouterErrorPage() {
     const error = useRouteError();
+    return <ErrorPage error={error} />;
+}
 
+export default function ErrorPage({ error }: { error?: unknown } = {}) {
     const is404 = !error || (isRouteErrorResponse(error) && error.status === 404);
 
     const title = is404 ? "404" : "Oops!";

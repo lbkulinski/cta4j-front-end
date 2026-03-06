@@ -1,4 +1,7 @@
 /trains /  301
 /trains/ /  301
 /trains/* /  301
-/*  /index.html  200
+/ /index.html  200
+/buses /index.html  200
+/holiday-train /index.html  200
+/*  /index.html  404
