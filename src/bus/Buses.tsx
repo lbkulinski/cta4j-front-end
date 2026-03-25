@@ -111,7 +111,7 @@ function Buses(props: BusesProps) {
     if (routeId == null) {
         return (
             <Box sx={{ px: 1.5, py: 4, textAlign: 'center' }}>
-                <Typography variant="body1" sx={{ color: '#555' }}>
+                <Typography variant="body1" sx={{ color: 'text.secondary' }}>
                     Select a route above to get started.
                 </Typography>
             </Box>
