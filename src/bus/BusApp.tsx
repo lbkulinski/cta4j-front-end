@@ -3,8 +3,10 @@ import Routes from "./Routes.tsx";
 import Directions from "./Directions.tsx";
 import Stops from "./Stops.tsx";
 import Buses from "./Buses.tsx";
+import useDocumentMetadata from "../useDocumentMetadata.ts";
 
 function BusApp() {
+    useDocumentMetadata('cta4j — Bus Tracker', 'https://cta4j.com/buses');
     const [routeId, setRouteId] = React.useState<string | null>(() => {
         const searchParams = new URLSearchParams(window.location.search);
 

@@ -67,7 +67,7 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
     },
     {
-        path: "/holiday-train",
+        path: "/holiday",
         element: <HolidayApp />,
         errorElement: <ErrorPage />,
     },
