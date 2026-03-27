@@ -3,47 +3,39 @@ import Routes from "./Routes.tsx";
 import Directions from "./Directions.tsx";
 import Stops from "./Stops.tsx";
 import Buses from "./Buses.tsx";
+import useDocumentMetadata from "../useDocumentMetadata.ts";
 
 function BusApp() {
-    const [routeId, setRouteId] = React.useState<string | null>(null);
-
-    const [direction, setDirection] = React.useState<string | null>(null);
-
-    const [stopId, setStopId] = React.useState<string | null>(null);
-
-    React.useEffect(() => {
+    useDocumentMetadata('cta4j — Bus Tracker', 'https://cta4j.com/buses');
+    const [routeId, setRouteId] = React.useState<string | null>(() => {
         const searchParams = new URLSearchParams(window.location.search);
 
         const urlRouteId = searchParams.get('routeId');
 
         const localStorageRouteId = localStorage.getItem('routeId');
 
-        const initialRouteId = urlRouteId ?? localStorageRouteId;
+        return urlRouteId ?? localStorageRouteId;
+    });
 
-        if (initialRouteId) {
-            setRouteId(initialRouteId);
-        }
+    const [direction, setDirection] = React.useState<string | null>(() => {
+        const searchParams = new URLSearchParams(window.location.search);
 
         const urlDirection = searchParams.get('direction');
 
         const localStorageDirection = localStorage.getItem('direction');
 
-        const initialDirection = urlDirection ?? localStorageDirection;
+        return urlDirection ?? localStorageDirection;
+    });
 
-        if (initialDirection) {
-            setDirection(initialDirection);
-        }
+    const [stopId, setStopId] = React.useState<string | null>(() => {
+        const searchParams = new URLSearchParams(window.location.search);
 
         const urlStopId = searchParams.get('stopId');
 
         const localStorageStopId = localStorage.getItem('stopId');
 
-        const initialStopId = urlStopId ?? localStorageStopId;
-
-        if (initialStopId) {
-            setStopId(initialStopId);
-        }
-    }, []);
+        return urlStopId ?? localStorageStopId;
+    });
 
     return (
         <div>

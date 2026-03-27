@@ -1,6 +1,7 @@
 import { useRouteError, isRouteErrorResponse, Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import useDocumentMetadata from './useDocumentMetadata.ts';
 
 export default function ErrorPage() {
     const error = useRouteError();
@@ -8,6 +9,8 @@ export default function ErrorPage() {
     const is404 = !error || (isRouteErrorResponse(error) && error.status === 404);
 
     const title = is404 ? "404" : "Oops!";
+
+    useDocumentMetadata(`cta4j — ${title}`, 'https://cta4j.com/');
     const message = is404
         ? "Page not found."
         : isRouteErrorResponse(error)
