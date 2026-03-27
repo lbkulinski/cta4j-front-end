@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import TrainApp from './train/TrainApp.tsx'
 import './index.css'
-import {createBrowserRouter, RouterProvider} from "react-router-dom";
+import {createBrowserRouter, Navigate, RouterProvider} from "react-router-dom";
 import MenuBar from "./MenuBar.tsx";
 import Footer from "./Footer.tsx";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -58,8 +58,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/trains",
-        element: <TrainApp />,
-        errorElement: <ErrorPage />,
+        element: <Navigate to="/" replace />,
     },
     {
         path: "/buses",
