@@ -149,13 +149,7 @@ function Trains(props: TrainsProps) {
     );
 
     if (stationId == null) {
-        return (
-            <Box sx={{ px: 1.5, py: 4, textAlign: 'center' }}>
-                <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-                    Select a station above to see upcoming arrivals.
-                </Typography>
-            </Box>
-        );
+        return null;
     }
 
     if (isLoading) {
