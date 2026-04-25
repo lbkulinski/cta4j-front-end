@@ -40,9 +40,11 @@ function Footer() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 1,
                 }}
             >
-                <Box sx={{ display: 'flex', gap: 3 }}>
+                <Box sx={{ display: 'flex', gap: 3, minWidth: 0 }}>
                     <Link
                         href="https://ctasmokers.com"
                         target="_blank"
