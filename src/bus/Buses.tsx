@@ -109,7 +109,13 @@ function Buses(props: BusesProps) {
     });
 
     if (routeId == null) {
-        return null;
+        return (
+            <Box sx={{ px: 1.5, py: 4, textAlign: 'center' }}>
+                <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+                    Select a route above to get started.
+                </Typography>
+            </Box>
+        );
     }
 
     if (stopId == null) {
