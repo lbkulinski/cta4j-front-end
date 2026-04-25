@@ -70,6 +70,7 @@ function Footer() {
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label={label}
+                            underline="none"
                             sx={{
                                 color: '#999999',
                                 display: 'flex',
