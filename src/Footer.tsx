@@ -2,9 +2,14 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import SvgIcon from '@mui/material/SvgIcon';
 import MuiGitHubIcon from '@mui/icons-material/GitHub';
+import MuiTwitterIcon from '@mui/icons-material/Twitter';
 
 function GitHubIcon() {
     return <MuiGitHubIcon sx={{ fontSize: '1rem' }} />;
+}
+
+function TwitterIcon() {
+    return <MuiTwitterIcon sx={{ fontSize: '1rem' }} />;
 }
 
 function DiscordIcon() {
@@ -17,6 +22,7 @@ function DiscordIcon() {
 
 const socialLinks = [
     { href: 'https://github.com/lbkulinski/cta4j-api', icon: <GitHubIcon />, label: 'GitHub' },
+    { href: 'https://x.com/cta4j', icon: <TwitterIcon />, label: 'Twitter' },
     { href: 'https://discord.gg/gNWjXZAhge', icon: <DiscordIcon />, label: 'Discord' },
 ];
 
