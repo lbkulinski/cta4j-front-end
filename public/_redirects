@@ -1,3 +1,4 @@
 /trains         /        301
 /holiday-train  /holiday  301
+/security.txt   /.well-known/security.txt  301
 /*              /index.html  200
