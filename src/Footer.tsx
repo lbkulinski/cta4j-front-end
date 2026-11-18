@@ -40,7 +40,7 @@ const socialLinks = [
     { href: 'https://github.com/lbkulinski/cta4j-api', icon: <GitHubIcon />, label: 'GitHub' },
     { href: 'https://x.com/cta4j', icon: <TwitterIcon />, label: 'Twitter' },
     { href: 'https://bsky.app/profile/cta4j.com', icon: <BlueskyIcon />, label: 'Bluesky' },
-    { href: 'https://mastodon.social/@ctasmokers', icon: <MastodonIcon />, label: 'Mastodon' },
+    { href: 'https://mastodon.social/@cta4j', icon: <MastodonIcon />, label: 'Mastodon' },
     { href: 'https://discord.gg/gNWjXZAhge', icon: <DiscordIcon />, label: 'Discord' },
 ];
 
