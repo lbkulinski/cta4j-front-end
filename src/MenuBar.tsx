@@ -18,6 +18,9 @@ function MenuBar() {
                     <Link href="/buses" underline="hover" sx={{ fontSize: '0.875rem', fontWeight: 500, color: '#aaaaaa', '&:hover': { color: '#ffffff' } }}>
                         Buses
                     </Link>
+                    <Link href="/holiday" underline="none" aria-label="Holiday Train" title="Holiday Train" sx={{ fontSize: '0.875rem', lineHeight: 1.5, '&:hover': { filter: 'brightness(1.25)' } }}>
+                        🎅🏻
+                    </Link>
                     <Link href="mailto:admin@cta4j.com" underline="hover" sx={{ fontSize: '0.875rem', fontWeight: 500, color: '#aaaaaa', '&:hover': { color: '#ffffff' } }}>
                         Contact
                     </Link>
