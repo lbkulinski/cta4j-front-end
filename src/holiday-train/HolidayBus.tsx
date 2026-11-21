@@ -58,7 +58,8 @@ function HolidayBus() {
     return (
         <HolidaySection title="Holiday Bus">
             <HolidayCard
-                heading={`${sortedData[0].destination}-bound Route ${sortedData[0].route} · VID ${id}`}
+                heading={`${sortedData[0].destination}-bound Route ${sortedData[0].route}`}
+                meta={`VID ${id}`}
                 headerColor="#58595b"
                 columnLabel="Upcoming stops"
                 rows={sortedData.map((arrival) => ({
