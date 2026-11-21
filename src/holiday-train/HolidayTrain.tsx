@@ -81,7 +81,8 @@ function HolidayTrain() {
     return (
         <HolidaySection title="Holiday Train">
             <HolidayCard
-                heading={`${sortedData[0].destinationName}-bound ${titleCaseRoute} Line · Run ${run}`}
+                heading={`${sortedData[0].destinationName}-bound ${titleCaseRoute} Line`}
+                meta={`Run ${run}`}
                 headerColor={routeColor}
                 headerTextColor={route === "YELLOW" ? "#000" : "#fff"}
                 columnLabel="Upcoming stations"

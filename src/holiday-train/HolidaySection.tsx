@@ -54,6 +54,7 @@ const candyCane = {
 
 interface HolidayCardProps {
     heading: string;
+    meta: string;
     headerColor: string;
     headerTextColor?: string;
     columnLabel: string;
@@ -62,7 +63,7 @@ interface HolidayCardProps {
     isFetching: boolean;
 }
 
-export function HolidayCard({heading, headerColor, headerTextColor = '#fff', columnLabel, rows, updatedAt, isFetching}: HolidayCardProps) {
+export function HolidayCard({heading, meta, headerColor, headerTextColor = '#fff', columnLabel, rows, updatedAt, isFetching}: HolidayCardProps) {
     const updated = updatedAt
         ? new Date(updatedAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false})
         : null;
@@ -71,9 +72,12 @@ export function HolidayCard({heading, headerColor, headerTextColor = '#fff', col
         <Box>
             <Paper sx={{backgroundColor: '#171717', border: '1px solid #2a2a2a', borderRadius: 2, overflow: 'hidden'}}>
                 <Box sx={candyCane}/>
-                <Box sx={{px: 1.5, py: 0.25, backgroundColor: headerColor}}>
-                    <Typography variant="body1" sx={{fontWeight: 'bold', color: headerTextColor, letterSpacing: '0.08em'}}>
+                <Box sx={{px: 1.5, py: 0.25, backgroundColor: headerColor, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', columnGap: 1.5, color: headerTextColor}}>
+                    <Typography variant="body1" sx={{fontWeight: 'bold', color: 'inherit', letterSpacing: {xs: '0.03em', sm: '0.08em'}, fontSize: {xs: '0.9rem', sm: '1rem'}}}>
                         {heading}
+                    </Typography>
+                    <Typography variant="body2" sx={{fontWeight: 'bold', color: 'inherit', opacity: 0.85, whiteSpace: 'nowrap'}}>
+                        {meta}
                     </Typography>
                 </Box>
                 <Box component="ul" aria-label={columnLabel} sx={{listStyle: 'none', m: 0, p: 0}}>
