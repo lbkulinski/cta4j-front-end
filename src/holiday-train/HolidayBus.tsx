@@ -1,83 +1,24 @@
-import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
-import {Bus, UpcomingBusArrival, useGetBus} from "../api";
+import {UpcomingBusArrival, useGetBus} from "../api";
 import {AxiosError, isAxiosError} from "axios";
-
-function getRow(arrival: UpcomingBusArrival) {
-    const key = JSON.stringify(arrival);
-
-    let rowStyles = {};
-
-    const eta = arrival.etaMinutes;
-
-    if (eta <= 1) {
-        rowStyles = {
-            backgroundColor: "#13251f"
-        };
-    } else if (arrival.delayed) {
-        rowStyles = {
-            backgroundColor: "#381717"
-        }
-    }
-
-    const etaString = (eta <= 1) ? "Due" : `${eta} min`;
-
-    return (
-        <TableRow key={key} sx={rowStyles}>
-            <TableCell>
-                {
-                    arrival.stopName
-                }
-            </TableCell>
-            <TableCell>
-                {
-                    etaString
-                }
-            </TableCell>
-        </TableRow>
-    );
-}
-
-function getTable(arrivals: UpcomingBusArrival[]) {
-    return (
-        <TableContainer component={Paper}>
-            <Table size="small">
-                <TableHead>
-                    <TableRow>
-                        <TableCell sx={{fontWeight: "bold"}}>Stop</TableCell>
-                        <TableCell sx={{fontWeight: "bold"}}>ETA</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {
-                        arrivals.map((bus) => getRow(bus))
-                    }
-                </TableBody>
-            </Table>
-        </TableContainer>
-    );
-}
+import {HolidayCard, HolidayEmpty, HolidayMessage, HolidaySection} from "./HolidaySection.tsx";
 
 function compareArrivals(arrival0: UpcomingBusArrival, arrival1: UpcomingBusArrival) {
-    const date0 = new Date(arrival0.arrivalTime);
-
-    const date1 = new Date(arrival1.arrivalTime);
-
-    if (date0 < date1) {
-        return -1;
-    } else if (date0 === date1) {
-        return 0;
-    } else {
-        return 1;
-    }
+    return new Date(arrival0.arrivalTime).getTime() - new Date(arrival1.arrivalTime).getTime();
 }
+
+const notRunning = (
+    <HolidaySection title="Holiday Bus">
+        <HolidayEmpty vehicle="Bus"/>
+    </HolidaySection>
+);
 
 function HolidayBus() {
     const id = "4374";
 
     const rollbar = useRollbar();
 
-    const { data, isLoading, error } = useGetBus(
+    const { data, isLoading, isFetching, dataUpdatedAt, error } = useGetBus(
         id,
         {
             query: {
@@ -91,79 +32,45 @@ function HolidayBus() {
     }
 
     if (error) {
-        if (isAxiosError(error)) {
-            const statusCode = (error as AxiosError).response?.status;
-
-            if (statusCode === 404) {
-                return (
-                    <Box sx={{p: 2}}>
-                        <h2 style={{color: "#B3000C"}}>Holiday Bus 🎅🏻</h2>
-                        <Alert severity="warning">
-                            The Holiday Bus does not appear to be running at this time. Please check back later.
-                        </Alert>
-                    </Box>
-                );
-            }
+        if (isAxiosError(error) && (error as AxiosError).response?.status === 404) {
+            return notRunning;
         }
 
         rollbar.error(error);
 
         return (
-            <Box sx={{p: 2}}>
-                <h2 style={{color: "#B3000C"}}>Holiday Bus 🎅🏻</h2>
-                <Alert severity="error">
+            <HolidaySection title="Holiday Bus">
+                <HolidayMessage>
                     An error occurred while retrieving the Holiday Bus data. Please check back later.
-                </Alert>
-            </Box>
+                </HolidayMessage>
+            </HolidaySection>
         );
     }
 
-    let bus: Bus | null;
+    const bus = data?.data ?? null;
 
-    if (data === undefined) {
-        bus = null;
-    } else {
-        bus = data.data;
+    if (bus === null || !Array.isArray(bus.arrivals) || bus.arrivals.length === 0) {
+        return notRunning;
     }
 
-    if (bus === null) {
-        return (
-            <Box sx={{p: 2}}>
-                <h2 style={{color: "#B3000C"}}>Holiday Bus 🎅🏻</h2>
-                <Alert severity="warning">
-                    The Holiday Bus does not appear to be running at this time. Please check back later.
-                </Alert>
-            </Box>
-        );
-    }
-
-    const arrivals: UpcomingBusArrival[] = bus.arrivals;
-
-    if (arrivals.length === 0) {
-        return (
-            <Box sx={{p: 2}}>
-                <h2 style={{color: "#B3000C"}}>Holiday Bus 🎅🏻</h2>
-                <Alert severity="warning">
-                    The Holiday Bus does not appear to be running at this time. Please check back later.
-                </Alert>
-            </Box>
-        );
-    }
-
-    const sortedData = [...arrivals].sort(compareArrivals);
-
-    const destination = sortedData[0].destination;
-
-    const route = sortedData[0].route;
-
-    const table = getTable(sortedData);
+    const sortedData = [...bus.arrivals].sort(compareArrivals);
 
     return (
-        <Box sx={{p: 2}}>
-            <h2 style={{color: "#B3000C"}}>Holiday Bus 🎅🏻</h2>
-            <h3>{destination}-bound Route {route} (VID {id})</h3>
-            {table}
-        </Box>
+        <HolidaySection title="Holiday Bus">
+            <HolidayCard
+                heading={`${sortedData[0].destination}-bound Route ${sortedData[0].route} · VID ${id}`}
+                headerColor="#58595b"
+                columnLabel="Upcoming stops"
+                rows={sortedData.map((arrival) => ({
+                    key: JSON.stringify(arrival),
+                    name: arrival.stopName,
+                    etaMinutes: arrival.etaMinutes,
+                    delayed: arrival.delayed,
+                }))}
+                updatedAt={dataUpdatedAt}
+                isFetching={isFetching}
+            />
+        </HolidaySection>
     );
 }
 
