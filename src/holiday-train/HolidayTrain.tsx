@@ -1,9 +1,9 @@
-import {Alert, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {useRollbar} from "@rollbar/react";
-import {Train, UpcomingTrainArrival, useGetTrain} from "../api";
+import {UpcomingTrainArrival, useGetTrain} from "../api";
 import {AxiosError, isAxiosError} from "axios";
+import {HolidayCard, HolidayEmpty, HolidayMessage, HolidaySection} from "./HolidaySection.tsx";
 
-const routeToHexColor = new Map([
+const routeToHexColor = new Map<string, string>([
     ["RED", "#C60C30"],
     ["BLUE", "#00A1DE"],
     ["BROWN", "#62361B"],
@@ -14,93 +14,28 @@ const routeToHexColor = new Map([
     ["YELLOW", "#F9E300"]
 ]);
 
-function getRow(arrival: UpcomingTrainArrival) {
-    const key = JSON.stringify(arrival);
-
-    let rowStyles = {};
-
-    if (arrival.approaching) {
-        rowStyles = {
-            backgroundColor: "#13251f"
-        };
-    } else if (arrival.scheduled) {
-        rowStyles = {
-            backgroundColor: "#172038"
-        }
-    } else if (arrival.delayed) {
-        rowStyles = {
-            backgroundColor: "#381717"
-        }
-    }
-
-    const eta = arrival.etaMinutes;
-
-    const etaString = (eta <= 1) ? "Due" : `${eta} min`;
-
-    return (
-        <TableRow key={key} sx={rowStyles}>
-            <TableCell>
-                {
-                    arrival.stationName
-                }
-            </TableCell>
-            <TableCell>
-                {
-                    etaString
-                }
-            </TableCell>
-        </TableRow>
-    );
-}
-
-function getTable(arrivals: UpcomingTrainArrival[]) {
-    return (
-        <TableContainer component={Paper}>
-            <Table size="small">
-                <TableHead>
-                    <TableRow>
-                        <TableCell sx={{fontWeight: "bold"}}>Station</TableCell>
-                        <TableCell sx={{fontWeight: "bold"}}>ETA</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {
-                        arrivals.map((train) => getRow(train))
-                    }
-                </TableBody>
-            </Table>
-        </TableContainer>
-    );
-}
-
 function compareArrivals(arrival0: UpcomingTrainArrival, arrival1: UpcomingTrainArrival) {
-    const route0 = arrival0.route;
+    const routeComparison = arrival0.route.localeCompare(arrival1.route);
 
-    const date0 = new Date(arrival0.arrivalTime);
-
-    const route1 = arrival1.route;
-
-    const date1 = new Date(arrival1.arrivalTime);
-
-    if (route0 < route1) {
-        return -1;
-    } else if (route0 > route1) {
-        return 1;
-    } else if (date0 < date1) {
-        return -1;
-    } else if (date0 === date1) {
-        return 0;
-    } else {
-        return 1;
+    if (routeComparison !== 0) {
+        return routeComparison;
     }
+
+    return new Date(arrival0.arrivalTime).getTime() - new Date(arrival1.arrivalTime).getTime();
 }
+
+const notRunning = (
+    <HolidaySection title="Holiday Train">
+        <HolidayEmpty vehicle="Train"/>
+    </HolidaySection>
+);
 
 function HolidayTrain() {
     const run = "1225";
 
     const rollbar = useRollbar();
 
-    const { data, isLoading, error } = useGetTrain(
+    const { data, isLoading, isFetching, dataUpdatedAt, error } = useGetTrain(
         run,
         {
             query: {
@@ -114,85 +49,54 @@ function HolidayTrain() {
     }
 
     if (error) {
-        if (isAxiosError(error)) {
-            const statusCode = (error as AxiosError).response?.status;
-
-            if (statusCode === 404) {
-                return (
-                    <Box sx={{p: 2}}>
-                        <h2 style={{color: "#B3000C"}}>Holiday Train 🎅🏻</h2>
-                        <Alert severity="warning">
-                            The Holiday Train does not appear to be running at this time. Please check back later.
-                        </Alert>
-                    </Box>
-                );
-            }
+        if (isAxiosError(error) && (error as AxiosError).response?.status === 404) {
+            return notRunning;
         }
 
         rollbar.error(error);
 
         return (
-            <Box sx={{p: 2}}>
-                <h2 style={{color: "#B3000C"}}>Holiday Train 🎅🏻</h2>
-                <Alert severity="error">
+            <HolidaySection title="Holiday Train">
+                <HolidayMessage>
                     An error occurred while retrieving the Holiday Train data. Please check back later.
-                </Alert>
-            </Box>
+                </HolidayMessage>
+            </HolidaySection>
         );
     }
 
-    let train: Train | null;
+    const train = data?.data ?? null;
 
-    if (data === undefined) {
-        train = null;
-    } else {
-        train = data.data;
+    if (train === null || !Array.isArray(train.arrivals) || train.arrivals.length === 0) {
+        return notRunning;
     }
 
-    if (train === null) {
-        return (
-            <Box sx={{p: 2}}>
-                <h2 style={{color: "#B3000C"}}>Holiday Train 🎅🏻</h2>
-                <Alert severity="warning">
-                    The Holiday Train does not appear to be running at this time. Please check back later.
-                </Alert>
-            </Box>
-        );
-    }
+    const sortedData = [...train.arrivals].sort(compareArrivals);
 
-    const arrivals: UpcomingTrainArrival[] = train.arrivals;
+    const route = sortedData[0].route.toString();
 
-    if (arrivals.length === 0) {
-        return (
-            <Box sx={{p: 2}}>
-                <h2 style={{color: "#B3000C"}}>Holiday Train 🎅🏻</h2>
-                <Alert severity="warning">
-                    The Holiday Train does not appear to be running at this time. Please check back later.
-                </Alert>
-            </Box>
-        );
-    }
+    const titleCaseRoute = route.charAt(0) + route.slice(1).toLowerCase();
 
-    const sortedData = [...arrivals].sort(compareArrivals);
-
-    const destination = sortedData[0].destinationName;
-
-    const route = sortedData[0].route.toString()
-
-    const lowercaseRoute = route.toLowerCase();
-
-    const titleCaseRoute = lowercaseRoute.charAt(0).toUpperCase() + lowercaseRoute.slice(1);
-
-    const routeColor = routeToHexColor.get(route);
-
-    const table = getTable(sortedData);
+    const routeColor = routeToHexColor.get(route) ?? "#888";
 
     return (
-        <Box sx={{p: 2}}>
-            <h2 style={{color: "#B3000C"}}>Holiday Train 🎅🏻</h2>
-            <h3>{destination}-bound <span style={{ color: routeColor }}>{titleCaseRoute}</span> Line Run 1225</h3>
-            {table}
-        </Box>
+        <HolidaySection title="Holiday Train">
+            <HolidayCard
+                heading={`${sortedData[0].destinationName}-bound ${titleCaseRoute} Line · Run ${run}`}
+                headerColor={routeColor}
+                headerTextColor={route === "YELLOW" ? "#000" : "#fff"}
+                columnLabel="Upcoming stations"
+                rows={sortedData.map((arrival) => ({
+                    key: JSON.stringify(arrival),
+                    name: arrival.stationName,
+                    etaMinutes: arrival.etaMinutes,
+                    approaching: arrival.approaching,
+                    scheduled: arrival.scheduled,
+                    delayed: arrival.delayed,
+                }))}
+                updatedAt={dataUpdatedAt}
+                isFetching={isFetching}
+            />
+        </HolidaySection>
     );
 }
 
