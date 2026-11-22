@@ -86,6 +86,7 @@ function HolidayTrain() {
                 headerColor={routeColor}
                 headerTextColor={route === "YELLOW" ? "#000" : "#fff"}
                 columnLabel="Upcoming stations"
+                itemNoun="stations"
                 rows={sortedData.map((arrival) => ({
                     key: JSON.stringify(arrival),
                     name: arrival.stationName,

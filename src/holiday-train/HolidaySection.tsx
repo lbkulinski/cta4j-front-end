@@ -1,5 +1,5 @@
-import {Alert, Box, CircularProgress, Paper, Typography} from '@mui/material';
-import {ReactNode} from 'react';
+import {Alert, Box, Button, CircularProgress, Paper, Typography} from '@mui/material';
+import {ReactNode, useState} from 'react';
 
 export interface HolidayRow {
     key: string;
@@ -58,12 +58,19 @@ interface HolidayCardProps {
     headerColor: string;
     headerTextColor?: string;
     columnLabel: string;
+    itemNoun: string;
     rows: HolidayRow[];
     updatedAt: number;
     isFetching: boolean;
 }
 
-export function HolidayCard({heading, meta, headerColor, headerTextColor = '#fff', columnLabel, rows, updatedAt, isFetching}: HolidayCardProps) {
+const COLLAPSED_ROW_COUNT = 5;
+
+export function HolidayCard({heading, meta, headerColor, headerTextColor = '#fff', columnLabel, itemNoun, rows, updatedAt, isFetching}: HolidayCardProps) {
+    const [expanded, setExpanded] = useState(false);
+
+    const visibleRows = expanded ? rows : rows.slice(0, COLLAPSED_ROW_COUNT);
+
     const updated = updatedAt
         ? new Date(updatedAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false})
         : null;
@@ -81,7 +88,7 @@ export function HolidayCard({heading, meta, headerColor, headerTextColor = '#fff
                     </Typography>
                 </Box>
                 <Box component="ul" aria-label={columnLabel} sx={{listStyle: 'none', m: 0, p: 0}}>
-                    {rows.map((row, i) => {
+                    {visibleRows.map((row, i) => {
                         const label = row.etaMinutes <= 1 ? 'Due' : `${row.scheduled ? '~' : ''}${row.etaMinutes} min`;
                         const color = row.approaching || row.etaMinutes <= 1 ? '#4caf50'
                             : row.delayed ? '#f44336'
@@ -113,6 +120,16 @@ export function HolidayCard({heading, meta, headerColor, headerTextColor = '#fff
                         );
                     })}
                 </Box>
+                {rows.length > COLLAPSED_ROW_COUNT && (
+                    <Button
+                        fullWidth
+                        onClick={() => setExpanded(!expanded)}
+                        aria-expanded={expanded}
+                        sx={{borderTop: '1px solid #2a2a2a', borderRadius: 0, color: '#90caf9', textTransform: 'none'}}
+                    >
+                        {expanded ? 'Show fewer' : `Show all ${rows.length} ${itemNoun}`}
+                    </Button>
+                )}
             </Paper>
             <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1, mt: 0.75}}>
                 {isFetching && <CircularProgress size={12} thickness={5} sx={{color: '#555'}} />}

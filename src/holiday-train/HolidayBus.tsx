@@ -62,6 +62,7 @@ function HolidayBus() {
                 meta={`VID ${id}`}
                 headerColor="#58595b"
                 columnLabel="Upcoming stops"
+                itemNoun="stops"
                 rows={sortedData.map((arrival) => ({
                     key: JSON.stringify(arrival),
                     name: arrival.stopName,
