@@ -70,13 +70,13 @@ function Footer() {
             >
                 <Box sx={{ display: 'flex', gap: 3, minWidth: 0 }}>
                     <Link
-                        href="https://ctasmokers.com"
+                        href="https://nita.illinois.gov/safety/app"
                         target="_blank"
                         rel="noopener noreferrer"
                         underline="hover"
                         sx={{ color: '#999999', fontSize: '0.75rem', fontWeight: 500, '&:hover': { color: '#aaaaaa' } }}
                     >
-                        ctasmokers.com
+                        NITA Ride Safe
                     </Link>
                     <Link
                         href="https://buymeacoffee.com/cta4j"
